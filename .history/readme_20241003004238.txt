@@ -10,7 +10,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-Welcome to the official Basgate Payment Gateway plugin for Woocommerce. 
+Welcome to the official Basgate Payment Gateway plugin for Woocommerce. Basgate Payment Gateway is ideal for Woocommerce and Wordpress merchants since it allows them to give their customers a seamless, super-fast checkout experience backed by cutting-edge payments technology that powers India’s largest payments platform. Accept payments from over 100+ payment sources including credit cards, debit cards, netbanking from 50+ banks (including HDFC & SBI), UPI, wallets and Buy-now-pay-later options. Here are a few reasons why Woocommerce merchants should choose Basgate Payment Gateway.  
 
 == Compatibilities and Dependencies ==
 
@@ -21,7 +21,8 @@ Welcome to the official Basgate Payment Gateway plugin for Woocommerce.
 
 == Features ==
 
-* Largest scale:  Preferred by all consumers in Yemen.
+* Largest scale:  Preferred by 330M+ consumers in India.
+* India’s most reliable PG: Trusted by India’s biggest online brands such as Uber, Flipkart, Zomato, Airtel, IRCTC, LIC and many more.  
 * Industry best prices guaranteed: 2x more affordable than other payment gateways with 0% transaction fees on UPI & Rupay payments.
 * Boost  conversions: Affordability options like EMI and Basgate Postpaid to boost conversions.
 * Superior technology: Industry best success rates & 99.99% Up-time, Capable of supporting 3x more transactions per second than other payment gateways.
@@ -31,15 +32,15 @@ Welcome to the official Basgate Payment Gateway plugin for Woocommerce.
 
 == Getting Started == 
 
-New to BasgatePG? Use this [link](https://web.basgate.com:9191/) to create your Basgate for Business account and get access to exciting offers.
+New to BasgatePG? Use this [link](https://dashboard.basgate.com) to create your Basgate for Business account and get access to exciting offers.
 
 Before enabling the Basgate Payment Gateway on Woocommerce, make sure you have a registered business account with Basgate. Please visit - 
-[Basgate Dashboard](https://web.basgate.com:9191/) to sign-up
+[Basgate Dashboard](https://dashboard.basgate.com) to sign-up
 
 == Step-1: Generate your API keys with Basgate ==
 
 To generate the API Key,
-* Log into your [Dashboard](https://web.basgate.com:9191/).
+* Log into your [Dashboard](https://dashboard.basgate.com/).
 * Select the API Keys under Developers on the left menu-bar.
 * Select the mode for which you want to generate the API Key from the menu.
 * Click Generate now to generate a key for the test mode and in case of live mode, first activate the account by submitting documents and then generate the key by clicking the Generate now button.
@@ -80,7 +81,7 @@ Note: In case you have installed the plugin directly from the wordpress dashboar
 	* Environment - Select environment type
 
 Your Basgate payment gateway is enabled. Now you can accept payment through Basgate.
-In case of any issues with integration, please [get in touch](https://basgate.com).
+In case of any issues with integration, please [get in touch](https://business.basgate.com/contact-us#developer).
 
 == Screenshots ==
 

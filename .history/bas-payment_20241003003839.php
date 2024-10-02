@@ -5,7 +5,7 @@
  * Description: This plugin allow you to accept payments using BasSDK. This plugin will add a BasSDK Payment option on WooCommerce checkout page, when user choses BasSDK as Payment Method, he will redirected to BasSDK website to complete his transaction and on completion his payment, BasSDK will send that user back to your website along with transactions details. This plugin uses server-to-server verification to add additional security layer for validating transactions. Admin can also see payment status for orders by navigating to WooCommerce > Orders from menu in admin.
  * Version: 2.8.5
  * Author: BasSDK
- * Author URI: https://basgate.com/
+ * Author URI: https://business.basgate.com/payment-gateway
  * Tags: BasSDK, BasSDK Payments, PayWithBasgate, BasSDK WooCommerce, BasSDK Plugin, BasSDK Payment Gateway
  * Requires at least: 4.0.1
  * Tested up to: 6.5.5

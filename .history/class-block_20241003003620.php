@@ -40,7 +40,7 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType {
 
     public function get_payment_method_data() {
         return [
-            'title' => "الدفع عبر منصة بس",
+            'title' => "Pay With Basgate",
             'description' => $this->settings['description'],
         ];
     } 

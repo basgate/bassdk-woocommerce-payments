@@ -18,10 +18,10 @@ class WC_Basgate extends WC_Payment_Gateway
         $getBasgateSetting = get_option('woocommerce_basgate_settings');
         $invertLogo = isset($getBasgateSetting['invertLogo'])?$getBasgateSetting['invertLogo']:"0";
         if ($invertLogo == 1) {
-            $this->icon= esc_url("https://ykbsocial.com/basgate/reportlogo.png");
+            $this->icon= esc_url("https://staticpg.basgate.in/pg_plugins_logo/basgate_logo_invert.svg");
         }
         else {
-            $this->icon= esc_url("https://ykbsocial.com/basgate/reportlogo.png");
+            $this->icon= esc_url("https://staticpg.basgate.in/pg_plugins_logo/basgate_logo_paymodes.svg");
         }
         $this->has_fields= false;
 
@@ -99,9 +99,9 @@ class WC_Basgate extends WC_Payment_Gateway
         $checkout_page_id = get_option('woocommerce_checkout_page_id');
         $checkout_page_id = (int) $checkout_page_id > 0 ? $checkout_page_id : 7;
         $webhookUrl = esc_url(get_site_url() . '/?wc-api=WC_Basgate&webhook=yes');
-        $basgateDashboardLink = esc_url("https://web.basgate.com:9191/");
-        $basgatePaymentStatusLink = esc_url("https://web.basgate.com:9191/");
-        $basgateContactLink = esc_url("https://basgate.com");
+        $basgateDashboardLink = esc_url("https://dashboard.basgate.com/next/apikeys");
+        $basgatePaymentStatusLink = esc_url("https://developer.basgate.com/docs/payment-status/");
+        $basgateContactLink = esc_url("https://business.basgate.com/contact-us#developer");
         $this->form_fields = array(
             /*'title' => array(
                 'title'         => __('Title', $this->id),
