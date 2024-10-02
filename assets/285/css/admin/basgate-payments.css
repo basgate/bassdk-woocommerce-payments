@@ -1,0 +1,11 @@
+/*#woocommerce_basgate_iswebhook{display: none;}*/
+.webhookTrigger{display:none;}
+.msg-by-basgate{
+	display: block;margin-top: 10px;font-size: 8px;
+}
+#woocommerce_basgate_otherWebsiteName{display: none;}
+label[for=woocommerce_basgate_otherWebsiteName]
+{
+    display: none !important;
+}
+ 
