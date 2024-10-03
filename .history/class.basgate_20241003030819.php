@@ -267,15 +267,15 @@ class WC_Basgate extends WC_Payment_Gateway
             echo wp_kses('<div class="basgate_response error-box">' . BasgateConstants::ERROR_CURL_DISABLED . '</div>', $allowed_tags);
         }
 
-        // // Transaction URL is not working properly or not able to communicate with basgate
-        // if (!empty(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')))) {
-        //     //wp_remote_get($url, array('sslverify' => FALSE));
+        // Transaction URL is not working properly or not able to communicate with basgate
+        if (!empty(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')))) {
+            //wp_remote_get($url, array('sslverify' => FALSE));
 
-        //     $response = (array)wp_remote_get(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')));
-        //     if (!empty($response['errors'])) {
-        //         echo wp_kses('<div class="basgate_response error-box">' . BasgateConstants::ERROR_CURL_WARNING . '</div>', $allowed_tags);
-        //     }
-        // }
+            $response = (array)wp_remote_get(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')));
+            if (!empty($response['errors'])) {
+                echo wp_kses('<div class="basgate_response error-box">' . BasgateConstants::ERROR_CURL_WARNING . '</div>', $allowed_tags);
+            }
+        }
 
         echo wp_kses('<table class="form-table">', $allowed_tags);
         $this->generate_settings_html();
