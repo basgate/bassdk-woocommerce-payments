@@ -72,13 +72,41 @@ class WC_Basgate extends WC_Payment_Gateway
     public function init_form_fields()
     {
 
+        /* Code to Handle Website Name Data Start */
+        // $isWebsiteAdded = get_option('isWebsiteAdded');
+        // $getBasgateSetting = get_option('woocommerce_basgate_settings');
+        // $website = isset($getBasgateSetting['website']) ? $getBasgateSetting['website'] : "";
+        // $websiteOption = array('WEBSTAGING' => 'WEBSTAGING', 'DEFAULT' => 'DEFAULT');
+
+        // if ($isWebsiteAdded == "") {
+        //     // Old plugin Data, Need to handle previous Website Name
+        //     add_option("isWebsiteAdded", "yes");
+        //     if (!in_array($website, $websiteOption) and $website != "") {
+        //         $websiteOption[$website] = $website;
+        //     }
+        //     $websiteOption['OTHERS'] = 'OTHERS';
+        //     add_option('websiteOption', json_encode($websiteOption));
+        // }
+        // $websiteOptionFromDB = json_decode(get_option('websiteOption'), true);
+        /* else
+        {
+        // New Plugin added Nothing to handle
+        } */
+        /* Code to Handle Website Name Data Start */
+
         $checkout_page_id = get_option('woocommerce_checkout_page_id');
         $checkout_page_id = (int) $checkout_page_id > 0 ? $checkout_page_id : 7;
-        // $webhookUrl = esc_url(get_site_url() . '/?wc-api=WC_Basgate&webhook=yes');
-        // $basgateDashboardLink = esc_url("https://web.basgate.com:9191/");
+        $webhookUrl = esc_url(get_site_url() . '/?wc-api=WC_Basgate&webhook=yes');
+        $basgateDashboardLink = esc_url("https://web.basgate.com:9191/");
         // $basgatePaymentStatusLink = esc_url("https://web.basgate.com:9191/");
         // $basgateContactLink = esc_url("https://basgate.com");
         $this->form_fields = array(
+            /*'title' => array(
+                'title'         => __('Title', $this->id),
+                'type'          => 'text',
+                'description'   => __('This controls the title which the user sees during checkout.', $this->id),
+                'default'       => __(BasgateConstants::TITLE, $this->id),
+            ),*/
             'description' => array(
                 'title'         => __('Description', $this->id),
                 'type'          => 'textarea',
@@ -98,32 +126,92 @@ class WC_Basgate extends WC_Payment_Gateway
                 'title'         => __('Application Id'),
                 'type'          => 'text',
                 'custom_attributes' => array('required' => 'required'),
-                'description'   => __('Based on the selected Environment Mode, copy the relevant Application ID for test or production environment you received on email.', $this->id),
+                'description'   => __('Based on the selected Environment Mode, copy the relevant Application ID for test or production environment available on <a href="' . $basgateDashboardLink . '" target="_blank">Basgate dashboard</a>.', $this->id),
             ),
             'merchant_key' => array(
                 'title'         => __('Merchant Key'),
                 'type'          => 'text',
                 'custom_attributes' => array('required' => 'required'),
-                'description'   => __('Based on the selected Environment Mode, copy the Merchant Key for test or production environment you received on email.', $this->id),
+                'description'   => __('Based on the selected Environment Mode, copy the Merchant Key for test or production environment available on <a href="' . $basgateDashboardLink . '" target="_blank">Basgate dashboard</a>.', $this->id),
             ),
             'client_id' => array(
                 'title'         => __('Client Id'),
                 'type'          => 'text',
                 'custom_attributes' => array('required' => 'required'),
-                'description'   => __('Based on the selected Environment Mode, copy the Client Id for test or production environment you received on email.', $this->id),
+                'description'   => __('Based on the selected Environment Mode, copy the Client Id for test or production environment available on <a href="' . $basgateDashboardLink . '" target="_blank">Basgate dashboard</a>.', $this->id),
             ),
             'client_secret' => array(
                 'title'         => __('Client Secret'),
                 'type'          => 'text',
                 'custom_attributes' => array('required' => 'required'),
-                'description'   => __('Based on the selected Environment Mode, copy the Client Secret for test or production environment you received on email.', $this->id),
+                'description'   => __('Based on the selected Environment Mode, copy the Client Secret for test or production environment available on <a href="' . $basgateDashboardLink . '" target="_blank">Basgate dashboard</a>.', $this->id),
             ),
+            // /*'website' => array(
+            //      'title'         => __('Website Name'),
+            //      'type'          => 'text',
+            //      'custom_attributes' => array( 'required' => 'required' ),
+            //      'description'   => __('Enter "WEBSTAGING" for test/integration environment & "DEFAULT" for production environment.', $this->id),
+            //  ),*/
+            // 'website' => array(
+            //     'title'         => __('Website (Provided by Basgate)'), $this->id,
+            //     'type'          => 'select',
+            //     'custom_attributes' => array( 'required' => 'required' ),
+            //     'options'       => $websiteOptionFromDB,
+            //     'description'   => __('Enter "WEBSTAGING" for test/staging environment & "DEFAULT" for production environment.', $this->id),
+            //     'default'       => 'WEBSTAGING'
+            // ),
+            // 'otherWebsiteName' => array(
+            //     'title'         => __('Other Website Name'),
+            //     'type'          => 'text',
+            //     //'custom_attributes' => array('placeholder' => __( 'Webiste Name', 'woocommerce' ),),
+            //     'description'   => __("<span class='otherWebsiteName-error-message' style='color:red'></span>", $this->id),
+            // ),
+            //  'iswebhook' => array(
+            //     'title' => __('Enable Webhook', $this->id),
+            //     'type' => 'checkbox',
+            //     'description' =>  "<span class='webhookTrigger'></span><span style='color:#00b9f5' class='webhook-url'>$webhookUrl</span><br/><br/>To know more about Webhooks please click  <a href='".$basgatePaymentStatusLink."' target='_blank'>here </a><br/><br/><span class='webhook-message'></span>" ,
+            //     'label' => __('Please check this box to enable Basgate Webhook with the URL listed below.', $this->id),
+            //     'default' => 'no'
+            // ),
+            // 'emiSubvention' => array(
+            //     'title'         => __('Enable EMI Subvention'), $this->id,
+            //     'type'          => 'select',
+            //     'custom_attributes' => array( 'required' => 'required' ),
+            //     'options'       => array("0" => "No", "1" => "Yes"),
+            //     'default'       => '0',
+            //     'description' => 'Get your EMI Subvention plans configured at <a href="'.$basgateContactLink.'" target="_blank">Basgate</a> & then Select "Yes" to offer EMI Subvention to your customers.'
+            // ),
+            // 'bankOffer' => array(
+            //     'title'         => __('Enable Bank Offers'), $this->id,
+            //     'type'          => 'select',
+            //     'custom_attributes' => array( 'required' => 'required' ),
+            //     'options'       => array("0" => "No", "1" => "Yes"),
+            //     'default'       => '0',
+            //     'description'=> 'Get your Bank Offer plans configured at <a href="'.$basgateContactLink.'" target="_blank">Basgate</a> & then Select "Yes" to provide Bank Offer to your customers.'
+            // ),
+            // 'dcEmi' => array(
+            //     'title'         => __('Enable DC EMI'), $this->id,
+            //     'type'          => 'select',
+            //     'custom_attributes' => array( 'required' => 'required' ),
+            //     'options'       => array("0" => "No", "1" => "Yes"),
+            //     'description'   => __('*For DC EMI Mobile Number Field is Mandatory.', $this->id),
+            //     'default'       => '0',
+            //     'description' => 'Get DC EMI enabled for your MID and then select "Yes" to offer DC EMI to your customer. Customer mobile number is mandatory for DC EMI.'
+            // ),
+            // 'invertLogo' => array(
+            //     'title'         => __('Enable Invert Logo'), $this->id,
+            //     'type'          => 'select',
+            //     'options'       => array("0" => "No", "1" => "Yes"),
+            //     'default'       => '0',
+            //     'description' => 'Basgate PG logo colour can be changed on your WooCommerce Checkout Page.'
+            // ),
             'enabled'           => array(
                 'title'             => __('Enable/Disable', $this->id),
                 'type'          => 'checkbox',
                 'label'         => __('Enable Basgate Payments.', $this->id),
                 'default'       => 'yes'
             ),
+
         );
     }
 
@@ -234,6 +322,7 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function receipt_page($order)
     {
+
         echo $this->generate_basgate_form($order);
     }
     public function getOrderInfo($order)
@@ -261,7 +350,7 @@ class WC_Basgate extends WC_Payment_Gateway
     */
     public function blinkCheckoutSend($paramData = array())
     {
-
+        
         $data = array();
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
             // if ($this->getSetting('otherWebsiteName') == "") {
@@ -348,14 +437,9 @@ class WC_Basgate extends WC_Payment_Gateway
         }
         $settings = get_option("woocommerce_basgate_settings");
 
-        $checkout_url = str_replace('MID', $settings['merchant_id'], BasgateHelper::getBasgateSDKURL(BasgateConstants::CHECKOUT_JS_URL, $settings['environment']));
+        // $checkout_url = str_replace('MID', $settings['merchant_id'], BasgateHelper::getBasgateURL(BasgateConstants::CHECKOUT_JS_URL, $settings['environment']));
         //echo '';
-        $wait_msg = '<script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
-                    <div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div>
-                    <div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5">
-                    </div><p class="loading-basgate">Loading Basgate</p></div><div class="basgate-overlay basgate-woopg-loader"></div>
-                    <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
-                    <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
+        // $wait_msg = '<script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script><div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5"></div><p class="loading-basgate">Loading Basgate</p></div><div class="basgate-overlay basgate-woopg-loader"></div><div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a><a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
 
         $paramData = array('amount' => $getOrderInfo['amount'], 'order_id' => $order_id, 'cust_id' => $cust_id, 'cust_mob_no' => $cust_mob_no, 'cust_name' => $cust_name);
         $data = $this->blinkCheckoutSend($paramData);
@@ -366,17 +450,17 @@ class WC_Basgate extends WC_Payment_Gateway
 					"root": "",
 					"flow": "DEFAULT",
 					"data": {
-                        "orderId": "' . $order_id . '", 
-                        "token": "' . $data['txnToken'] . '", 
-                        "tokenType": "TXN_TOKEN",
-                        "amount": "' . $getOrderInfo['amount'] . '"
+					  "orderId": "' . $order_id . '", 
+					  "token": "' . $data['txnToken'] . '", 
+					  "tokenType": "TXN_TOKEN",
+					  "amount": "' . $getOrderInfo['amount'] . '"
 					},
 					"integration": {
 						"platform": "Woocommerce",
 						"version": "' . WOOCOMMERCE_VERSION . '|' . BasgateConstants::PLUGIN_VERSION . '"
 					},
 					"handler": {
-					    "notifyMerchant": function(eventName,data){
+					  "notifyMerchant": function(eventName,data){
 						console.log("notifyMerchant handler function called");
 						if(eventName=="APP_CLOSED")
 						{
@@ -389,22 +473,18 @@ class WC_Basgate extends WC_Payment_Gateway
                             }
                             jQuery(".basgate-action-btn").show();
 						}
-                    } 
-                }
-                };
-                  //TODO: Call Bas payment SDK Here.
-                if(window.isJSBridgeReady && window.JSBridge){
-                    window.JSBridge.call("basPayment",config).then(function (result) {
-                        console.log("basPayment Result:", JSON.stringify(result));
-                        if (result) {
-                            return result;
-                        } else {
-                            return null
-                        }
-                    ).catch(function onError(error){
-                        console.log("error => ",error);
-                    });
-                } 
+					  } 
+					}
+				  };
+				  if(window.Basgate && window.Basgate.CheckoutJS){
+					  window.Basgate.CheckoutJS.onLoad(function excecuteAfterCompleteLoad() {
+						  window.Basgate.CheckoutJS.init(config).then(function onSuccess() {
+							   window.Basgate.CheckoutJS.invoke(); 
+						  }).catch(function onError(error){
+							  console.log("error => ",error);
+						  });
+					  });
+				  } 
 			}
 			jQuery(document).ready(function(){ jQuery(".re-invoke").on("click",function(){ window.Basgate.CheckoutJS.invoke();  return false; }); });
 			</script>' . $wait_msg . '</div>
@@ -514,7 +594,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 if (!empty($order)) {
 
                     $reqParams = array(
-                        "appId" => $this->getSetting('merchant_id'),
+                        "MID" => $this->getSetting('merchant_id'),
                         "ORDERID" => sanitize_text_field($_POST['ORDERID']),
                     );
 
@@ -523,6 +603,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     /* number of retries untill cURL gets success */
                     $retry = 1;
                     do {
+
                         $resParams = BasgateHelper::executecUrl(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')), $reqParams);
                         $retry++;
                     } while (!$resParams['STATUS'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
