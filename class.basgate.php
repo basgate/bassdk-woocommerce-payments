@@ -273,7 +273,7 @@ class WC_Basgate extends WC_Payment_Gateway
             /* body parameters */
             $basgateParams["body"] = array(
                 "requestTimestamp" => $requestTimestamp,
-                "mid" => $this->getSetting('merchant_id'),
+                "appId" => $this->getSetting('merchant_id'),
                 // "websiteName" => $website,
                 "orderType" => "PayBill",
                 "orderId" => $paramData['order_id'],
@@ -366,10 +366,12 @@ class WC_Basgate extends WC_Payment_Gateway
 					"root": "",
 					"flow": "DEFAULT",
 					"data": {
+                        "appId":"' . $this->getSetting('merchant_id') . '",
                         "orderId": "' . $order_id . '", 
-                        "token": "' . $data['txnToken'] . '", 
+                        "txnToken": "' . $data['txnToken'] . '", 
                         "tokenType": "TXN_TOKEN",
-                        "amount": "' . $getOrderInfo['amount'] . '"
+                        "amount": "' . $getOrderInfo['amount'] . '",
+                        "currency":"' . $data['currency'] . '"
 					},
 					"integration": {
 						"platform": "Woocommerce",
