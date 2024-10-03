@@ -350,7 +350,6 @@ class WC_Basgate extends WC_Payment_Gateway
     */
     public function blinkCheckoutSend($paramData = array())
     {
-        
         $data = array();
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
             // if ($this->getSetting('otherWebsiteName') == "") {
@@ -436,11 +435,10 @@ class WC_Basgate extends WC_Payment_Gateway
             $cust_mob_no = "";
         }
         $settings = get_option("woocommerce_basgate_settings");
-
-        // $checkout_url = str_replace('MID', $settings['merchant_id'], BasgateHelper::getBasgateURL(BasgateConstants::CHECKOUT_JS_URL, $settings['environment']));
+        $checkout_url = str_replace('MID', $settings['merchant_id'], BasgateHelper::getBasgateURL(BasgateConstants::CHECKOUT_JS_URL, $settings['environment']));
         //echo '';
-        // $wait_msg = '<script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script><div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5"></div><p class="loading-basgate">Loading Basgate</p></div><div class="basgate-overlay basgate-woopg-loader"></div><div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a><a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
 
+        $wait_msg = '<script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script><div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5"></div><p class="loading-basgate">Loading Basgate</p></div><div class="basgate-overlay basgate-woopg-loader"></div><div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a><a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
         $paramData = array('amount' => $getOrderInfo['amount'], 'order_id' => $order_id, 'cust_id' => $cust_id, 'cust_mob_no' => $cust_mob_no, 'cust_name' => $cust_name);
         $data = $this->blinkCheckoutSend($paramData);
         return '<div class="pg-basgate-checkout"><script type="text/javascript">
