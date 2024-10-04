@@ -349,6 +349,13 @@ class WC_Basgate extends WC_Payment_Gateway
         } else {
             $cust_mob_no = "";
         }
+        //get currency
+        if (isset($getOrderInfo['currency']) && !empty($getOrderInfo['currency'])) {
+            $currency = $getOrderInfo['currency'];
+        } else {
+            $currency = "YER";
+        }
+
         $settings = get_option("woocommerce_basgate_settings");
 
         $checkout_url = str_replace('MID', $settings['merchant_id'], BasgateHelper::getBasgateSDKURL(BasgateConstants::CHECKOUT_JS_URL, $settings['environment']));
@@ -360,7 +367,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
                     <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
 
-        $paramData = array('amount' => $getOrderInfo['amount'], 'order_id' => $order_id, 'cust_id' => $cust_id, 'cust_mob_no' => $cust_mob_no, 'cust_name' => $cust_name);
+        $paramData = array('amount' => $getOrderInfo['amount'], 'order_id' => $order_id, 'cust_id' => $cust_id, 'cust_mob_no' => $cust_mob_no, 'cust_name' => $cust_name, "currency" => $currency);
         $data = $this->blinkCheckoutSend($paramData);
         return '<div class="pg-basgate-checkout"><script type="text/javascript">
 			function invokeBlinkCheckoutPopup(){
