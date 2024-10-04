@@ -244,6 +244,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 'email' => $order->get_billing_email(),
                 'contact' => $order->get_billing_phone(),
                 'amount' => $order->get_total(),
+                'currency' => $order->get_currency()
             );
         } else {
             $data = array(
@@ -251,6 +252,8 @@ class WC_Basgate extends WC_Payment_Gateway
                 'email' => $order->billing_email,
                 'contact' => $order->billing_phone,
                 'amount' => $order->order_total,
+                'currency' => $order->get_currency()
+
             );
         }
 
@@ -280,7 +283,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 "callbackUrl" => $this->getCallbackUrl(),
                 "amount" => array(
                     "value" => $paramData['amount'],
-                    "currency" => "YER",
+                    "currency" => $paramData['currency'],
                 ),
                 "customerInfo" => array(
                     "id" => $paramData['cust_id'],
@@ -341,8 +344,8 @@ class WC_Basgate extends WC_Payment_Gateway
             $cust_name = "CUST_" . $order_id;
         }
         //get mobile no if there for DC_EMI
-        if (isset($getOrderInfo['contact']) && !empty($getOrderInfo['contact'])) {
-            $cust_mob_no = $getOrderInfo['contact'];
+        if (isset($getOrderInfo['phone']) && !empty($getOrderInfo['phone'])) {
+            $cust_mob_no = $getOrderInfo['phone'];
         } else {
             $cust_mob_no = "";
         }
@@ -371,7 +374,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "txnToken": "' . $data['txnToken'] . '", 
                         "tokenType": "TXN_TOKEN",
                         "amount": "' . $getOrderInfo['amount'] . '",
-                        "currency":"' . $data['currency'] . '"
+                        "currency":"' . $getOrderInfo['currency'] . '"
 					},
 					"integration": {
 						"platform": "Woocommerce",
