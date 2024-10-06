@@ -37,7 +37,7 @@ class BasgateConstants
     const METHOD_TITLE = "Basgate Payments";
     const METHOD_DESCRIPTION = "The best payment gateway provider in Yemen for e-payment through most of wallets and banks";
 
-    const TITLE = "Basgate Payment Gateway";
+    const TITLE = "Pay via Basgate Payment";
     const DESCRIPTION = "The best payment gateway provider in Yemen for e-payment through most of wallets and banks";
 
     const FRONT_MESSAGE = "Thank you for your order, please click the button below to pay with basgate.";

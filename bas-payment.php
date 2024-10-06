@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Plugin Name: BasSDK WooCommerce Payment Gateway
- * Plugin URI: https://github.com/Basgate/
+ * Plugin Name: Basgate SDK WooCommerce Payment
+ * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية والبنوك المختلفة
  * Version: 2.8.5
  * Author: BasGate Super APP 
