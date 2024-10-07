@@ -10,7 +10,7 @@
 #basgate-pg-spinner>div {
     width: 10px;
     height: 10px;
-    background-color: #dc2707;
+    background-color: #012b71;
     border-radius: 100%;
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
@@ -39,7 +39,7 @@
 
 #basgate-pg-spinner .bounce4,
 #basgate-pg-spinner .bounce5 {
-    background-color: #000000;
+    background-color: #48baf5;
 }
 
 @-webkit-keyframes sk-bouncedelay {
