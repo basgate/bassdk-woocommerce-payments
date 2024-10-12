@@ -82,6 +82,7 @@ class WC_Basgate extends WC_Payment_Gateway
             'bas_description' => array(
                 'title'         => __('Description', $this->id),
                 'type'          => 'textarea',
+                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
                 'description'   => __('This controls the description which the user sees during checkout.', $this->id),
                 'default'       => __(BasgateConstants::DESCRIPTION, $this->id)
             ),
@@ -121,7 +122,7 @@ class WC_Basgate extends WC_Payment_Gateway
             'enabled'           => array(
                 'title'             => __('Enable/Disable', $this->id),
                 'type'          => 'checkbox',
-                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
+                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled', 'display' => 'none'),
                 'label'         => __('Enable Basgate Login/Payments.', $this->id),
                 'default'       => 'yes'
             ),
