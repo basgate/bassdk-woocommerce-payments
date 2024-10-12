@@ -237,13 +237,6 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function receipt_page($order)
     {
-        ?>
-        <script>
-            var order = '<?php echo esc_attr($order); ?>'
-            console.log("===== STARTED receipt_page order:", order);
-        </script>
-        <?php
-
         echo $this->generate_basgate_form($order);
     }
 
@@ -276,13 +269,6 @@ class WC_Basgate extends WC_Payment_Gateway
     */
     public function blinkCheckoutSend($paramData = array())
     {
-
-        ?>
-        <script>
-            var paramData = '<?php echo esc_attr($paramData); ?>'
-            console.log("===== STARTED blinkCheckoutSend paramData:", paramData);
-        </script>
-        <?php
 
         $data = array();
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
@@ -339,13 +325,6 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function generate_basgate_form($order_id)
     {
-        ?>
-        <script>
-            var orderId = '<?php echo esc_attr($order_id); ?>'
-            console.log("===== STARTED generate_basgate_form orderId:", orderId);
-        </script>
-        <?php
-
         global $woocommerce;
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
             $order = new WC_Order($order_id);
@@ -448,13 +427,6 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function process_payment($order_id)
     {
-        ?>
-        <script>
-            var orderId = '<?php echo esc_attr($order_id); ?>'
-            console.log("===== STARTED process_payment orderId:", orderId);
-        </script>
-        <?php
-
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
             $order = new WC_Order($order_id);
         } else {
