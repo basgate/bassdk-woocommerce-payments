@@ -118,7 +118,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
                 'description'   => __('Based on the selected Environment Mode, copy the Client Secret for test or production environment you received on email.', $this->id),
             ),
-            'bas_enabled'           => array(
+            'enabled'           => array(
                 'title'             => __('Enable/Disable', $this->id),
                 'type'          => 'checkbox',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
