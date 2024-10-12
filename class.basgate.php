@@ -359,7 +359,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $currency = "YER";
         }
 
-        $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+        // $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
         $wait_msg = '<div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div>
                     <div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5">
@@ -696,12 +696,12 @@ class WC_Basgate extends WC_Payment_Gateway
 //     die();
 // }
 
-// function basgate_enqueue_script()
-// {
-//     wp_enqueue_style('basgateadminWoopayment', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/css/admin/basgate-payments.css', array(), time(), '');
-//     wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/admin/basgate-payments.js', array('jquery'), time(), true);
-// }
+function basgate_enqueue_script()
+{
+    wp_enqueue_style('basgateadminWoopayment', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/css/admin/basgate-payments.css', array(), time(), '');
+    wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/admin/basgate-payments.js', array('jquery'), time(), true);
+}
 
-// if (current_user_can('manage_options') && isset($_GET['page']) && $_GET['page'] === 'wc-settings') {
-//     add_action('admin_enqueue_scripts', 'basgate_enqueue_script');
-// }
+if (current_user_can('manage_options') && isset($_GET['page']) && $_GET['page'] === 'wc-settings') {
+    add_action('admin_enqueue_scripts', 'basgate_enqueue_script');
+}
