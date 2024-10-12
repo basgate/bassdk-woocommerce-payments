@@ -295,7 +295,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
     function woocommerce_basgate_add_css_js()
     {
-?>
+        ?>
         <style>
             #basgate_payment_area .message {
                 float: left;
@@ -398,7 +398,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-    <?php
+        <?php
     }
 
 
@@ -515,7 +515,7 @@ function woocommerce_basgate_init()
                 border-color: #c3e6cb;
             }
         </style>
-<?php
+    <?php
     }
 
     function basgateResponseMessage($content)
