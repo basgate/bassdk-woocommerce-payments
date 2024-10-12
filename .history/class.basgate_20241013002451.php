@@ -362,9 +362,9 @@ class WC_Basgate extends WC_Payment_Gateway
 
         // $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
-        // $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
-        // <script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
-        $wait_msg = '
+        $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
+
+        $wait_msg = '<script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
                     <div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div>
                     <div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5">
                     </div><p class="loading-basgate">Loading Basgate</p></div><div class="basgate-overlay basgate-woopg-loader"></div>
@@ -378,7 +378,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         function invokeBlinkCheckoutPopup(){
                             console.log("===== method called");
                             var config = {
-                                    "appId":"' . $this->getSetting('bas_application_id') . '",
+                                    "appId":"' . $settings['bas_application_id'] . '",
                                     "orderId": "' . $order_id . '", 
                                     "txnToken": "' . $data['txnToken'] . '", 
                                     "tokenType": "TXN_TOKEN",
@@ -415,11 +415,8 @@ class WC_Basgate extends WC_Payment_Gateway
                                     });
                             },false);
                         }
-                        invokeBlinkCheckoutPopup();
-			            // jQuery(document).ready(function(){ jQuery(".re-invoke").on("click",function(){ window.Basgate.CheckoutJS.invoke();  return false; }); });
-                    </script>
-                    ' . $wait_msg . '
-                </div>
+			// jQuery(document).ready(function(){ jQuery(".re-invoke").on("click",function(){ window.Basgate.CheckoutJS.invoke();  return false; }); });
+			</script>' . $wait_msg . '</div>
 			';
     }
     /**
