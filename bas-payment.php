@@ -414,7 +414,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
         if (!empty($_POST['basgate_order_id']) && BasgateConstants::SAVE_BASGATE_RESPONSE) {
             $reqParams = array(
-                "MID"        => $settings['bas_merchant_id'],
+                "MID"        => $settings['bas_application_id'],
                 "ORDERID"    => sanitize_text_field($_POST['basgate_order_id'])
             );
 

@@ -16,7 +16,7 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->id = BasgateConstants::ID;
         $this->method_title = BasgateConstants::METHOD_TITLE;
         $this->method_description = BasgateConstants::METHOD_DESCRIPTION;
-        // $this->settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+        // $getBasgateSetting = get_option(BasgateConstants::OPTION_DATA_NAME);
         // $invertLogo = isset($getBasgateSetting['invertLogo']) ? $getBasgateSetting['invertLogo'] : "0";
         // if ($invertLogo == 1) {
         $this->icon = esc_url("https://ykbsocial.com/basgate/reportlogo.png");
@@ -29,7 +29,7 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->init_settings();
 
         $this->title = BasgateConstants::TITLE;
-        $this->description = $this->getSetting('bas_description');
+        // $this->description = $this->getSetting('description');
 
         $this->msg = array('message' => '', 'class' => '');
 
@@ -44,11 +44,11 @@ class WC_Basgate extends WC_Payment_Gateway
         add_action('init', array(&$this, 'check_basgate_response'));
         //update for woocommerce >2.0
         add_action('woocommerce_api_' . strtolower(get_class($this)), array($this, 'check_basgate_response'));
-        if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
-            add_action('woocommerce_update_options_payment_gateways_' . $this->id, array(&$this, 'process_admin_options'));
-        } else {
-            add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
-        }
+        // if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
+        //     add_action('woocommerce_update_options_payment_gateways_' . $this->id, array(&$this, 'process_admin_options'));
+        // } else {
+        //     add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
+        // }
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
     }
 
@@ -194,10 +194,10 @@ class WC_Basgate extends WC_Payment_Gateway
         }
 
         // Transaction URL is not working properly or not able to communicate with basgate
-        if (!empty(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')))) {
+        if (!empty(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')))) {
             //wp_remote_get($url, array('sslverify' => FALSE));
 
-            $response = (array)wp_remote_get(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')));
+            $response = (array)wp_remote_get(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')));
             if (!empty($response['errors'])) {
                 echo wp_kses('<div class="basgate_response error-box">' . BasgateConstants::ERROR_CURL_WARNING . '</div>', $allowed_tags);
             }
@@ -361,6 +361,9 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
+        // $checkout_url = str_replace('MID', $settings['bas_application_id'], BasgateHelper::getBasgateSDKURL(BasgateConstants::CHECKOUT_JS_URL, $settings['bas_environment']));
+        //  $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
+        //echo '';
         $wait_msg = '<div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div>
                     <div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5">
                     </div><p class="loading-basgate">Loading Basgate</p></div><div class="basgate-overlay basgate-woopg-loader"></div>
@@ -374,7 +377,7 @@ class WC_Basgate extends WC_Payment_Gateway
 				console.log("method called");
 				var config = {
 					"data": {
-                        "appId":"' . $settings['bas_application_id'] . '",
+                        "appId":"' . $this->getSetting('bas_application_id') . '",
                         "orderId": "' . $order_id . '", 
                         "txnToken": "' . $data['txnToken'] . '", 
                         "tokenType": "TXN_TOKEN",

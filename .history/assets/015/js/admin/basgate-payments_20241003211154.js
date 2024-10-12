@@ -2,14 +2,14 @@
 
 
     if (window.location.host == "localhost") {
-        //document.getElementById("woocommerce_basgate_bas_iswebhook").disabled= true;
-        document.getElementById('woocommerce_basgate_bas_iswebhook').title = 'Webhook function will not work for localhost';
+        //document.getElementById("woocommerce_basgate_iswebhook").disabled= true;
+        document.getElementById('woocommerce_basgate_iswebhook').title = 'Webhook function will not work for localhost';
     }
     var websiteName = jQuery("#woocommerce_basgate_otherWebsiteName").val();
     if (websiteName != "") {
         document.getElementById("woocommerce_basgate_otherWebsiteName").style.display = 'block';
     }
-    jQuery('#woocommerce_basgate_bas_iswebhook').change(function () {
+    jQuery('#woocommerce_basgate_iswebhook').change(function () {
         jQuery('.webhookTrigger').text(1);
 
     });
@@ -25,26 +25,26 @@
         var webhookTrigger = jQuery('.webhookTrigger').text();
         if (webhookTrigger == 1) {
             var is_webhook = '';
-            var environment = jQuery('#woocommerce_basgate_bas_environment').val();
-            var mid = jQuery('#woocommerce_basgate_bas_application_id').val();
-            var mkey = jQuery('#woocommerce_basgate_bas_merchant_key').val();
+            var environment = jQuery('#woocommerce_basgate_environment').val();
+            var mid = jQuery('#woocommerce_basgate_merchant_id').val();
+            var mkey = jQuery('#woocommerce_basgate_merchant_key').val();
             var webhookUrl = jQuery('.webhook-url').text();
 
 
             jQuery('.webhook-message').html('');
             //if(this.checked) {
-            if (jQuery('#woocommerce_basgate_bas_iswebhook').is(':checked')) {
+            if (jQuery('#woocommerce_basgate_iswebhook').is(':checked')) {
                 is_webhook = 1;
             } else {
                 is_webhook = 0;
             }
             if (mid == "") {
-                document.getElementById("woocommerce_basgate_bas_iswebhook").checked = false;
+                document.getElementById("woocommerce_basgate_iswebhook").checked = false;
                 jQuery('.webhook-message').html('<div class="basgate_response error-box">Please enter MID</div>');
                 return false;
             }
             if (webhookUrl == "") {
-                document.getElementById("woocommerce_basgate_bas_iswebhook").checked = false;
+                document.getElementById("woocommerce_basgate_iswebhook").checked = false;
                 jQuery('.webhook-message').html('<div class="basgate_response error-box">Please check webhookUrl</div>');
                 return false;
             }
@@ -60,12 +60,12 @@
                         //jQuery('.webhook-message').html('<div class="basgate_response success-box">WebhookUrl updated successfully</div>');
                         //alert("WebhookUrl updated successfully");
                     } else {
-                        //document.getElementById("woocommerce_basgate_bas_iswebhook").checked = false;
+                        //document.getElementById("woocommerce_basgate_iswebhook").checked = false;
                         //jQuery('.webhook-message').html('<div class="basgate_response error-box">'+data.message+'</div>');
                     }
 
                     if (data.showMsg == true) {
-                        document.getElementById("woocommerce_basgate_bas_iswebhook").checked = false;
+                        document.getElementById("woocommerce_basgate_iswebhook").checked = false;
                         alert(data.message);
                         window.open('https://web.basgate.com:9191/', '_blank');
                     }
@@ -81,14 +81,14 @@
 
     });
 
-    jQuery('#woocommerce_basgate_bas_enabled').click(function () {
-        if (jQuery('#woocommerce_basgate_bas_enabled').is(':checked')) {
+    jQuery('#woocommerce_basgate_enabled').click(function () {
+        if (jQuery('#woocommerce_basgate_enabled').is(':checked')) {
             //do nothing
         } else {
             if (confirm('Are you sure you want to disable Basgate Payment Gateway, you will no longer be able to accept payments through us?')) {
                 //disable pg
             } else {
-                jQuery('#woocommerce_basgate_bas_enabled').prop("checked", true);
+                jQuery('#woocommerce_basgate_enabled').prop("checked", true);
             }
         }
     });
