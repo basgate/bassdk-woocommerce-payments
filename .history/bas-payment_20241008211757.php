@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Plugin Name: Bassdk WooCommerce Payment
+ * Plugin Name: Basgate SDK WooCommerce Payment
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية والبنوك المختلفة
- * Version: 0.1.6
+ * Version: 0.1.5
  * Author: Basgate Super APP 
  * Author URI: https://basgate.com/
  * Tags: BasSDK, BasSDK Payments, PayWithBasgate, BasSDK WooCommerce, BasSDK Plugin, BasSDK Payment Gateway
@@ -25,10 +25,13 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+
 
 require_once __DIR__ . '/includes/BasgateHelper.php';
 require_once __DIR__ . '/includes/BasgateChecksum.php';
+
 
 add_action('before_woocommerce_init', function () {
     if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
@@ -38,16 +41,16 @@ add_action('before_woocommerce_init', function () {
     }
 });
 
-// add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_basgate_add_action_links');
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_basgate_add_action_links');
 
-// function woocommerce_basgate_add_action_links($links)
-// {
-//     $settting_url = array(
-//         '<a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=checkout&section=WC_basgate')) . '"><b>Settings</b></a>',
-//         '<a href="' . esc_url(BasgateConstants::PLUGIN_DOC_URL) . '" target="_blank"><b>Docs</b></a>',
-//     );
-//     return array_merge($settting_url, $links);
-// }
+function woocommerce_basgate_add_action_links($links)
+{
+    $settting_url = array(
+        '<a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=checkout&section=WC_basgate')) . '"><b>Settings</b></a>',
+        '<a href="' . esc_url(BasgateConstants::PLUGIN_DOC_URL) . '" target="_blank"><b>Docs</b></a>',
+    );
+    return array_merge($settting_url, $links);
+}
 
 /**
  * Checkout Block code Start
@@ -108,7 +111,7 @@ function uninstall_basgate_plugin()
         $sql = "DROP TABLE IF EXISTS $table_name";
         $wpdb->query($sql);
     }
-    delete_option(BasgateConstants::OPTION_DATA_NAME); */
+    delete_option('woocommerce_basgate_settings'); */
 }
 function basgateWoopayment_enqueue_style()
 {
@@ -137,7 +140,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
     {
 
         global $wpdb;
-        $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+        $settings = get_option("woocommerce_basgate_settings");
         $post_id1 = sanitize_text_field(isset($_GET['post']) ? $_GET['post'] : '');
         $post_id = preg_replace('/[^a-zA-Z0-9]/', '', $post_id1);
 
@@ -153,7 +156,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         $results = getBasgateOrderData($post_id);
 
         // basgate enabled and order is exists with paym_order_data
-        if ($settings['bas_enabled'] == '1' && !empty($results)) {
+        if ($settings['enabled'] == 'yes' && !empty($results)) {
             add_meta_box(
                 '_basgate_response_table',
                 __('BasSDK Payments'),
@@ -398,9 +401,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-    <?php
-    }
-
+    <?php }
 
     add_action('wp_ajax_savetxnstatus', 'savetxnstatus');
 
@@ -409,20 +410,20 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
         if (!wp_verify_nonce($_POST['basgate_woo_nonce'], 'basgate_woo_nonce')) die('You are not authorised!');
 
-        $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+        $settings = get_option("woocommerce_basgate_settings");
         $json = array("success" => false, "response" => '', 'message' => __(BasgateConstants::RESPONSE_ERROR));
 
         if (!empty($_POST['basgate_order_id']) && BasgateConstants::SAVE_BASGATE_RESPONSE) {
             $reqParams = array(
-                "MID"        => $settings['bas_merchant_id'],
+                "MID"        => $settings['merchant_id'],
                 "ORDERID"    => sanitize_text_field($_POST['basgate_order_id'])
             );
 
-            $reqParams['CHECKSUMHASH'] = BasgateChecksum::generateSignature($reqParams, $settings['bas_merchant_key']);
+            $reqParams['CHECKSUMHASH'] = BasgateChecksum::generateSignature($reqParams, $settings['merchant_key']);
 
             $retry = 1;
             do {
-                $resParams = BasgateHelper::executecUrl(BasgateHelper::getTransactionStatusURL($settings['bas_environment']), $reqParams);
+                $resParams = BasgateHelper::executecUrl(BasgateHelper::getTransactionStatusURL($settings['environment']), $reqParams);
                 $retry++;
             } while (!$resParams['STATUS'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
 
@@ -461,7 +462,6 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         }
     }
 }
-
 add_action('plugins_loaded', 'woocommerce_basgate_init', 0);
 
 function woocommerce_basgate_init()
@@ -515,8 +515,7 @@ function woocommerce_basgate_init()
                 border-color: #c3e6cb;
             }
         </style>
-<?php
-    }
+<?php }
 
     function basgateResponseMessage($content)
     {

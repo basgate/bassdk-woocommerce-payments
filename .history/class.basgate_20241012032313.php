@@ -281,6 +281,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $basgateParams["body"] = array(
                 "requestTimestamp" => $requestTimestamp,
                 "appId" => $this->getSetting('bas_merchant_id'),
+                // "websiteName" => $website,
                 "orderType" => "PayBill",
                 "orderId" => $paramData['order_id'],
                 "callbackUrl" => $this->getCallbackUrl(),
@@ -307,9 +308,9 @@ class WC_Basgate extends WC_Payment_Gateway
 
             /* prepare JSON string for request */
             $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
-            $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment')); 
+            $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment')); //. '?mid=' . $basgateParams["body"]["mid"] . '&orderId=' . $basgateParams["body"]["orderId"];
 
-            $res = BasgateHelper::executecUrl($url, $post_data);
+            $res = BasgateHelper::executecUrl($url, $basgateParams);
 
             if (!empty($res['body']['resultInfo']['resultStatus']) && $res['body']['resultInfo']['resultStatus'] == 'S') {
                 $data['txnToken'] = $res['body']['txnToken'];
@@ -346,7 +347,7 @@ class WC_Basgate extends WC_Payment_Gateway
         } else {
             $cust_name = "CUST_" . $order_id;
         }
-        //get mobile no 
+        //get mobile no if there for DC_EMI
         if (isset($getOrderInfo['phone']) && !empty($getOrderInfo['phone'])) {
             $cust_mob_no = $getOrderInfo['phone'];
         } else {
@@ -361,8 +362,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
-        // $checkout_url = str_replace('MID', $settings['bas_merchant_id'], BasgateHelper::getBasgateSDKURL(BasgateConstants::CHECKOUT_JS_URL, $settings['bas_environment']));
-        $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
+        $checkout_url = str_replace('MID', $settings['bas_merchant_id'], BasgateHelper::getBasgateSDKURL(BasgateConstants::CHECKOUT_JS_URL, $settings['bas_environment']));
         //echo '';
         $wait_msg = '<script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
                     <div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div>
@@ -377,34 +377,42 @@ class WC_Basgate extends WC_Payment_Gateway
 			function invokeBlinkCheckoutPopup(){
 				console.log("method called");
 				var config = {
+					"root": "",
+					"flow": "DEFAULT",
 					"data": {
-                        "appId":"' . $this->getSetting('bas_application_id') . '",
+                        "appId":"' . $this->getSetting('bas_merchant_id') . '",
                         "orderId": "' . $order_id . '", 
                         "txnToken": "' . $data['txnToken'] . '", 
                         "tokenType": "TXN_TOKEN",
                         "amount": "' . $getOrderInfo['amount'] . '",
                         "currency":"' . $getOrderInfo['currency'] . '"
 					},
+					"integration": {
+						"platform": "Woocommerce",
+						"version": "' . WOOCOMMERCE_VERSION . '|' . BasgateConstants::PLUGIN_VERSION . '"
+					},
+					"handler": {
+					    "notifyMerchant": function(eventName,data){
+						console.log("notifyMerchant handler function called");
+						if(eventName=="APP_CLOSED")
+						{
+							jQuery(".loading-basgate").hide();
+							jQuery(".basgate-woopg-loader").hide();
+							jQuery(".basgate-overlay").hide();
+							jQuery(".refresh-payment").show();
+                            if(jQuery(".pg-basgate-checkout").length>1){
+                            jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
+                            }
+                            jQuery(".basgate-action-btn").show();
+						}
+                    } 
                 }
                 };
                   //TODO: Call Bas payment SDK Here.
-                if("JSBridge" in window){
-                    window.JSBridge.call("basPayment",config.data).then(function (result) {
+                if(window.isJSBridgeReady && window.JSBridge){
+                    window.JSBridge.call("basPayment",config).then(function (result) {
                         console.log("basPayment Result:", JSON.stringify(result));
                         if (result) {
-                            "notifyMerchant": function(eventName,data){
-                            console.log("notifyMerchant handler function called");
-                            if(eventName=="APP_CLOSED")
-                            {
-                                jQuery(".loading-basgate").hide();
-                                jQuery(".basgate-woopg-loader").hide();
-                                jQuery(".basgate-overlay").hide();
-                                jQuery(".refresh-payment").show();
-                                if(jQuery(".pg-basgate-checkout").length>1){
-                                jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
-                                }
-                                jQuery(".basgate-action-btn").show();
-                            }
                             return result;
                         } else {
                             return null

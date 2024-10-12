@@ -8,7 +8,7 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType {
     protected $name = 'basgate';
 
     public function initialize() {
-        $this->settings = get_option( BasgateConstants::OPTION_DATA_NAME, [] );
+        $this->settings = get_option( 'woocommerce_basgate_settings', [] );
        // $this->gateway = new WC_Basgate(); 
     } 
 
@@ -40,7 +40,7 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType {
     public function get_payment_method_data() {
         return [
             'title' => __("Pay via Basgate",BasgateConstants::ID),
-            'description' => $this->settings['bas_description'],
+            'description' => $this->settings['description'],
         ];
     } 
 

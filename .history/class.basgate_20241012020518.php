@@ -25,11 +25,11 @@ class WC_Basgate extends WC_Payment_Gateway
         // }
         $this->has_fields = false;
 
-        $this->init_form_fields();
+        // $this->init_form_fields();
         $this->init_settings();
 
         $this->title = BasgateConstants::TITLE;
-        // $this->description = $this->getSetting('description');
+        $this->description = $this->getSetting('description');
 
         $this->msg = array('message' => '', 'class' => '');
 
@@ -74,7 +74,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $checkout_page_id = get_option('woocommerce_checkout_page_id');
         $checkout_page_id = (int) $checkout_page_id > 0 ? $checkout_page_id : 7;
-        $webhookUrl = esc_url(get_site_url() . '/?wc-api=WC_Basgate&webhook=yes');
+        // $webhookUrl = esc_url(get_site_url() . '/?wc-api=WC_Basgate&webhook=yes');
         // $basgateDashboardLink = esc_url("https://web.basgate.com:9191/");
         // $basgatePaymentStatusLink = esc_url("https://web.basgate.com:9191/");
         // $basgateContactLink = esc_url("https://basgate.com");
@@ -89,7 +89,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 'title'         => __('Environment Mode'),
                 $this->id,
                 'type'          => 'select',
-                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
+                'custom_attributes' => array('required' => 'required'),
                 'options'       => array("0" => "Test/Staging", "1" => "Production"),
                 'description'   => __('Select "Test/Staging" to setup test transactions & "Production" once you are ready to go live', $this->id),
                 'default'       => '0'
@@ -97,32 +97,31 @@ class WC_Basgate extends WC_Payment_Gateway
             'merchant_id' => array(
                 'title'         => __('Application Id'),
                 'type'          => 'text',
-                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
+                'custom_attributes' => array('required' => 'required'),
                 'description'   => __('Based on the selected Environment Mode, copy the relevant Application ID for test or production environment you received on email.', $this->id),
             ),
             'merchant_key' => array(
                 'title'         => __('Merchant Key'),
                 'type'          => 'text',
-                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
+                'custom_attributes' => array('required' => 'required'),
                 'description'   => __('Based on the selected Environment Mode, copy the Merchant Key for test or production environment you received on email.', $this->id),
             ),
             'client_id' => array(
                 'title'         => __('Client Id'),
                 'type'          => 'text',
-                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
+                'custom_attributes' => array('required' => 'required'),
                 'description'   => __('Based on the selected Environment Mode, copy the Client Id for test or production environment you received on email.', $this->id),
             ),
             'client_secret' => array(
                 'title'         => __('Client Secret'),
                 'type'          => 'text',
-                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
+                'custom_attributes' => array('required' => 'required'),
                 'description'   => __('Based on the selected Environment Mode, copy the Client Secret for test or production environment you received on email.', $this->id),
             ),
             'enabled'           => array(
                 'title'             => __('Enable/Disable', $this->id),
                 'type'          => 'checkbox',
-                'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
-                'label'         => __('Enable Basgate Login/Payments.', $this->id),
+                'label'         => __('Enable Basgate Payments.', $this->id),
                 'default'       => 'yes'
             ),
         );
@@ -184,7 +183,6 @@ class WC_Basgate extends WC_Payment_Gateway
 
         echo wp_kses('<h3>' . __('Basgate Payment Gateway', $this->id) . '</h3>', $allowed_tags);
         echo wp_kses('<p>' . __('Online payment solutions for all your transactions by Basgate', $this->id) . '</p>', $allowed_tags);
-        echo wp_kses('<p>' . __('Please note disabled settings can be modified from ', $this->id) . '<a href="' . esc_url(admin_url('admin.php?page=basgate')) . '">Basgate Login SDK</a></p>', $allowed_tags);
 
         // Check cUrl is enabled or not
         $curl_version = BasgateHelper::getcURLversion();
@@ -280,7 +278,8 @@ class WC_Basgate extends WC_Payment_Gateway
             /* body parameters */
             $basgateParams["body"] = array(
                 "requestTimestamp" => $requestTimestamp,
-                "appId" => $this->getSetting('bas_merchant_id'),
+                "appId" => $this->getSetting('merchant_id'),
+                // "websiteName" => $website,
                 "orderType" => "PayBill",
                 "orderId" => $paramData['order_id'],
                 "callbackUrl" => $this->getCallbackUrl(),
@@ -298,7 +297,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 // params.Body["customerInfo"]["id"] = ("" + order.customerInfo.open_id).trim();
                 // params.Body["customerInfo"]["name"] = ("" + order.customerInfo.name).trim();
             );
-            $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES), $this->getSetting('bas_merchant_key'));
+            $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES), $this->getSetting('merchant_key'));
 
             $basgateParams["head"] = array(
                 "signature" => $checksum,
@@ -307,9 +306,9 @@ class WC_Basgate extends WC_Payment_Gateway
 
             /* prepare JSON string for request */
             $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
-            $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment')); 
+            $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('environment')); //. '?mid=' . $basgateParams["body"]["mid"] . '&orderId=' . $basgateParams["body"]["orderId"];
 
-            $res = BasgateHelper::executecUrl($url, $post_data);
+            $res = BasgateHelper::executecUrl($url, $basgateParams);
 
             if (!empty($res['body']['resultInfo']['resultStatus']) && $res['body']['resultInfo']['resultStatus'] == 'S') {
                 $data['txnToken'] = $res['body']['txnToken'];
@@ -346,7 +345,7 @@ class WC_Basgate extends WC_Payment_Gateway
         } else {
             $cust_name = "CUST_" . $order_id;
         }
-        //get mobile no 
+        //get mobile no if there for DC_EMI
         if (isset($getOrderInfo['phone']) && !empty($getOrderInfo['phone'])) {
             $cust_mob_no = $getOrderInfo['phone'];
         } else {
@@ -361,8 +360,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
-        // $checkout_url = str_replace('MID', $settings['bas_merchant_id'], BasgateHelper::getBasgateSDKURL(BasgateConstants::CHECKOUT_JS_URL, $settings['bas_environment']));
-        $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
+        $checkout_url = str_replace('MID', $settings['merchant_id'], BasgateHelper::getBasgateSDKURL(BasgateConstants::CHECKOUT_JS_URL, $settings['environment']));
         //echo '';
         $wait_msg = '<script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
                     <div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div>
@@ -377,34 +375,42 @@ class WC_Basgate extends WC_Payment_Gateway
 			function invokeBlinkCheckoutPopup(){
 				console.log("method called");
 				var config = {
+					"root": "",
+					"flow": "DEFAULT",
 					"data": {
-                        "appId":"' . $this->getSetting('bas_application_id') . '",
+                        "appId":"' . $this->getSetting('merchant_id') . '",
                         "orderId": "' . $order_id . '", 
                         "txnToken": "' . $data['txnToken'] . '", 
                         "tokenType": "TXN_TOKEN",
                         "amount": "' . $getOrderInfo['amount'] . '",
                         "currency":"' . $getOrderInfo['currency'] . '"
 					},
+					"integration": {
+						"platform": "Woocommerce",
+						"version": "' . WOOCOMMERCE_VERSION . '|' . BasgateConstants::PLUGIN_VERSION . '"
+					},
+					"handler": {
+					    "notifyMerchant": function(eventName,data){
+						console.log("notifyMerchant handler function called");
+						if(eventName=="APP_CLOSED")
+						{
+							jQuery(".loading-basgate").hide();
+							jQuery(".basgate-woopg-loader").hide();
+							jQuery(".basgate-overlay").hide();
+							jQuery(".refresh-payment").show();
+                            if(jQuery(".pg-basgate-checkout").length>1){
+                            jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
+                            }
+                            jQuery(".basgate-action-btn").show();
+						}
+                    } 
                 }
                 };
                   //TODO: Call Bas payment SDK Here.
-                if("JSBridge" in window){
-                    window.JSBridge.call("basPayment",config.data).then(function (result) {
+                if(window.isJSBridgeReady && window.JSBridge){
+                    window.JSBridge.call("basPayment",config).then(function (result) {
                         console.log("basPayment Result:", JSON.stringify(result));
                         if (result) {
-                            "notifyMerchant": function(eventName,data){
-                            console.log("notifyMerchant handler function called");
-                            if(eventName=="APP_CLOSED")
-                            {
-                                jQuery(".loading-basgate").hide();
-                                jQuery(".basgate-woopg-loader").hide();
-                                jQuery(".basgate-overlay").hide();
-                                jQuery(".refresh-payment").show();
-                                if(jQuery(".pg-basgate-checkout").length>1){
-                                jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
-                                }
-                                jQuery(".basgate-action-btn").show();
-                            }
                             return result;
                         } else {
                             return null
@@ -418,6 +424,8 @@ class WC_Basgate extends WC_Payment_Gateway
 			</script>' . $wait_msg . '</div>
 			';
     }
+
+
     /**
      * Process the payment and return the result
      **/
@@ -495,7 +503,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 $post_checksum = "";
             }
             $order = array();
-            $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
+            $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('merchant_key'), $post_checksum);
             if ($isValidChecksum === true) {
                 $order_id = !empty($_POST['ORDERID']) ? BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])) : 0;
 
@@ -520,16 +528,16 @@ class WC_Basgate extends WC_Payment_Gateway
                 if (!empty($order)) {
 
                     $reqParams = array(
-                        "appId" => $this->getSetting('bas_merchant_id'),
+                        "appId" => $this->getSetting('merchant_id'),
                         "ORDERID" => sanitize_text_field($_POST['ORDERID']),
                     );
 
-                    $reqParams['CHECKSUMHASH'] = BasgateChecksum::generateSignature($reqParams, $this->getSetting('bas_merchant_key'));
+                    $reqParams['CHECKSUMHASH'] = BasgateChecksum::generateSignature($reqParams, $this->getSetting('merchant_key'));
 
                     /* number of retries untill cURL gets success */
                     $retry = 1;
                     do {
-                        $resParams = BasgateHelper::executecUrl(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')), $reqParams);
+                        $resParams = BasgateHelper::executecUrl(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('environment')), $reqParams);
                         $retry++;
                     } while (!$resParams['STATUS'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
                     /* number of retries untill cURL gets success */
@@ -652,58 +660,56 @@ class WC_Basgate extends WC_Payment_Gateway
      * End basgate Essential Functions
     **/
 }
+add_action('wp_ajax_setPaymentNotificationUrl', 'setPaymentNotificationUrl');
 
+function setPaymentNotificationUrl()
+{
+    if ($_POST['environment'] == 0) {
+        $url = BasgateConstants::WEBHOOK_STAGING_URL;
+    } else {
+        $url = BasgateConstants::WEBHOOK_PRODUCTION_URL;
+    }
+    $environment = sanitize_text_field($_POST['environment']);
+    $mid = sanitize_text_field($_POST['mid']);
+    $mkey = sanitize_text_field($_POST['mkey']);
+    if ($_POST['is_webhook'] == 1) {
+        $webhookUrl = sanitize_text_field($_POST['webhookUrl']);
+    } else {
+        $webhookUrl = esc_url("https://www.dummyUrl.com"); //set this when unchecked
+    }
+    $basgateParams = array(
+        "mid"       => $mid,
+        "queryParam" => "notificationUrls",
+        "paymentNotificationUrl" => $webhookUrl
 
-// add_action('wp_ajax_setPaymentNotificationUrl', 'setPaymentNotificationUrl');
+    );
+    $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams, JSON_UNESCAPED_SLASHES), $mkey);
+    $res = BasgateHelper::executecUrl($url . 'api/v1/external/putMerchantInfo', $basgateParams, $method = 'PUT', ['x-checksum' => $checksum]);
+    // print_r($res);
+    if (isset($res['success'])) {
+        $message = true;
+        $success = $response;
+        $showMsg = false;
+    } elseif (isset($res['E_400'])) {
+        $message = "Your webhook has already been configured";
+        $success = $response;
+        $showMsg = false;
+    } else {
+        $success = $response;
+        $message = "Something went wrong while configuring webhook. Please login to configure.";
+        $showMsg = true;
+    }
+    echo json_encode(array('message' => $message, 'response' => $response, 'showMsg' => $showMsg));
 
-// function setPaymentNotificationUrl()
-// {
-//     if ($_POST['environment'] == 0) {
-//         $url = BasgateConstants::WEBHOOK_STAGING_URL;
-//     } else {
-//         $url = BasgateConstants::WEBHOOK_PRODUCTION_URL;
-//     }
-//     $environment = sanitize_text_field($_POST['environment']);
-//     $mid = sanitize_text_field($_POST['mid']);
-//     $mkey = sanitize_text_field($_POST['mkey']);
-//     if ($_POST['is_webhook'] == 1) {
-//         $webhookUrl = sanitize_text_field($_POST['webhookUrl']);
-//     } else {
-//         $webhookUrl = esc_url("https://www.dummyUrl.com"); //set this when unchecked
-//     }
-//     $basgateParams = array(
-//         "mid"       => $mid,
-//         "queryParam" => "notificationUrls",
-//         "paymentNotificationUrl" => $webhookUrl
+    die();
+}
 
-//     );
-//     $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams, JSON_UNESCAPED_SLASHES), $mkey);
-//     $res = BasgateHelper::executecUrl($url . 'api/v1/external/putMerchantInfo', $basgateParams, $method = 'PUT', ['x-checksum' => $checksum]);
-//     // print_r($res);
-//     if (isset($res['success'])) {
-//         $message = true;
-//         $success = $response;
-//         $showMsg = false;
-//     } elseif (isset($res['E_400'])) {
-//         $message = "Your webhook has already been configured";
-//         $success = $response;
-//         $showMsg = false;
-//     } else {
-//         $success = $response;
-//         $message = "Something went wrong while configuring webhook. Please login to configure.";
-//         $showMsg = true;
-//     }
-//     echo json_encode(array('message' => $message, 'response' => $response, 'showMsg' => $showMsg));
+function basgate_enqueue_script()
+{
+    wp_enqueue_style('basgateadminWoopayment', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/css/admin/basgate-payments.css', array(), time(), '');
+    wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/admin/basgate-payments.js', array('jquery'), time(), true);
+}
 
-//     die();
-// }
-
-// function basgate_enqueue_script()
-// {
-//     wp_enqueue_style('basgateadminWoopayment', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/css/admin/basgate-payments.css', array(), time(), '');
-//     wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/admin/basgate-payments.js', array('jquery'), time(), true);
-// }
-
-// if (current_user_can('manage_options') && isset($_GET['page']) && $_GET['page'] === 'wc-settings') {
-//     add_action('admin_enqueue_scripts', 'basgate_enqueue_script');
-// }
+if (current_user_can('manage_options') && isset($_GET['page']) && $_GET['page'] === 'wc-settings') {
+    add_action('admin_enqueue_scripts', 'basgate_enqueue_script');
+}
