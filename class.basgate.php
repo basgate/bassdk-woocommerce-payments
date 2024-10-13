@@ -404,23 +404,22 @@ class WC_Basgate extends WC_Payment_Gateway
                     <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
                     <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
 
-        $paramData = array(
-            'amount' => $getOrderInfo['amount'],
-            'order_id' => $order_id,
-            'cust_id' => $cust_id,
-            'cust_mob_no' => $cust_mob_no,
-            'cust_name' => $cust_name,
-            "currency" => $currency
-        );
+        $paramData = array('amount' => $getOrderInfo['amount'], 'order_id' => $order_id, 'cust_id' => $cust_id, 'cust_mob_no' => $cust_mob_no, 'cust_name' => $cust_name, "currency" => $currency);
 
         ?>
-        <script>
-            var paramData = '<?php echo json_encode($paramData); ?>';
-            console.log("===== generate_basgate_form paramData:", paramData);
-        </script>
-<?php
+            <script>
+                var paramData = '<?php echo json_encode($paramData); ?>';
+                console.log("===== generate_basgate_form paramData:", paramData);
+            </script>
+        <?php
 
         $data = $this->blinkCheckoutSend($paramData);
+        ?>
+            <script>
+                var data = '<?php echo json_encode($data); ?>';
+                console.log("===== generate_basgate_form data:", data);
+            </script>
+        <?php
         return '<div class="pg-basgate-checkout">
                     <script type="text/javascript">
                         function invokeBlinkCheckoutPopup(){

@@ -20,10 +20,6 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType
         // $this->gateway = new WC_Basgate(); 
     }
 
-    /*  public function is_active() {
-        return $this->gateway->is_available();
-    }   */
-
     public function get_payment_method_script_handles()
     {
     ?>
