@@ -237,12 +237,12 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function receipt_page($order)
     {
-?>
+        ?>
         <script>
             var order = '<?php echo esc_attr($order); ?>'
             console.log("===== STARTED receipt_page order:", order);
         </script>
-    <?php
+        <?php
 
         echo $this->generate_basgate_form($order);
     }
@@ -268,12 +268,12 @@ class WC_Basgate extends WC_Payment_Gateway
             );
         }
 
-    ?>
+        ?>
         <script>
             var data = '<?php echo json_encode($data); ?>'
             console.log("===== return getOrderInfo data:", data);
         </script>
-    <?php
+     <?php
 
         return $data;
     }
@@ -290,10 +290,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $paramData['cust_mob_no'] = get_user_meta($current_user->ID, 'billing_phone', true);
             $paramData['cust_id'] = get_user_meta($current_user->ID, 'openid', true);
         } else {
-            global $wp;
-            $current_url = home_url(add_query_arg(array(), $wp->request));
-            wp_redirect(wp_login_url($current_url));
-            exit;
+           
         }
 
         $data = array();
