@@ -142,6 +142,8 @@ if (!class_exists('BasgateHelper')) :
                     )
                 );
                 throw new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
+            }else{
+                log
             }
 
             if (is_wp_error($result)) {

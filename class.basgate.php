@@ -340,8 +340,8 @@ class WC_Basgate extends WC_Payment_Gateway
             );
 
             /* prepare JSON string for request */
-            // $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
-            $post_data = $basgateParams;
+            $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
+            // $post_data = $basgateParams;
             $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
 
             $res = BasgateHelper::executecUrl($url, $post_data);
@@ -368,7 +368,7 @@ class WC_Basgate extends WC_Payment_Gateway
             var orderId = '<?php echo esc_attr($order_id); ?>'
             console.log("===== STARTED generate_basgate_form orderId:", orderId);
         </script>
-        <?php
+<?php
 
         global $woocommerce;
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
@@ -424,13 +424,6 @@ class WC_Basgate extends WC_Payment_Gateway
             'cust_name' => $cust_name,
             "currency" => $currency
         );
-
-        ?>
-        <script>
-            var paramData = '<?php echo json_encode($paramData); ?>';
-            console.log("===== generate_basgate_form paramData:", paramData);
-        </script>
-<?php
 
         $data = $this->blinkCheckoutSend($paramData);
         if (is_null($data) || empty($data) || array_key_exists("trxToken", $data)) {
