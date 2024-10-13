@@ -299,7 +299,7 @@ class WC_Basgate extends WC_Payment_Gateway
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
 
             // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
-            $requestTimestamp = (string)  time();
+            $requestTimestamp = (string)  microtime();
             /* body parameters */
             $basgateParams["body"] = array(
                 "appId" => $this->getSetting('bas_application_id'),

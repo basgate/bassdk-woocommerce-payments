@@ -128,13 +128,17 @@ if (!class_exists('BasgateHelper')) :
             $result =  wp_remote_request($apiURL, $args);
             $response_code = wp_remote_retrieve_response_code($result);
             if (200 !==  $response_code) {
+                $error = wp_remote_retrieve_response_message($result);
+                $resp = wp_remote_retrieve_body($result);
                 error_log(
                     sprintf(
-                        /* translators: 1: Url, 2: Response code, 3: Event data. */
-                        __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s'),
+                        /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
+                        __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s'),
                         $apiURL,
                         $response_code,
-                        wp_json_encode($args)
+                        wp_json_encode($args),
+                        $error,
+                        $resp
                     )
                 );
                 throw new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
