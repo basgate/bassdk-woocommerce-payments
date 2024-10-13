@@ -287,7 +287,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $paramData['cust_name'] = $current_user->display_name;
             $paramData['cust_email'] = $current_user->user_email;
             $paramData['cust_mob_no'] = get_user_meta($current_user->ID, 'billing_phone', true);
-            $paramData['cust_id'] = get_user_meta($current_user->ID, 'openid', true);
+            $paramData['open_id'] = get_user_meta($current_user->ID, 'open_id', true);
         } else {
             global $wp;
             $current_url = home_url(add_query_arg(array(), $wp->request));
@@ -297,7 +297,9 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $data = array();
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
-            $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
+        
+            // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
+            $requestTimestamp = time();
             /* body parameters */
             $basgateParams["body"] = array(
                 "appId" => $this->getSetting('bas_application_id'),
@@ -305,9 +307,8 @@ class WC_Basgate extends WC_Payment_Gateway
                 "orderType" => "PayBill",
                 "callbackUrl" => $this->getCallbackUrl(),
                 "customerInfo" => array(
-                    "id" => $paramData['cust_id'],
+                    "id" => $paramData['open_id'],
                     "name" => $paramData['cust_name'],
-                    "mobile" => $paramData["cust_mob_no"]
                 ),
                 "amount" => array(
                     "value" => $paramData['amount'],
