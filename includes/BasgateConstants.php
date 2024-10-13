@@ -18,7 +18,7 @@ class BasgateConstants
 
     const SAVE_BASGATE_RESPONSE = true;
     const CHANNEL_ID = "WEB";
-    const APPEND_TIMESTAMP = false;
+    const APPEND_TIMESTAMP = true;
     const ORDER_PREFIX = "";
     const X_REQUEST_ID = "PLUGIN_WOOCOMMERCE_";
     const PLUGIN_DOC_URL = "https://basgate.github.io/pages.html";
