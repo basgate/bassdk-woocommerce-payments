@@ -126,8 +126,27 @@ if (!class_exists('BasgateHelper')) :
             );
 
             $result =  wp_remote_request($apiURL, $args);
-            $response_body = wp_remote_retrieve_body($result);
-            return $responseParamList['request'] = json_decode($response_body, true);
+
+            // if (200 !== wp_remote_retrieve_response_code($result)) {
+            //     // throw new Exception(__('Could not retrieve the access token, please try again.', 'login-with-google'));
+            // }
+
+            if (is_wp_error($result)) {
+                error_log(
+                    sprintf(
+                        /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
+                        __('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'),
+                        $apiURL,
+                        $result->get_error_code(),
+                        $result->get_error_message(),
+                        wp_json_encode($args)
+                    )
+                );
+                return null;
+            } else {
+                $response_body = wp_remote_retrieve_body($result);
+                return json_decode($response_body, true);
+            }
         }
     }
 endif;

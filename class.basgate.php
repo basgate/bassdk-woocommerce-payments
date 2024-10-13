@@ -419,6 +419,9 @@ class WC_Basgate extends WC_Payment_Gateway
         <?php
 
         $data = $this->blinkCheckoutSend($paramData);
+        if (is_null($data)) {
+            throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
+        }
         ?>
         <script>
             var data = '<?php echo json_encode($data); ?>';
