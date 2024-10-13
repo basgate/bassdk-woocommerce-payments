@@ -297,9 +297,9 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $data = array();
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
-        
+
             // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
-            $requestTimestamp = time();
+            $requestTimestamp = (string)  time();
             /* body parameters */
             $basgateParams["body"] = array(
                 "appId" => $this->getSetting('bas_application_id'),
@@ -311,7 +311,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     "name" => $paramData['cust_name'],
                 ),
                 "amount" => array(
-                    "value" => $paramData['amount'],
+                    "value" => (float)$paramData['amount'],
                     "currency" => $paramData['currency'],
                 ),
                 "orderId" => $paramData['order_id'],
@@ -319,7 +319,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     "Id" => $paramData['order_id'],
                     // "Products" => array(),
                     "Currency" => $paramData['currency'],
-                    "TotalPrice" => $paramData['amount'],
+                    "TotalPrice" => (float) $paramData['amount'],
                 )
             );
             $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES), $this->getSetting('bas_merchant_key'));
