@@ -121,13 +121,14 @@ if (!class_exists('BasgateHelper')) :
             }
             $args = array(
                 'headers' => $headers,
-                'body'      => $requestParamList,
-                // 'body'      => json_encode($requestParamList, JSON_UNESCAPED_SLASHES),
+                // 'body'      => $requestParamList,
+                'body'      => json_encode($requestParamList, JSON_UNESCAPED_SLASHES),
                 'method'    => $method,
             );
 
             $result =  wp_remote_request($apiURL, $args);
             $response_code = wp_remote_retrieve_response_code($result);
+            
             if (200 !==  $response_code) {
                 $error = wp_remote_retrieve_response_message($result);
                 $resp = wp_remote_retrieve_body($result);
