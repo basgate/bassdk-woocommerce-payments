@@ -300,7 +300,7 @@ class WC_Basgate extends WC_Payment_Gateway
             if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
 
                 // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
-                $requestTimestamp = (string)  time() . '000';
+                $requestTimestamp = (string)  time();
                 /* body parameters */
                 $basgateParams["body"] = array(
                     "appId" => $this->getSetting('bas_application_id'),
@@ -322,7 +322,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "TotalPrice" => (float) $paramData['amount'],
                     )
                 );
-                $bodystr = wp_json_encode($basgateParams["body"]);
+                $bodystr = json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
                 $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
@@ -432,7 +432,7 @@ class WC_Basgate extends WC_Payment_Gateway
         );
 
         $data = $this->blinkCheckoutSend($paramData);
-        if (is_null($data) || empty($data) || array_key_exists("trxToken", $data)) {
+        if (is_null($data) || empty($data)) {
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
 
