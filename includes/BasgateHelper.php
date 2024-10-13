@@ -126,10 +126,20 @@ if (!class_exists('BasgateHelper')) :
             );
 
             $result =  wp_remote_request($apiURL, $args);
-
-            // if (200 !== wp_remote_retrieve_response_code($result)) {
-            //     // throw new Exception(__('Could not retrieve the access token, please try again.', 'login-with-google'));
-            // }
+            $response_code=wp_remote_retrieve_response_code($result);
+            if (200 !==  $response_code) {
+                error_log(
+                    sprintf(
+                        /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
+                        __('executecUrl error status!=200 for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'),
+                        $apiURL,
+                        $result->get_error_code(),
+                        $result->get_error_message(),
+                        wp_json_encode($args)
+                    )
+                );
+                throw new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
+            }
 
             if (is_wp_error($result)) {
                 error_log(

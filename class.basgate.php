@@ -323,7 +323,7 @@ class WC_Basgate extends WC_Payment_Gateway
             );
             $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES), $this->getSetting('bas_merchant_key'));
 
-            if($checksum===false){
+            if ($checksum === false) {
                 error_log(
                     sprintf(
                         /* translators: 1: Event data. */
@@ -415,22 +415,23 @@ class WC_Basgate extends WC_Payment_Gateway
                     <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
 
         $paramData = array(
-            'amount' => $getOrderInfo['amount'], 
-            'order_id' => $order_id, 
-            'cust_id' => $cust_id, 
-            'cust_mob_no' => $cust_mob_no, 
-            'cust_name' => $cust_name, 
-            "currency" => $currency);
+            'amount' => $getOrderInfo['amount'],
+            'order_id' => $order_id,
+            'cust_id' => $cust_id,
+            'cust_mob_no' => $cust_mob_no,
+            'cust_name' => $cust_name,
+            "currency" => $currency
+        );
 
         ?>
-            <script>
-                var paramData = '<?php echo json_encode($paramData); ?>';
-                console.log("===== generate_basgate_form paramData:", paramData);
-            </script>
-        <?php
+        <script>
+            var paramData = '<?php echo json_encode($paramData); ?>';
+            console.log("===== generate_basgate_form paramData:", paramData);
+        </script>
+<?php
 
         $data = $this->blinkCheckoutSend($paramData);
-        if (is_null($data)) {
+        if (is_null($data) || empty($data) || array_key_exists("trxToken", $data)) {
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
 
