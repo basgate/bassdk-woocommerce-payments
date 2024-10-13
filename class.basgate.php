@@ -297,11 +297,6 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $data = array();
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
-            // if ($this->getSetting('otherWebsiteName') == "") {
-            // $website = $this->getSetting('website');
-            // } else {
-            //     $website = $this->getSetting('otherWebsiteName');
-            // }
             $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
             /* body parameters */
             $basgateParams["body"] = array(
@@ -344,13 +339,15 @@ class WC_Basgate extends WC_Payment_Gateway
 
             $res = BasgateHelper::executecUrl($url, $post_data);
 
-            $data = $res['body'];
-            if (!empty($res['body']['trxToken']) && $res['body']['authenticated'] == 'true') {
-                $data['trxToken'] = $res['body']['trxToken'];
-                $data['trxId'] = $res['body']['trxId'];
-            } else {
-                $data['trxToken'] = "";
-            }
+            //TODO: Added Temporary
+            $data = $res;
+            //TODO: Disabled temporary
+            // if (!empty($res['body']['trxToken']) && $res['body']['authenticated'] == 'true') {
+            //     $data['trxToken'] = $res['body']['trxToken'];
+            //     $data['trxId'] = $res['body']['trxId'];
+            // } else {
+            //     $data['trxToken'] = "";
+            // }
         }
         return $data;
     }
