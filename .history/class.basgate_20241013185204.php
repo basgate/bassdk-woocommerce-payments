@@ -237,7 +237,7 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function receipt_page($order)
     {
-?>
+    ?>
         <script>
             var order = '<?php echo esc_attr($order); ?>'
             console.log("===== STARTED receipt_page order:", order);
@@ -274,6 +274,7 @@ class WC_Basgate extends WC_Payment_Gateway
             console.log("===== return getOrderInfo data:", data);
         </script>
     <?php
+
         return $data;
     }
 
@@ -305,27 +306,20 @@ class WC_Basgate extends WC_Payment_Gateway
             $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
             /* body parameters */
             $basgateParams["body"] = array(
-                "appId" => $this->getSetting('bas_application_id'),
                 "requestTimestamp" => $requestTimestamp,
+                "appId" => $this->getSetting('bas_application_id'),
                 "orderType" => "PayBill",
+                "orderId" => $paramData['order_id'],
                 "callbackUrl" => $this->getCallbackUrl(),
+                "amount" => array(
+                    "value" => $paramData['amount'],
+                    "currency" => $paramData['currency'],
+                ),
                 "customerInfo" => array(
                     "id" => $paramData['cust_id'],
                     "name" => $paramData['cust_name'],
                     "mobile" => $paramData["cust_mob_no"]
                 ),
-                "amount" => array(
-                    "value" => $paramData['amount'],
-                    "currency" => $paramData['currency'],
-                ),
-                "orderId" => $paramData['order_id'],
-                "orderDetails" => array(
-                    "Id" => $paramData['order_id'],
-                    "Products" => array(),
-                    "Currency" => $paramData['currency'],
-                    "TotalPrice" => $paramData['amount'],
-                )
-
                 //TODO: from JS SDK 
                 // params.Body["customerInfo"] = {};
                 // params.Body["customerInfo"]["id"] = ("" + order.customerInfo.open_id).trim();
@@ -344,12 +338,10 @@ class WC_Basgate extends WC_Payment_Gateway
 
             $res = BasgateHelper::executecUrl($url, $post_data);
 
-            $data = $res['body'];
-            if (!empty($res['body']['trxToken']) && $res['body']['authenticated'] == 'true') {
-                $data['trxToken'] = $res['body']['trxToken'];
-                $data['trxId'] = $res['body']['trxId'];
+            if (!empty($res['body']['resultInfo']['resultStatus']) && $res['body']['resultInfo']['resultStatus'] == 'S') {
+                $data['txnToken'] = $res['body']['txnToken'];
             } else {
-                $data['trxToken'] = "";
+                $data['txnToken'] = "";
             }
         }
         return $data;
@@ -427,7 +419,7 @@ class WC_Basgate extends WC_Payment_Gateway
             var data = '<?php echo json_encode($data); ?>';
             console.log("===== generate_basgate_form data:", data);
         </script>
-<?php
+    <?php
         return '<div class="pg-basgate-checkout">
                     <script type="text/javascript">
                         function invokeBlinkCheckoutPopup(){
@@ -435,12 +427,11 @@ class WC_Basgate extends WC_Payment_Gateway
                             var config = {
                                     "appId":"' . $this->getSetting('bas_application_id') . '",
                                     "orderId": "' . $order_id . '", 
-                                    "trxToken": "' . $data['trxToken'] . '", 
-                                    "amount":{
-                                        "value": "' . $getOrderInfo['amount'] . '",
-                                        "currency":"' . $getOrderInfo['currency'] . '"                                        
-                                    },
-                                };
+                                    "trxToken": "' . $data['txnToken'] . '", 
+                                    "tokenType": "TXN_TOKEN",
+                                    "amount": "' . $getOrderInfo['amount'] . '",
+                                    "currency":"' . $getOrderInfo['currency'] . '"
+                            };
                             console.log("===== invokeBlinkCheckoutPopup config:",JSON.stringify(config));
                             //TODO: Call Bas payment SDK Here.
                             window.addEventListener("JSBridgeReady", async (event) => {
