@@ -126,15 +126,14 @@ if (!class_exists('BasgateHelper')) :
             );
 
             $result =  wp_remote_request($apiURL, $args);
-            $response_code=wp_remote_retrieve_response_code($result);
+            $response_code = wp_remote_retrieve_response_code($result);
             if (200 !==  $response_code) {
                 error_log(
                     sprintf(
-                        /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
-                        __('executecUrl error status!=200 for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'),
+                        /* translators: 1: Url, 2: Response code, 3: Event data. */
+                        __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s'),
                         $apiURL,
-                        $result->get_error_code(),
-                        $result->get_error_message(),
+                        $response_code,
                         wp_json_encode($args)
                     )
                 );
