@@ -322,25 +322,28 @@ class WC_Basgate extends WC_Payment_Gateway
                         "TotalPrice" => (float) $paramData['amount'],
                     )
                 );
-                $checksum = BasgateChecksum::generateSignature($basgateParams["body"], $this->getSetting('bas_merchant_key'));
+                $bodystr = wp_json_encode($basgateParams["body"]);
+                $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
                     error_log(
                         sprintf(
                             /* translators: 1: Event data. */
                             __('Could not retrieve signature, please try again Data: %1$s.'),
-                            wp_json_encode($basgateParams["body"])
+                            $bodystr
                         )
                     );
                     throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
                 }
+
+                $basgateParams["body"] = $bodystr;
                 $basgateParams["head"] = array(
                     "signature" => $checksum,
                     "requestTimeStamp" => $requestTimestamp
                 );
 
                 /* prepare JSON string for request */
-                $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
+                $post_data = $basgateParams;
                 // $post_data = $basgateParams;
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
 
