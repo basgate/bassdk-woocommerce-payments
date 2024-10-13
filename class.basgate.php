@@ -339,7 +339,7 @@ class WC_Basgate extends WC_Payment_Gateway
             );
 
             /* prepare JSON string for request */
-            $post_data = json_encode($basgateParams);
+            $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
             // $post_data = $basgateParams;
             $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
 
