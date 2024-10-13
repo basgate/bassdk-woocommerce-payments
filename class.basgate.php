@@ -282,80 +282,84 @@ class WC_Basgate extends WC_Payment_Gateway
     */
     public function blinkCheckoutSend($paramData = array())
     {
-        $current_user = wp_get_current_user();
-        if ($current_user->ID != 0) {
-            $paramData['cust_name'] = $current_user->display_name;
-            $paramData['cust_email'] = $current_user->user_email;
-            $paramData['cust_mob_no'] = get_user_meta($current_user->ID, 'billing_phone', true);
-            $paramData['open_id'] = get_user_meta($current_user->ID, 'open_id', true);
-        } else {
-            global $wp;
-            $current_url = home_url(add_query_arg(array(), $wp->request));
-            wp_redirect(wp_login_url($current_url));
-            exit;
-        }
+        try {
+            $current_user = wp_get_current_user();
+            if ($current_user->ID != 0) {
+                $paramData['cust_name'] = $current_user->display_name;
+                $paramData['cust_email'] = $current_user->user_email;
+                $paramData['cust_mob_no'] = get_user_meta($current_user->ID, 'billing_phone', true);
+                $paramData['open_id'] = get_user_meta($current_user->ID, 'open_id', true);
+            } else {
+                global $wp;
+                $current_url = home_url(add_query_arg(array(), $wp->request));
+                wp_redirect(wp_login_url($current_url));
+                exit;
+            }
 
-        $data = array();
-        if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
+            $data = array();
+            if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
 
-            // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
-            $requestTimestamp = (string)  time().'000';
-            /* body parameters */
-            $basgateParams["body"] = array(
-                "appId" => $this->getSetting('bas_application_id'),
-                "requestTimestamp" => $requestTimestamp,
-                "orderType" => "PayBill",
-                "callBackUrl" => $this->getCallbackUrl(),
-                "customerInfo" => array(
-                    "id" => $paramData['open_id'],
-                    "name" => $paramData['cust_name'],
-                ),
-                "amount" => array(
-                    "value" => (float)$paramData['amount'],
-                    "currency" => $paramData['currency'],
-                ),
-                "orderId" => $paramData['order_id'],
-                "orderDetails" => array(
-                    "Id" => $paramData['order_id'],
-                    "Currency" => $paramData['currency'],
-                    "TotalPrice" => (float) $paramData['amount'],
-                )
-            );
-            $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"]), $this->getSetting('bas_merchant_key'));
-
-            if ($checksum === false) {
-                error_log(
-                    sprintf(
-                        /* translators: 1: Event data. */
-                        __('Could not retrieve signature, please try again Data: %1$s.'),
-                        wp_json_encode($basgateParams["body"])
+                // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
+                $requestTimestamp = (string)  time() . '000';
+                /* body parameters */
+                $basgateParams["body"] = array(
+                    "appId" => $this->getSetting('bas_application_id'),
+                    "requestTimestamp" => $requestTimestamp,
+                    "orderType" => "PayBill",
+                    "callBackUrl" => $this->getCallbackUrl(),
+                    "customerInfo" => array(
+                        "id" => $paramData['open_id'],
+                        "name" => $paramData['cust_name'],
+                    ),
+                    "amount" => array(
+                        "value" => (float)$paramData['amount'],
+                        "currency" => $paramData['currency'],
+                    ),
+                    "orderId" => $paramData['order_id'],
+                    "orderDetails" => array(
+                        "Id" => $paramData['order_id'],
+                        "Currency" => $paramData['currency'],
+                        "TotalPrice" => (float) $paramData['amount'],
                     )
                 );
-                throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
+                $checksum = BasgateChecksum::generateSignature($basgateParams["body"], $this->getSetting('bas_merchant_key'));
+
+                if ($checksum === false) {
+                    error_log(
+                        sprintf(
+                            /* translators: 1: Event data. */
+                            __('Could not retrieve signature, please try again Data: %1$s.'),
+                            wp_json_encode($basgateParams["body"])
+                        )
+                    );
+                    throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
+                }
+                $basgateParams["head"] = array(
+                    "signature" => $checksum,
+                    "requestTimeStamp" => $requestTimestamp
+                );
+
+                /* prepare JSON string for request */
+                $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
+                // $post_data = $basgateParams;
+                $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
+
+                $res = BasgateHelper::executecUrl($url, $post_data);
+
+                //TODO: Added Temporary
+                $data = $res;
+                //TODO: Disabled temporary
+                // if (!empty($res['body']['trxToken']) && $res['body']['authenticated'] == 'true') {
+                //     $data['trxToken'] = $res['body']['trxToken'];
+                //     $data['trxId'] = $res['body']['trxId'];
+                // } else {
+                //     $data['trxToken'] = "";
+                // }
             }
-            $basgateParams["head"] = array(
-                "signature" => $checksum,
-                "requestTimeStamp" => $requestTimestamp
-            );
-
-            /* prepare JSON string for request */
-            $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
-            // $post_data = $basgateParams;
-            $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
-
-            $res = BasgateHelper::executecUrl($url, $post_data);
-
-            //TODO: Added Temporary
-            $data = $res;
-            //TODO: Disabled temporary
-            // if (!empty($res['body']['trxToken']) && $res['body']['authenticated'] == 'true') {
-            //     $data['trxToken'] = $res['body']['trxToken'];
-            //     $data['trxId'] = $res['body']['trxId'];
-            // } else {
-            //     $data['trxToken'] = "";
-            // }
+            return $data;
+        } catch (\Throwable $th) {
+            return new Exception("ERROR On blinkCheckoutSend :" . $th->getMessage());
         }
-        return $data;
     }
     /**
      * Generate basgate button link
