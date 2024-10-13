@@ -65,7 +65,7 @@ class WC_Basgate extends WC_Payment_Gateway
         } else {
             $checkout_page_id = get_option('woocommerce_checkout_page_id');
             $checkout_page_id = (int) $checkout_page_id > 0 ? $checkout_page_id : 7;
-            return get_site_url() . '/?page_id=' . $checkout_page_id . '&wc-api=WC_Basgate';
+            return get_site_url() . '?page_id=' . $checkout_page_id . '&wc-api=WC_Basgate';
         }
     }
 
@@ -299,13 +299,13 @@ class WC_Basgate extends WC_Payment_Gateway
         if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
 
             // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
-            $requestTimestamp = (string)  microtime();
+            $requestTimestamp = (string)  time();
             /* body parameters */
             $basgateParams["body"] = array(
                 "appId" => $this->getSetting('bas_application_id'),
                 "requestTimestamp" => $requestTimestamp,
                 "orderType" => "PayBill",
-                "callbackUrl" => $this->getCallbackUrl(),
+                "callBackUrl" => $this->getCallbackUrl(),
                 "customerInfo" => array(
                     "id" => $paramData['open_id'],
                     "name" => $paramData['cust_name'],
@@ -340,7 +340,8 @@ class WC_Basgate extends WC_Payment_Gateway
             );
 
             /* prepare JSON string for request */
-            $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
+            // $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
+            $post_data = $basgateParams;
             $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
 
             $res = BasgateHelper::executecUrl($url, $post_data);
