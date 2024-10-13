@@ -317,12 +317,11 @@ class WC_Basgate extends WC_Payment_Gateway
                 "orderId" => $paramData['order_id'],
                 "orderDetails" => array(
                     "Id" => $paramData['order_id'],
-                    // "Products" => array(),
                     "Currency" => $paramData['currency'],
                     "TotalPrice" => (float) $paramData['amount'],
                 )
             );
-            $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES), $this->getSetting('bas_merchant_key'));
+            $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"]), $this->getSetting('bas_merchant_key'));
 
             if ($checksum === false) {
                 error_log(
@@ -340,7 +339,7 @@ class WC_Basgate extends WC_Payment_Gateway
             );
 
             /* prepare JSON string for request */
-            $post_data = json_encode($basgateParams, JSON_UNESCAPED_SLASHES);
+            $post_data = json_encode($basgateParams);
             // $post_data = $basgateParams;
             $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
 
