@@ -4,7 +4,7 @@
  * Plugin Name: Bassdk WooCommerce Payment
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية والبنوك المختلفة
- * Version: 0.1.71
+ * Version: 0.1.72
  * Author: Basgate Super APP 
  * Author URI: https://basgate.com/
  * Tags: BasSDK, BasSDK Payments, PayWithBasgate, BasSDK WooCommerce, BasSDK Plugin, BasSDK Payment Gateway
@@ -25,12 +25,39 @@ if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+if (! function_exists('is_plugin_active')) {
+    require_once ABSPATH . '/wp-admin/includes/plugin.php';
+}
+
+if (! is_plugin_active('woocommerce/woocommerce.php')) {
+    add_action(
+        'admin_notices',
+        function () {
+            echo '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires WooCommerce to be installed and active. You can download %s here.', 'basgate'), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>') . '</strong></p></div>';
+        }
+    );
+
+    return;
+}
+
+if (! is_plugin_active('bassdk-wp-login/bassdk-wp-login.php')) {
+    add_action(
+        'admin_notices',
+        function () {
+            echo '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires Basgate Login SDK to be installed and active. You can download %s here.', 'basgate'), '<a href="https://basgate.github.io/" target="_blank">Basgate Login SDK</a>') . '</strong></p></div>';
+        }
+    );
+
+    return;
+}
+
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
 require_once __DIR__ . '/includes/BasgateHelper.php';
 require_once __DIR__ . '/includes/BasgateChecksum.php';
 
 add_action('before_woocommerce_init', function () {
+
     if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
         \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
         \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('product_block_editor', __FILE__, true);
@@ -299,7 +326,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
     function woocommerce_basgate_add_css_js()
     {
-?>
+    ?>
         <style>
             #basgate_payment_area .message {
                 float: left;

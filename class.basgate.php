@@ -237,7 +237,7 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function receipt_page($order)
     {
-?>
+    ?>
         <script>
             var order = '<?php echo esc_attr($order); ?>'
             console.log("===== STARTED receipt_page order:", order);
@@ -407,19 +407,19 @@ class WC_Basgate extends WC_Payment_Gateway
         $paramData = array('amount' => $getOrderInfo['amount'], 'order_id' => $order_id, 'cust_id' => $cust_id, 'cust_mob_no' => $cust_mob_no, 'cust_name' => $cust_name, "currency" => $currency);
 
         ?>
-            <script>
-                var paramData = '<?php echo json_encode($paramData); ?>';
-                console.log("===== generate_basgate_form paramData:", paramData);
-            </script>
+        <script>
+            var paramData = '<?php echo json_encode($paramData); ?>';
+            console.log("===== generate_basgate_form paramData:", paramData);
+        </script>
         <?php
 
         $data = $this->blinkCheckoutSend($paramData);
         ?>
-            <script>
-                var data = '<?php echo json_encode($data); ?>';
-                console.log("===== generate_basgate_form data:", data);
-            </script>
-        <?php
+        <script>
+            var data = '<?php echo json_encode($data); ?>';
+            console.log("===== generate_basgate_form data:", data);
+        </script>
+    <?php
         return '<div class="pg-basgate-checkout">
                     <script type="text/javascript">
                         function invokeBlinkCheckoutPopup(){
@@ -436,30 +436,30 @@ class WC_Basgate extends WC_Payment_Gateway
                             //TODO: Call Bas payment SDK Here.
                             window.addEventListener("JSBridgeReady", async (event) => {
                                 console.log("===== invokeBlinkCheckoutPopup JSBridge existed");
-                                // await getBasPayment(config)
-                                //     .then(function (result) {
-                                //         console.log("===== basPayment Result:", JSON.stringify(result));
-                                //         if (result) {
-                                //             // "notifyMerchant": function(eventName,data){
-                                //             // console.log("notifyMerchant handler function called");
-                                //             // if(eventName=="APP_CLOSED")
-                                //             // {
-                                //             //     jQuery(".loading-basgate").hide();
-                                //             //     jQuery(".basgate-woopg-loader").hide();
-                                //             //     jQuery(".basgate-overlay").hide();
-                                //             //     jQuery(".refresh-payment").show();
-                                //             //     if(jQuery(".pg-basgate-checkout").length>1){
-                                //             //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
-                                //             //     }
-                                //             //     jQuery(".basgate-action-btn").show();
-                                //             // }
-                                //             return result;
-                                //         } else {
-                                //             return null
-                                //         }
-                                //     }).catch(function onError(error){
-                                //         console.log("error => ",error);
-                                //     });
+                                await getBasPayment(config)
+                                    .then(function (result) {
+                                        console.log("===== basPayment Result:", JSON.stringify(result));
+                                        if (result) {
+                                            // "notifyMerchant": function(eventName,data){
+                                            // console.log("notifyMerchant handler function called");
+                                            // if(eventName=="APP_CLOSED")
+                                            // {
+                                            //     jQuery(".loading-basgate").hide();
+                                            //     jQuery(".basgate-woopg-loader").hide();
+                                            //     jQuery(".basgate-overlay").hide();
+                                            //     jQuery(".refresh-payment").show();
+                                            //     if(jQuery(".pg-basgate-checkout").length>1){
+                                            //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
+                                            //     }
+                                            //     jQuery(".basgate-action-btn").show();
+                                            // }
+                                            return result;
+                                        } else {
+                                            return null
+                                        }
+                                    }).catch(function onError(error){
+                                        console.log("error => ",error);
+                                    });
                             },false);
                         }
                         invokeBlinkCheckoutPopup();
