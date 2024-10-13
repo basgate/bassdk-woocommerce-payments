@@ -316,18 +316,23 @@ class WC_Basgate extends WC_Payment_Gateway
                 "orderId" => $paramData['order_id'],
                 "orderDetails" => array(
                     "Id" => $paramData['order_id'],
-                    "Products" => array(),
+                    // "Products" => array(),
                     "Currency" => $paramData['currency'],
                     "TotalPrice" => $paramData['amount'],
                 )
-
-                //TODO: from JS SDK 
-                // params.Body["customerInfo"] = {};
-                // params.Body["customerInfo"]["id"] = ("" + order.customerInfo.open_id).trim();
-                // params.Body["customerInfo"]["name"] = ("" + order.customerInfo.name).trim();
             );
             $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES), $this->getSetting('bas_merchant_key'));
 
+            if($checksum===false){
+                error_log(
+                    sprintf(
+                        /* translators: 1: Event data. */
+                        __('Could not retrieve signature, please try again Data: %1$s.'),
+                        wp_json_encode($basgateParams["body"])
+                    )
+                );
+                throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
+            }
             $basgateParams["head"] = array(
                 "signature" => $checksum,
                 "requestTimeStamp" => $requestTimestamp
@@ -409,25 +414,26 @@ class WC_Basgate extends WC_Payment_Gateway
                     <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
                     <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
 
-        $paramData = array('amount' => $getOrderInfo['amount'], 'order_id' => $order_id, 'cust_id' => $cust_id, 'cust_mob_no' => $cust_mob_no, 'cust_name' => $cust_name, "currency" => $currency);
+        $paramData = array(
+            'amount' => $getOrderInfo['amount'], 
+            'order_id' => $order_id, 
+            'cust_id' => $cust_id, 
+            'cust_mob_no' => $cust_mob_no, 
+            'cust_name' => $cust_name, 
+            "currency" => $currency);
 
         ?>
-        <script>
-            var paramData = '<?php echo json_encode($paramData); ?>';
-            console.log("===== generate_basgate_form paramData:", paramData);
-        </script>
+            <script>
+                var paramData = '<?php echo json_encode($paramData); ?>';
+                console.log("===== generate_basgate_form paramData:", paramData);
+            </script>
         <?php
 
         $data = $this->blinkCheckoutSend($paramData);
         if (is_null($data)) {
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
-        ?>
-        <script>
-            var data = '<?php echo json_encode($data); ?>';
-            console.log("===== generate_basgate_form data:", data);
-        </script>
-<?php
+
         return '<div class="pg-basgate-checkout">
                     <script type="text/javascript">
                         function invokeBlinkCheckoutPopup(){
