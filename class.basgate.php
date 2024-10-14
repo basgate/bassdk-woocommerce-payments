@@ -323,7 +323,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     )
                 );
                 $bodystr = json_encode($basgateParams["body"]);
-                $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
+                $checksum = BasChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
                     error_log(
@@ -563,7 +563,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 $post_checksum = "";
             }
             $order = array();
-            $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
+            $isValidChecksum = BasChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
             if ($isValidChecksum === true) {
                 $order_id = !empty($_POST['ORDERID']) ? BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])) : 0;
 
@@ -592,7 +592,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "ORDERID" => sanitize_text_field($_POST['ORDERID']),
                     );
 
-                    $reqParams['CHECKSUMHASH'] = BasgateChecksum::generateSignature($reqParams, $this->getSetting('bas_merchant_key'));
+                    $reqParams['CHECKSUMHASH'] = BasChecksum::generateSignature($reqParams, $this->getSetting('bas_merchant_key'));
 
                     /* number of retries untill cURL gets success */
                     $retry = 1;
