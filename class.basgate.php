@@ -298,7 +298,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
             $data = array();
             if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
-
+                $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
                 // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
                 $requestTimestamp = (string)  time();
                 /* body parameters */
@@ -336,18 +336,20 @@ class WC_Basgate extends WC_Payment_Gateway
                     throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
                 }
 
-                // $basgateParams["body"] = $bodystr;
-                $basgateParams["head"] = array(
-                    "signature" => $checksum,
-                    "requestTimeStamp" => $requestTimestamp
-                );
+                // // $basgateParams["body"] = $bodystr;
+                // $basgateParams["head"] = array(
+                //     "signature" => $checksum,
+                //     "requestTimeStamp" => $requestTimestamp
+                // );
 
                 /* prepare JSON string for request */
-                $post_data = $basgateParams;
-                // $post_data = $basgateParams;
+                $reqBody = str_replace('bodyy', $bodystr, $reqBody);
+                $reqBody = str_replace('sigg', $checksum, $reqBody);
+                $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
+                // $post_data = $reqBody;
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
                 $header = array('Accept: text/plain', 'Content-Type: application/json');
-                $res = BasgateHelper::httpPost($url, json_encode($post_data), $header);
+                $res = BasgateHelper::httpPost($url, $reqBody, $header);
 
                 if (!empty($res['body']['trxToken'])) {
                     $data['trxToken'] = $res['body']['trxToken'];
