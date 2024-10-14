@@ -39,9 +39,10 @@ class BasChecksum
 			$stringBuilder .= $randomString;
 			$hash = self::getHashedString($stringBuilder);
 			$hashRandom = $hash . $randomString;
-			echo "======generateSignature hashRandom ,key: $hashRandom $key\n";
+			// echo "======generateSignature hashRandom: $hashRandom\n";
 			$encrypt = self::encrypt($hashRandom, $key);
-			echo "======generateSignature encrypt ,key: $encrypt $key\n";
+			echo "======generateSignature encrypt: $encrypt\n";
+			echo "======generateSignature input: $input\n";
 			return $encrypt;
 		} catch (Exception $ex) {
 			self::showException($ex);
