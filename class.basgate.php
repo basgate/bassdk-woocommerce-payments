@@ -353,6 +353,14 @@ class WC_Basgate extends WC_Payment_Gateway
                     $data['trxToken'] = $res['body']['trxToken'];
                     $data['trxId'] = $res['body']['trxId'];
                 } else {
+                    error_log(
+                        sprintf(
+                            /* translators: 1: bodystr, 2:. */
+                            __('trxToken empty \n bodystr: %1$s , \n $checksum: %2$s.'),
+                            $bodystr,
+                            $checksum
+                        )
+                    );
                     $data['trxToken'] = "";
                 }
             }

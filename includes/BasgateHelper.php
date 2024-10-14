@@ -167,7 +167,6 @@ if (!class_exists('BasgateHelper')) :
 
         static function httpPost($url, $data, $header)
         {
-
             try {
                 $curl = curl_init($url);
                 curl_setopt($curl, CURLOPT_POST, true);
@@ -195,7 +194,7 @@ if (!class_exists('BasgateHelper')) :
                         )
                     );
                     curl_close($curl);
-                    throw new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
+                    return new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
                     // return $msg;
                     //return $response;
                 } else {
@@ -203,7 +202,7 @@ if (!class_exists('BasgateHelper')) :
                     return json_decode($response, true);
                 }
             } catch (\Throwable $th) {
-                throw $th;
+                return new Exception("ERROR On httpPost :" . $th->getMessage());
             }
         }
     }
