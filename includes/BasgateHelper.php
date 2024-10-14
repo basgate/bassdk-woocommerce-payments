@@ -183,8 +183,20 @@ if (!class_exists('BasgateHelper')) :
                 if ($httpCode != 200) {
                     $msg = "Return httpCode is {$httpCode} \n"
                         . curl_error($curl) . "URL: " . $url;
+                    $error = curl_error($curl);
+                    error_log(
+                        sprintf(
+                            /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg. */
+                            __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s'),
+                            $url,
+                            $httpCode,
+                            $data,
+                            $error
+                        )
+                    );
                     curl_close($curl);
-                    return $msg;
+                    throw new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
+                    // return $msg;
                     //return $response;
                 } else {
                     curl_close($curl);
