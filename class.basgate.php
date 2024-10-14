@@ -293,7 +293,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
                     "orderType" => "PayBill",
-                    "callBackUrl" => '', // $this->getCallbackUrl(),
+                    "callBackUrl" => $this->getCallbackUrl(),
                     "customerInfo" => array(
                         "id" => $paramData['open_id'],
                         "name" => $paramData['cust_name'],
@@ -475,6 +475,9 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function process_payment($order_id)
     {
+        error_log(sprintf('==== STARTED process_payment order_id:%1$s' , $order_id));
+
+        echo "==== STARTED process_payment ";
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
             $order = new WC_Order($order_id);
         } else {
@@ -518,13 +521,8 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function check_basgate_response()
     {
-        
-        ?>
-        <script>
-            console.log("===== STARTED check_basgate_response");
-        </script>
-        <?php
-
+        error_log("===== STARTED check_basgate_response");
+   
         global $woocommerce;
 
         if (!empty($_POST['STATUS'])) {
@@ -697,7 +695,7 @@ class WC_Basgate extends WC_Payment_Gateway
             if ('success' == $this->msg['class']) {
                 $redirect_url = $order->get_checkout_order_received_url();
             } else {
-                //$redirect_url = wc_get_checkout_url();
+                $redirect_url = wc_get_checkout_url();
                 $redirect_url = $order->get_view_order_url();
             }
         } else {
@@ -725,7 +723,7 @@ class WC_Basgate extends WC_Payment_Gateway
 //     $environment = sanitize_text_field($_POST['environment']);
 //     $mid = sanitize_text_field($_POST['mid']);
 //     $mkey = sanitize_text_field($_POST['mkey']);
-    
+
 //     if ($_POST['is_webhook'] == 1) {
 //         $webhookUrl = sanitize_text_field($_POST['webhookUrl']);
 //     } else {

@@ -3,10 +3,12 @@
 /**
  * Plugin Name: Bassdk WooCommerce Payment
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
- * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية والبنوك المختلفة
- * Version: 0.1.101
+ * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية
+ * Version: 0.1.102
  * Author: Basgate Super APP 
  * Author URI: https://basgate.com/
+ * Developer: Abdullah AlAnsi
+ * Developer URI: https://basgate.com/
  * Tags: BasSDK, BasSDK Payments, PayWithBasgate, BasSDK WooCommerce, BasSDK Plugin, BasSDK Payment Gateway
  * Requires at least: 5.0.1
  * Tested up to: 6.5.5
@@ -317,7 +319,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
     function woocommerce_basgate_add_css_js()
     {
-        ?>
+?>
         <style>
             #basgate_payment_area .message {
                 float: left;
@@ -420,7 +422,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-        <?php
+    <?php
     }
 
 
