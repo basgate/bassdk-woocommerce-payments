@@ -323,7 +323,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     )
                 );
                 $bodystr = json_encode($basgateParams["body"]);
-                $checksum = BasChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
+                $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
                     error_log(
@@ -336,17 +336,11 @@ class WC_Basgate extends WC_Payment_Gateway
                     throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
                 }
 
-                // // $basgateParams["body"] = $bodystr;
-                // $basgateParams["head"] = array(
-                //     "signature" => $checksum,
-                //     "requestTimeStamp" => $requestTimestamp
-                // );
-
                 /* prepare JSON string for request */
                 $reqBody = str_replace('bodyy', $bodystr, $reqBody);
                 $reqBody = str_replace('sigg', $checksum, $reqBody);
                 $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
-                // $post_data = $reqBody;
+
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
                 $header = array('Accept: text/plain', 'Content-Type: application/json');
                 $res = BasgateHelper::httpPost($url, $reqBody, $header);
@@ -468,17 +462,17 @@ class WC_Basgate extends WC_Payment_Gateway
                                         console.log("===== basPayment Result:", JSON.stringify(result));
                                         if (result) {
                                             // "notifyMerchant": function(eventName,data){
-                                            // console.log("notifyMerchant handler function called");
+                                            console.log("notifyMerchant handler function called");
                                             // if(eventName=="APP_CLOSED")
                                             // {
-                                            //     jQuery(".loading-basgate").hide();
-                                            //     jQuery(".basgate-woopg-loader").hide();
-                                            //     jQuery(".basgate-overlay").hide();
-                                            //     jQuery(".refresh-payment").show();
-                                            //     if(jQuery(".pg-basgate-checkout").length>1){
-                                            //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
-                                            //     }
-                                            //     jQuery(".basgate-action-btn").show();
+                                            jQuery(".loading-basgate").hide();
+                                            jQuery(".basgate-woopg-loader").hide();
+                                            jQuery(".basgate-overlay").hide();
+                                            jQuery(".refresh-payment").show();
+                                            if(jQuery(".pg-basgate-checkout").length>1){
+                                                jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
+                                            }
+                                            jQuery(".basgate-action-btn").show();
                                             // }
                                             return result;
                                         } else {
@@ -573,7 +567,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 $post_checksum = "";
             }
             $order = array();
-            $isValidChecksum = BasChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
+            $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
             if ($isValidChecksum === true) {
                 $order_id = !empty($_POST['ORDERID']) ? BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])) : 0;
 
@@ -602,7 +596,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "ORDERID" => sanitize_text_field($_POST['ORDERID']),
                     );
 
-                    $reqParams['CHECKSUMHASH'] = BasChecksum::generateSignature($reqParams, $this->getSetting('bas_merchant_key'));
+                    $reqParams['CHECKSUMHASH'] = BasgateChecksum::generateSignature($reqParams, $this->getSetting('bas_merchant_key'));
 
                     /* number of retries untill cURL gets success */
                     $retry = 1;

@@ -5,147 +5,146 @@
  * application and Bas over network have not been tampered with. We use SHA256 hashing and 
  * AES128 encryption algorithm to ensure the safety of transaction data.
  *
- * @author     Kamal Hassan - Abdullah Al-Ansi
- * @version    0.0.1
+ * @author     Kamal Hassan, Abdullah Al-Ansi
+ * @version    0.0.2
  * @link       https://.basgate.com/docs/
  */
 
 
 
-class BasChecksum
+class BasgateChecksum
 {
-	public static function encryptString($plainText, $key, $iv)
-	{
-		$cipher = "aes-256-cbc";
-		$key = substr($key, 0, 32);
-		$encrypted = openssl_encrypt($plainText, $cipher, $key, 0, $iv);
-		return $encrypted;
-	}
+	private static $iv = "@@@@&&&&####$$$$";
 
-	public static function decryptString($cipherText, $key, $iv)
+	static public function encrypt($input, $key)
 	{
-		$cipher = "aes-256-cbc";
-		$key = substr($key, 0, 32);
-		$decrypted = openssl_decrypt($cipherText, $cipher, $key, 0, $iv);
-		return $decrypted;
-	}
+		$key = html_entity_decode($key);
+		$password = substr(hash('sha256', $key, true), 0, 32);
+		if (function_exists('openssl_encrypt')) {
 
-	public static function generateSignature($input, $key)
-	{
-		try {
-			self::validateGenerateCheckSumInput($key);
-			$stringBuilder = $input . '|';
-			$randomString = self::generateRandomString(4);
-			$stringBuilder .= $randomString;
-			$hash = self::getHashedString($stringBuilder);
-			$hashRandom = $hash . $randomString;
-			// echo "======generateSignature hashRandom: $hashRandom\n";
-			$encrypt = self::encrypt($hashRandom, $key);
-			// echo "====== encrypt:\n $encrypt\n";
-			// echo "====== input:\n $input\n";
-			return $encrypt;
-		} catch (Exception $ex) {
-			self::showException($ex);
-			return null;
+			$ssl_encrypt = openssl_encrypt($input,  'aes-256-cbc', $password, OPENSSL_RAW_DATA, self::$iv);
+			// $ssl_encrypt=openssl_encrypt($input,  'AES-128-CBC', $key,  OPENSSL_RAW_DATA, self::$iv);
+			//	$data = base64_encode($ssl_encrypt);
+			$data = base64_encode($ssl_encrypt);
+		} else {
+			$size = mcrypt_get_block_size(MCRYPT_RIJNDAEL_128, 'cbc');
+			$input = self::pkcs5Pad($input, $size);
+			$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', 'cbc', '');
+			mcrypt_generic_init($td, $key, self::$iv);
+			$data = mcrypt_generic($td, $input);
+			mcrypt_generic_deinit($td);
+			mcrypt_module_close($td);
+			$data = base64_encode($data);
 		}
+		return $data;
 	}
 
-	public static function verifySignature($input, $key, $checkSum)
+	static public function decrypt($encrypted, $key)
 	{
-		try {
-			self::validateVerifyCheckSumInput($checkSum, $key);
-			$str1 = self::decrypt($checkSum, $key);
-			if ($str1 === null || strlen($str1) < 4) {
-				return false;
-			}
-			$str2 = substr($str1, -4);
-			$stringBuilder = $input . '|' . $str2;
-			$source = self::getHashedString($stringBuilder);
-			return $str1 === $source . $str2;
-		} catch (Exception $ex) {
-			self::showException($ex);
+		$key = html_entity_decode($key);
+		if (function_exists('openssl_decrypt')) {
+			$hash = hash('sha256', $key, true);
+			$password = substr(hash('sha256', $key, true), 0, 32);
+			$data = openssl_decrypt($encrypted, "aes-256-cbc", $password, 0, self::$iv);
+			// $data = openssl_decrypt ( $encrypted ,"AES-128-CBC" , $key, 0, self::$iv );
+		} else {
+			$encrypted = base64_decode($encrypted);
+			$td = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', 'cbc', '');
+			mcrypt_generic_init($td, $key, self::$iv);
+			$data = mdecrypt_generic($td, $encrypted);
+			mcrypt_generic_deinit($td);
+			mcrypt_module_close($td);
+			$data = self::pkcs5Unpad($data);
+			$data = rtrim($data);
+		}
+		return $data;
+	}
+
+	static public function generateSignature($params, $key)
+	{
+		if (!is_array($params) && !is_string($params)) {
+			throw new Exception("string or array expected, " . gettype($params) . " given");
+		}
+		if (is_array($params)) {
+			$params = self::getStringByParams($params);
+		}
+		return self::generateSignatureByString($params, $key);
+	}
+
+	static public function verifySignature($params, $key, $checksum): bool
+	{
+		if (!is_array($params) && !is_string($params)) {
+			throw new Exception("string or array expected, " . gettype($params) . " given");
+		}
+		if (isset($params['CHECKSUMHASH'])) {
+			unset($params['CHECKSUMHASH']);
+		}
+		if (is_array($params)) {
+			$params = self::getStringByParams($params);
+		}
+		return self::verifySignatureByString($params, $key, $checksum);
+	}
+
+	static private function generateSignatureByString($params, $key)
+	{
+		$salt = self::generateRandomString(4);
+		return self::calculateChecksum($params, $key, $salt);
+	}
+
+	static private function verifySignatureByString($params, $key, $checksum)
+	{
+		$bas_hash = self::decrypt($checksum, $key);
+		$salt = substr($bas_hash, -4);
+		return $bas_hash == self::calculateHash($params, $salt) ? true : false;
+	}
+
+	static private function generateRandomString($length)
+	{
+		$random = "";
+		srand((float) microtime() * 1000000);
+
+		$data = "9876543210ZYXWVUTSRQPONMLKJIHGFEDCBAabcdefghijklmnopqrstuvwxyz!@#$&_";
+
+		for ($i = 0; $i < $length; $i++) {
+			$random .= substr($data, (rand() % (strlen($data))), 1);
+		}
+
+		return "aaaa"; //$random;
+	}
+
+	static private function getStringByParams($params)
+	{
+		ksort($params);
+		$params = array_map(function ($value) {
+			return ($value !== null && strtolower($value) !== "null") ? $value : "";
+		}, $params);
+		return implode("|", $params);
+	}
+
+	static private function calculateHash($params, $salt)
+	{
+		$finalString = $params . "|" . $salt;
+		$hash = hash("sha256", $finalString);
+		return $hash . $salt;
+	}
+
+	static private function calculateChecksum($params, $key, $salt)
+	{
+		$hashString = self::calculateHash($params, $salt);
+		return self::encrypt($hashString, $key);
+	}
+
+	static private function pkcs5Pad($text, $blocksize)
+	{
+		$pad = $blocksize - (strlen($text) % $blocksize);
+		return $text . str_repeat(chr($pad), $pad);
+	}
+
+	static private function pkcs5Unpad($text)
+	{
+		$pad = ord($text[strlen($text) - 1]);
+		if ($pad > strlen($text))
 			return false;
-		}
-	}
-
-	public static function encrypt($input, $key)
-	{
-		$key0 = hash('sha256', $key, true);
-		try {
-			$iv = pack('C*', 64, 64, 64, 64, 38, 38, 38, 38, 35, 35, 35, 35, 36, 36, 36, 36);
-			$encrypted = openssl_encrypt($input, 'aes-256-cbc', $key0, 0, $iv);
-			return $encrypted;
-		} catch (Exception $ex) {
-			self::showException($ex);
-			return null;
-		}
-	}
-
-	public static function decrypt($input, $key)
-	{
-		$key0 = hash('sha256', $key, true);
-		try {
-			$iv = pack('C*', 64, 64, 64, 64, 38, 38, 38, 38, 35, 35, 35, 35, 36, 36, 36, 36);
-			$decrypted = openssl_decrypt($input, 'aes-256-cbc', $key0, 0, $iv);
-			return $decrypted;
-		} catch (Exception $ex) {
-			self::showException($ex);
-			return null;
-		}
-	}
-
-	public static function validateGenerateCheckSumInput($key)
-	{
-		if ($key === null) {
-			throw new Exception('Parameter cannot be null: Specified key');
-		}
-	}
-
-	public static function validateVerifyCheckSumInput($checkSum, $key)
-	{
-		if ($key === null) {
-			throw new Exception('Parameter cannot be null: Specified key');
-		}
-		if ($checkSum === null) {
-			throw new Exception('Parameter cannot be null: Specified checkSum');
-		}
-	}
-
-	public static function getStringByParams($parameters)
-	{
-		if ($parameters === null) {
-			return '';
-		}
-		ksort($parameters);
-		$stringBuilder = '';
-		foreach ($parameters as $value) {
-			$str = $value ?? '';
-			$stringBuilder .= $str . '|';
-		}
-		return rtrim($stringBuilder, '|');
-	}
-
-	public static function generateRandomString($length)
-	{
-		if ($length <= 0) {
-			return '';
-		}
-		$characters = '@#!abcdefghijklmonpqrstuvwxyz#@01234567890123456789#@ABCDEFGHIJKLMNOPQRSTUVWXYZ#@';
-		$stringBuilder = '';
-		for ($index = 0; $index < $length; $index++) {
-			$startIndex = mt_rand(0, strlen($characters) - 1);
-			$stringBuilder .= $characters[$startIndex];
-		}
-		return 'aaaa'; // $stringBuilder;
-	}
-
-	public static function getHashedString($inputValue)
-	{
-		return hash('sha256', $inputValue);
-	}
-
-	public static function showException($ex)
-	{
-		echo "Message: " . $ex->getMessage() . "\nStackTrace: " . $ex->getTraceAsString() . "\n";
+		return substr($text, 0, -1 * $pad);
 	}
 }
