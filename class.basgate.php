@@ -306,7 +306,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
                     "orderType" => "PayBill",
-                    "callBackUrl" => $this->getCallbackUrl(),
+                    "callBackUrl" => '', // $this->getCallbackUrl(),
                     "customerInfo" => array(
                         "id" => $paramData['open_id'],
                         "name" => $paramData['cust_name'],
@@ -432,6 +432,9 @@ class WC_Basgate extends WC_Payment_Gateway
         );
 
         $data = $this->blinkCheckoutSend($paramData);
+        if(is_wp_error( $data )){
+            throw new Exception(__('Could not retrieve the Transaction Token, please try again. ERROR:'.$data->, BasgateConstants::ID));
+        }
         if (is_null($data) || empty($data)) {
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
