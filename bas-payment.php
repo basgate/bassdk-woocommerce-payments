@@ -65,16 +65,7 @@ add_action('before_woocommerce_init', function () {
     }
 });
 
-// add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'woocommerce_basgate_add_action_links');
 
-// function woocommerce_basgate_add_action_links($links)
-// {
-//     $settting_url = array(
-//         '<a href="' . esc_url(admin_url('admin.php?page=wc-settings&tab=checkout&section=WC_basgate')) . '"><b>Settings</b></a>',
-//         '<a href="' . esc_url(BasgateConstants::PLUGIN_DOC_URL) . '" target="_blank"><b>Docs</b></a>',
-//     );
-//     return array_merge($settting_url, $links);
-// }
 
 /**
  * Checkout Block code Start
@@ -326,7 +317,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
     function woocommerce_basgate_add_css_js()
     {
-    ?>
+        ?>
         <style>
             #basgate_payment_area .message {
                 float: left;
@@ -429,7 +420,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-    <?php
+        <?php
     }
 
 

@@ -183,6 +183,9 @@ if (!class_exists('BasgateHelper')) :
                     $msg = "Return httpCode is {$httpCode} \n"
                         . curl_error($curl) . "URL: " . $url;
                     $error = curl_error($curl);
+                    if ($error) {
+                        wc_add_notice("Error: " . $error, 'error');
+                    }
                     error_log(
                         sprintf(
                             /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg. */

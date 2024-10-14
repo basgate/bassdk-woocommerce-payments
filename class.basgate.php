@@ -237,13 +237,6 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function receipt_page($order)
     {
-?>
-        <script>
-            var order = '<?php echo esc_attr($order); ?>'
-            console.log("===== STARTED receipt_page order:", order);
-        </script>
-    <?php
-
         echo $this->generate_basgate_form($order);
     }
 
@@ -268,12 +261,6 @@ class WC_Basgate extends WC_Payment_Gateway
             );
         }
 
-    ?>
-        <script>
-            var data = '<?php echo json_encode($data); ?>'
-            console.log("===== return getOrderInfo data:", data);
-        </script>
-    <?php
         return $data;
     }
 
@@ -370,13 +357,6 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function generate_basgate_form($order_id)
     {
-    ?>
-        <script>
-            var orderId = '<?php echo esc_attr($order_id); ?>'
-            console.log("===== STARTED generate_basgate_form orderId:", orderId);
-        </script>
-<?php
-
         global $woocommerce;
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
             $order = new WC_Order($order_id);
@@ -538,6 +518,13 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function check_basgate_response()
     {
+        
+        ?>
+        <script>
+            console.log("===== STARTED check_basgate_response");
+        </script>
+        <?php
+
         global $woocommerce;
 
         if (!empty($_POST['STATUS'])) {
@@ -738,6 +725,7 @@ class WC_Basgate extends WC_Payment_Gateway
 //     $environment = sanitize_text_field($_POST['environment']);
 //     $mid = sanitize_text_field($_POST['mid']);
 //     $mkey = sanitize_text_field($_POST['mkey']);
+    
 //     if ($_POST['is_webhook'] == 1) {
 //         $webhookUrl = sanitize_text_field($_POST['webhookUrl']);
 //     } else {
