@@ -322,7 +322,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "TotalPrice" => (float) $paramData['amount'],
                     )
                 );
-                $bodystr = json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
+                $bodystr = json_encode($basgateParams["body"]);
                 $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
@@ -336,7 +336,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
                 }
 
-                $basgateParams["body"] = $bodystr;
+                // $basgateParams["body"] = $bodystr;
                 $basgateParams["head"] = array(
                     "signature" => $checksum,
                     "requestTimeStamp" => $requestTimestamp
@@ -346,8 +346,8 @@ class WC_Basgate extends WC_Payment_Gateway
                 $post_data = $basgateParams;
                 // $post_data = $basgateParams;
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
-
-                $res = BasgateHelper::executecUrl($url, $post_data);
+                $header = array('Accept: text/plain', 'Content-Type: application/json');
+                $res = BasgateHelper::httpPost($url, json_encode($post_data), $header);
 
                 //TODO: Added Temporary
                 $data = $res;

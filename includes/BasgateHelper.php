@@ -97,6 +97,7 @@ if (!class_exists('BasgateHelper')) :
             return false;
         }
 
+
         /* public static function executecUrlOld($apiURL, $requestParamList) //not in use
         {
             $jsonResponse = wp_remote_post(
@@ -160,6 +161,37 @@ if (!class_exists('BasgateHelper')) :
             } else {
                 $response_body = wp_remote_retrieve_body($result);
                 return json_decode($response_body, true);
+            }
+        }
+
+
+        static function httpPost($url, $data, $header)
+        {
+
+            try {
+                $curl = curl_init($url);
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+
+                $response = curl_exec($curl);
+                $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+                if ($httpCode != 200) {
+                    $msg = "Return httpCode is {$httpCode} \n"
+                        . curl_error($curl) . "URL: " . $url;
+                    curl_close($curl);
+                    return $msg;
+                    //return $response;
+                } else {
+                    curl_close($curl);
+                    return $response;
+                }
+            } catch (\Throwable $th) {
+                throw $th;
             }
         }
     }
