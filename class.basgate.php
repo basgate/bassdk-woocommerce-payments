@@ -349,15 +349,12 @@ class WC_Basgate extends WC_Payment_Gateway
                 $header = array('Accept: text/plain', 'Content-Type: application/json');
                 $res = BasgateHelper::httpPost($url, json_encode($post_data), $header);
 
-                //TODO: Added Temporary
-                $data = $res;
-                //TODO: Disabled temporary
-                // if (!empty($res['body']['trxToken']) && $res['body']['authenticated'] == 'true') {
-                //     $data['trxToken'] = $res['body']['trxToken'];
-                //     $data['trxId'] = $res['body']['trxId'];
-                // } else {
-                //     $data['trxToken'] = "";
-                // }
+                if (!empty($res['body']['trxToken'])) {
+                    $data['trxToken'] = $res['body']['trxToken'];
+                    $data['trxId'] = $res['body']['trxId'];
+                } else {
+                    $data['trxToken'] = "";
+                }
             }
             return $data;
         } catch (\Throwable $th) {

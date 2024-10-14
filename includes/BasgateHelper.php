@@ -188,7 +188,7 @@ if (!class_exists('BasgateHelper')) :
                     //return $response;
                 } else {
                     curl_close($curl);
-                    return $response;
+                    return json_decode($response, true);
                 }
             } catch (\Throwable $th) {
                 throw $th;
