@@ -481,7 +481,7 @@ class WC_Basgate extends WC_Payment_Gateway
     public function process_payment($order_id)
     {
         BasgateHelper::basgate_log('==== STARTED process_payment : ' . print_r($order_id, true));
-        error_log(sprintf('==== STARTED process_payment order_id:%1$s' . $order_id));
+        error_log(sprintf('==== STARTED process_payment order_id: %1$s', $order_id));
 
         echo "==== STARTED process_payment ";
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
