@@ -338,6 +338,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
                 $header = array('Accept: text/plain', 'Content-Type: application/json');
                 $res = BasgateHelper::httpPost($url, $reqBody, $header);
+                BasgateHelper::basgate_log('====== blinkCheckoutSend $reqBody:' . $reqBody);
 
                 if (!empty($res['body']['trxToken'])) {
                     $data['trxToken'] = $res['body']['trxToken'];
@@ -360,6 +361,7 @@ class WC_Basgate extends WC_Payment_Gateway
             return new Exception("ERROR On blinkCheckoutSend :" . $th->getMessage());
         }
     }
+
     /**
      * Generate basgate button link
      **/
@@ -461,7 +463,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                             if(jQuery(".pg-basgate-checkout").length>1){
                                                 jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
                                             }
-                                            jQuery(".basgate-action-btn").show();
+                                            // jQuery(".basgate-action-btn").show();
                                             // }
                                             window.location="' . $data['callBackUrl'] . '"
                                             return result;
@@ -480,6 +482,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 </div>
 			';
     }
+
     /**
      * Process the payment and return the result
      **/
