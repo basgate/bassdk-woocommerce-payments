@@ -75,7 +75,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $checkout_page_id = get_option('woocommerce_checkout_page_id');
         $checkout_page_id = (int) $checkout_page_id > 0 ? $checkout_page_id : 7;
-        $webhookUrl = esc_url(get_site_url() . '/?wc-api=WC_Basgate&webhook=yes');
+        // $webhookUrl = esc_url(get_site_url() . '/?wc-api=WC_Basgate&webhook=yes');
         // $basgateDashboardLink = esc_url("https://web.basgate.com:9191/");
         // $basgatePaymentStatusLink = esc_url("https://web.basgate.com:9191/");
         // $basgateContactLink = esc_url("https://basgate.com");
@@ -338,6 +338,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 if (!empty($res['body']['trxToken'])) {
                     $data['trxToken'] = $res['body']['trxToken'];
                     $data['trxId'] = $res['body']['trxId'];
+                    $data['callBackUrl'] = $this->getCallbackUrl();
                 } else {
                     error_log(
                         sprintf(
@@ -457,6 +458,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                             }
                                             jQuery(".basgate-action-btn").show();
                                             // }
+                                            window.location="' . $data['callBackUrl'] . '"
                                             return result;
                                         } else {
                                             return null
