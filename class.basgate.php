@@ -300,7 +300,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
                     "orderType" => "PayBill",
-                    "callBackUrl" => $callBackURL,
+                    "callBackUrl" => '',
                     "customerInfo" => array(
                         "id" => $paramData['open_id'],
                         "name" => $paramData['cust_name'],
@@ -338,7 +338,9 @@ class WC_Basgate extends WC_Payment_Gateway
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
                 $header = array('Accept: text/plain', 'Content-Type: application/json');
                 $res = BasgateHelper::httpPost($url, $reqBody, $header);
+
                 BasgateHelper::basgate_log('====== blinkCheckoutSend $reqBody:' . $reqBody);
+                BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
 
                 if (!empty($res['body']['trxToken'])) {
                     $data['trxToken'] = $res['body']['trxToken'];
@@ -679,7 +681,7 @@ class WC_Basgate extends WC_Payment_Gateway
             exit;
         }
     }
-    
+
     /**
      * Show template while response 
      */
