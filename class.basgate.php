@@ -242,6 +242,7 @@ class WC_Basgate extends WC_Payment_Gateway
     {
         BasgateHelper::basgate_log('====== STARTED receipt_page');
         echo $this->generate_basgate_form($order);
+        echo $this->generate_basgate_callback($order);
     }
 
     public function getOrderInfo($order)
@@ -300,7 +301,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
                     "orderType" => "PayBill",
-                    "callBackUrl" => '',
+                    "callBackUrl" => $callBackURL,
                     "customerInfo" => array(
                         "id" => $paramData['open_id'],
                         "name" => $paramData['cust_name'],
@@ -316,7 +317,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "TotalPrice" => (float) $paramData['amount'],
                     )
                 );
-                $bodystr = json_encode($basgateParams["body"]);
+                $bodystr = json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
                 $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
@@ -433,56 +434,72 @@ class WC_Basgate extends WC_Payment_Gateway
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
 
-        return '<div class="pg-basgate-checkout">
-                    <script type="text/javascript">
-                        function invokeBlinkCheckoutPopup(){
-                            console.log("===== method called");
-                            var config = {
-                                    "appId":"' . $this->getSetting('bas_application_id') . '",
-                                    "orderId": "' . $order_id . '", 
-                                    "trxToken": "' . $data['trxToken'] . '", 
-                                    "amount":{
-                                        "value": "' . $getOrderInfo['amount'] . '",
-                                        "currency":"' . $getOrderInfo['currency'] . '"                                        
-                                    },
-                                };
-                            console.log("===== invokeBlinkCheckoutPopup config:",JSON.stringify(config));
-                            //TODO: Call Bas payment SDK Here.
-                            window.addEventListener("JSBridgeReady", async (event) => {
-                                console.log("===== invokeBlinkCheckoutPopup JSBridge existed");
-                                await getBasPayment(config)
-                                    .then(function (result) {
-                                        console.log("===== basPayment Result:", JSON.stringify(result));
-                                        if (result) {
-                                            // "notifyMerchant": function(eventName,data){
-                                            console.log("notifyMerchant handler function called");
-                                            // if(eventName=="APP_CLOSED")
-                                            // {
-                                            jQuery(".loading-basgate").hide();
-                                            jQuery(".basgate-woopg-loader").hide();
-                                            jQuery(".basgate-overlay").hide();
-                                            jQuery(".refresh-payment").show();
-                                            if(jQuery(".pg-basgate-checkout").length>1){
-                                                jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
-                                            }
-                                            // jQuery(".basgate-action-btn").show();
-                                            // }
-                                            window.location="' . $data['callBackUrl'] . '"
-                                            return result;
-                                        } else {
-                                            return null
-                                        }
-                                    }).catch(function onError(error){
-                                        console.log("error => ",error);
-                                    });
-                            },false);
-                        }
-                        invokeBlinkCheckoutPopup();
-			            // jQuery(document).ready(function(){ jQuery(".re-invoke").on("click",function(){ window.Basgate.CheckoutJS.invoke();  return false; }); });
-                    </script>
-                    ' . $wait_msg . '
-                </div>
-			';
+?>
+        <div class="pg-basgate-checkout">
+            <script type="text/javascript">
+                function invokeBlinkCheckoutPopup() {
+                    console.log("===== method called");
+                    var config = {
+                        "appId": "<?php esc_attr($this->getSetting('bas_application_id')); ?>",
+                        "orderId": "<?php esc_attr($order_id); ?>",
+                        "trxToken": "<?php esc_attr($data['trxToken']); ?>",
+                        "amount": {
+                            "value": "<?php esc_attr($getOrderInfo['amount']); ?>",
+                            "currency": "<?php esc_attr($getOrderInfo['currency']); ?>"
+                        },
+                    };
+                    console.log("===== invokeBlinkCheckoutPopup config:", JSON.stringify(config));
+                    window.addEventListener("JSBridgeReady", async (event) => {
+                        console.log("===== invokeBlinkCheckoutPopup JSBridge existed");
+                        await getBasPayment(config)
+                            .then(function(result) {
+                                console.log("===== basPayment Result:", JSON.stringify(result));
+                                if (result) {
+                                    console.log("notifyMerchant handler function called");
+                                    jQuery(".loading-basgate").hide();
+                                    jQuery(".basgate-woopg-loader").hide();
+                                    jQuery(".basgate-overlay").hide();
+                                    jQuery(".refresh-payment").show();
+                                    if (jQuery(".pg-basgate-checkout").length > 1) {
+                                        jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
+                                    }
+                                    basCheckOutCallback(result, "<?php esc_attr($data['callBackUrl']); ?>");
+                                } else {
+                                    return null
+                                }
+                            }).catch(function onError(error) {
+                                console.log("error => ", error);
+                            });
+                    }, false);
+                }
+                invokeBlinkCheckoutPopup();
+            </script>
+            <?php echo esc_js($wait_msg); ?>
+        </div>
+    <?php
+    }
+
+    public function generate_basgate_callback($order_id)
+    {
+        return ?>
+        <script>
+            // eslint-disable-next-line
+            function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
+                var $ = jQuery;
+                console.log("basCheckOutCallback() resData:", JSON.stringify(resData))
+
+                if (resData.hasOwnProperty('status')) {
+                    var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
+                    $.post(ajaxurl, {
+                        data: resData,
+                        nonce: nonce,
+                    }, function(data, textStatus) {});
+                } else {
+                    //TODO:Handle errors message return from getBasPayment 
+                }
+            }
+        </script>
+<?php
     }
 
     /**
