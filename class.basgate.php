@@ -342,7 +342,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 if (!empty($res['body']['trxToken'])) {
                     $data['trxToken'] = $res['body']['trxToken'];
                     $data['trxId'] = $res['body']['trxId'];
-                    $data['callBackUrl'] = $this->getCallbackUrl();
+                    $data['callBackUrl'] = $callBackURL;
                 } else {
                     error_log(
                         sprintf(
