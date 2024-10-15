@@ -41,7 +41,6 @@ class WC_Basgate extends WC_Payment_Gateway
      */
     private function initHooks()
     {
-        BasgateHelper::basgate_log('====== STARTED initHooks');
         add_action('init', array(&$this, 'check_basgate_response'));
         //update for woocommerce >2.0
         add_action('woocommerce_api_' . strtolower(get_class($this)), array($this, 'check_basgate_response'));
@@ -67,8 +66,6 @@ class WC_Basgate extends WC_Payment_Gateway
             $checkout_page_id = get_option('woocommerce_checkout_page_id');
             $checkout_page_id = (int) $checkout_page_id > 0 ? $checkout_page_id : 7;
             $url = get_site_url() . '?page_id=' . $checkout_page_id . '&wc-api=WC_Basgate';
-            BasgateHelper::basgate_log('====== getCallbackUrl $url:' . $url);
-
             return $url;
         }
     }
@@ -243,6 +240,7 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function receipt_page($order)
     {
+        BasgateHelper::basgate_log('====== STARTED receipt_page');
         echo $this->generate_basgate_form($order);
     }
 
@@ -288,6 +286,9 @@ class WC_Basgate extends WC_Payment_Gateway
                 wp_redirect(wp_login_url($current_url));
                 exit;
             }
+            $callBackURL = $this->getCallbackUrl();
+            $callBackURL = add_query_arg('ORDERID', $paramData['order_id'], $callBackURL);
+            BasgateHelper::basgate_log('====== blinkCheckoutSend $callBackURL:' . $callBackURL);
 
             $data = array();
             if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
@@ -299,7 +300,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
                     "orderType" => "PayBill",
-                    "callBackUrl" => $this->getCallbackUrl(),
+                    "callBackUrl" => $callBackURL,
                     "customerInfo" => array(
                         "id" => $paramData['open_id'],
                         "name" => $paramData['cust_name'],
@@ -499,10 +500,13 @@ class WC_Basgate extends WC_Payment_Gateway
         }
 
         if (version_compare(WOOCOMMERCE_VERSION, '2.1', '>=')) {
-            return array(
+            $data = array(
                 'result' => 'success',
                 'redirect' => add_query_arg('key', $order_key, $order->get_checkout_payment_url(true))
             );
+            BasgateHelper::basgate_log('==== STARTED process_payment  $data: ' . print_r($data, true));
+
+            return $data;
         } else if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
             return array(
                 'result' => 'success',
@@ -513,7 +517,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 )
             );
         } else {
-            return array(
+            $data = array(
                 'result' => 'success',
                 'redirect' => add_query_arg(
                     'order',
@@ -521,6 +525,9 @@ class WC_Basgate extends WC_Payment_Gateway
                     add_query_arg('key', $order_key, get_permalink(get_option('woocommerce_pay_page_id')))
                 )
             );
+            BasgateHelper::basgate_log('==== STARTED process_payment else $data: ' . print_r($data, true));
+
+            return $data;
         }
     }
 
@@ -536,7 +543,7 @@ class WC_Basgate extends WC_Payment_Gateway
         BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r($_REQUEST, true));
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . print_r($_POST, true));
 
-        if (!empty($_POST['STATUS'])) {
+        if (!empty($_POST['ORDERID'])) {
 
             //check order status before executing webhook call
             if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
