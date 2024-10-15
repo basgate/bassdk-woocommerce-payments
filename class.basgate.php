@@ -66,7 +66,10 @@ class WC_Basgate extends WC_Payment_Gateway
         } else {
             $checkout_page_id = get_option('woocommerce_checkout_page_id');
             $checkout_page_id = (int) $checkout_page_id > 0 ? $checkout_page_id : 7;
-            return get_site_url() . '?page_id=' . $checkout_page_id . '&wc-api=WC_Basgate';
+            $url = get_site_url() . '?page_id=' . $checkout_page_id . '&wc-api=WC_Basgate';
+            BasgateHelper::basgate_log('====== getCallbackUrl $url:' . $url);
+
+            return $url;
         }
     }
 
@@ -361,6 +364,7 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function generate_basgate_form($order_id)
     {
+        BasgateHelper::basgate_log('====== STARTED generate_basgate_form');
         global $woocommerce;
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
             $order = new WC_Order($order_id);
@@ -481,9 +485,7 @@ class WC_Basgate extends WC_Payment_Gateway
     public function process_payment($order_id)
     {
         BasgateHelper::basgate_log('==== STARTED process_payment : ' . print_r($order_id, true));
-        error_log(sprintf('==== STARTED process_payment order_id: %1$s', $order_id));
 
-        echo "==== STARTED process_payment ";
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
             $order = new WC_Order($order_id);
         } else {
