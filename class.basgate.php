@@ -410,7 +410,19 @@ class WC_Basgate extends WC_Payment_Gateway
 
         // $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
         // <script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
-        // $wait_msg = '';
+        $wait_msg = '<div id="basgate-pg-spinner" class="basgate-woopg-loader">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+                <div class="bounce4"></div>
+                <div class="bounce5">
+                </div>
+                <p class="loading-basgate">Loading Basgate</p>
+            </div>
+            <div class="basgate-overlay basgate-woopg-loader"></div>
+            <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
+                <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a>
+            </div>';
 
         $paramData = array(
             'amount' => $getOrderInfo['amount'],
@@ -429,18 +441,18 @@ class WC_Basgate extends WC_Payment_Gateway
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
 
-?>
-        <div class="pg-basgate-checkout">
+
+        return '<div class="pg-basgate-checkout">
             <script type="text/javascript">
                 function invokeBlinkCheckoutPopup() {
                     console.log("===== method called");
                     var config = {
-                        "appId": "<?php esc_attr($this->getSetting('bas_application_id')); ?>",
-                        "orderId": "<?php esc_attr($order_id); ?>",
-                        "trxToken": "<?php esc_attr($data['trxToken']); ?>",
+                        "appId": "' . $this->getSetting('bas_application_id') . '",
+                        "orderId": "' . $order_id . '",
+                        "trxToken": "' . $data['trxToken'] . '",
                         "amount": {
-                            "value": "<?php esc_attr($getOrderInfo['amount']); ?>",
-                            "currency": "<?php esc_attr($getOrderInfo['currency']); ?>"
+                            "value": "' . $getOrderInfo['amount'] . '",
+                            "currency": "' . $getOrderInfo['currency'] . '"
                         },
                     };
                     console.log("===== invokeBlinkCheckoutPopup config:", JSON.stringify(config));
@@ -458,7 +470,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     // if (jQuery(".pg-basgate-checkout").length > 1) {
                                     //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
                                     // }
-                                    basCheckOutCallback(result, "<?php esc_attr($data['callBackUrl']); ?>");
+                                    basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
                                 } else {
                                     return null
                                 }
@@ -469,28 +481,15 @@ class WC_Basgate extends WC_Payment_Gateway
                 }
                 invokeBlinkCheckoutPopup();
             </script>
-            <div id="basgate-pg-spinner" class="basgate-woopg-loader">
-                <div class="bounce1"></div>
-                <div class="bounce2"></div>
-                <div class="bounce3"></div>
-                <div class="bounce4"></div>
-                <div class="bounce5">
-                </div>
-                <p class="loading-basgate">Loading Basgate</p>
-            </div>
-            <div class="basgate-overlay basgate-woopg-loader"></div>
-            <!-- <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
-                <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a>
-            </div> -->
-        </div>
-    <?php
+            ' . $wait_msg . '
+        </div>';
     }
 
     public function generate_basgate_callback()
     {
         BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
 
-    ?>
+?>
         <script type="text/javascript">
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
