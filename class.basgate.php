@@ -529,9 +529,12 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function check_basgate_response()
     {
-        error_log('===== STARTED check_basgate_response');
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response');
 
         global $woocommerce;
+
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r($_REQUEST, true));
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . print_r($_POST, true));
 
         if (!empty($_POST['STATUS'])) {
 
