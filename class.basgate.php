@@ -441,7 +441,6 @@ class WC_Basgate extends WC_Payment_Gateway
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
 
-
         return '<div class="pg-basgate-checkout">
             <script type="text/javascript">
                 function invokeBlinkCheckoutPopup() {
@@ -570,29 +569,39 @@ class WC_Basgate extends WC_Payment_Gateway
     {
         BasgateHelper::basgate_log('====== STARTED check_basgate_response');
 
+        if (
+            ! isset($_POST['nonce']) ||
+            ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')
+        ) {
+            die(esc_html("ERROR check_basgate_response wrong nonce"));
+        }
+
+
         global $woocommerce;
 
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r($_REQUEST, true));
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . print_r($_POST, true));
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r(json_encode($_REQUEST), true));
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . print_r(json_encode($_POST), true));
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response _GET :' . print_r(json_encode($_GET), true));
 
-        if (!empty($_POST['ORDERID'])) {
-
+        if (isset($_POST['DATA'])) {
+            $data = $_POST['DATA'];
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["DATA"] :' . print_r($_POST['DATA'], true));
             //check order status before executing webhook call
-            if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
-                $getOrderId = !empty($_POST['ORDERID']) ? BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])) : 0;
-                if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
-                    $orderCheck = new WC_Order($getOrderId);
-                } else {
-                    $orderCheck = new woocommerce_order($getOrderId);
-                }
-                $result = getBasgateOrderData($getOrderId);
-                if (isset($result) && json_decode($result['basgate_response'], true)['STATUS'] == "TXN_SUCCESS") {
-                    exit;
-                }
-                if ($orderCheck->status == "processing" || $orderCheck->status == "completed") {
-                    exit;
-                }
-            }
+            // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
+            //     $getOrderId = !empty($_POST['ORDERID']) ? BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])) : 0;
+            //     if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
+            //         $orderCheck = new WC_Order($getOrderId);
+            //     } else {
+            //         $orderCheck = new woocommerce_order($getOrderId);
+            //     }
+            //     $result = getBasgateOrderData($getOrderId);
+            //     if (isset($result) && json_decode($result['basgate_response'], true)['STATUS'] == "TXN_SUCCESS") {
+            //         exit;
+            //     }
+            //     if ($orderCheck->status == "processing" || $orderCheck->status == "completed") {
+            //         exit;
+            //     }
+            // }
             //end webhook check
 
             if (!empty($_POST['CHECKSUMHASH'])) {
@@ -706,6 +715,8 @@ class WC_Basgate extends WC_Payment_Gateway
             }
 
             exit;
+        } else {
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response else !empty($_POST["STATUS"]) :' . print_r(!empty($_POST['STATUS']), true));
         }
     }
 
