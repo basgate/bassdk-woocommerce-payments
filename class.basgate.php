@@ -41,6 +41,7 @@ class WC_Basgate extends WC_Payment_Gateway
      */
     private function initHooks()
     {
+        BasgateHelper::basgate_log('====== STARTED initHooks');
         add_action('init', array(&$this, 'check_basgate_response'));
         //update for woocommerce >2.0
         add_action('woocommerce_api_' . strtolower(get_class($this)), array($this, 'check_basgate_response'));
@@ -228,7 +229,9 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function payment_fields()
     {
-        if ($this->description) echo wpautop(wptexturize($this->description));
+        if ($this->description) {
+            echo wpautop(wptexturize($this->description));
+        }
     }
 
 
@@ -475,7 +478,8 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function process_payment($order_id)
     {
-        error_log(sprintf('==== STARTED process_payment order_id:%1$s' , $order_id));
+        BasgateHelper::basgate_log('==== STARTED process_payment : ' . print_r($order_id, true));
+        error_log(sprintf('==== STARTED process_payment order_id:%1$s' . $order_id));
 
         echo "==== STARTED process_payment ";
         if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
@@ -521,8 +525,8 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function check_basgate_response()
     {
-        error_log("===== STARTED check_basgate_response");
-   
+        error_log('===== STARTED check_basgate_response');
+
         global $woocommerce;
 
         if (!empty($_POST['STATUS'])) {
