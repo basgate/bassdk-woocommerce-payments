@@ -340,8 +340,8 @@ class WC_Basgate extends WC_Payment_Gateway
                 $header = array('Accept: text/plain', 'Content-Type: application/json');
                 $res = BasgateHelper::httpPost($url, $reqBody, $header);
 
-                BasgateHelper::basgate_log('====== blinkCheckoutSend $reqBody:' . $reqBody);
-                BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
+                // BasgateHelper::basgate_log('====== blinkCheckoutSend $reqBody:' . $reqBody);
+                // BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
 
                 if (!empty($res['body']['trxToken'])) {
                     $data['trxToken'] = $res['body']['trxToken'];
@@ -429,7 +429,7 @@ class WC_Basgate extends WC_Payment_Gateway
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
 
-        return ?>
+?>
         <div class="pg-basgate-checkout">
             <script type="text/javascript">
                 function invokeBlinkCheckoutPopup() {
@@ -490,7 +490,7 @@ class WC_Basgate extends WC_Payment_Gateway
     {
         BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
 
-        return ?>
+    ?>
         <script type="text/javascript">
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
