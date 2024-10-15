@@ -22,7 +22,7 @@ node () {
             userRemoteConfigs: [[credentialsId: 'User-Token',url: """ "${githubUrl}" """]]])
     }
     stage('Deploy'){
-      dir("""${WORKSPACE}\\${projectName}""") {
+      dir("""${WORKSPACE}""") {
             bat """
             xcopy * "${iisApplicationPath}" /Y /E
             """
