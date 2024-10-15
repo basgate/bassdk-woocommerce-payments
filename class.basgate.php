@@ -580,7 +580,7 @@ class WC_Basgate extends WC_Payment_Gateway
         global $woocommerce;
 
         BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r(json_encode($_REQUEST), true));
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . print_r(json_encode($_POST), true));
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . json_encode($_POST));
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _GET :' . print_r(json_encode($_GET), true));
 
         if (isset($_POST['DATA'])) {
