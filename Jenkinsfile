@@ -28,10 +28,10 @@ node () {
             """
       }
     }
-    stage('Folder Security') {
-            bat """
-            icacls "${iisApplicationPath}" /grant ${userName}:(OI)(CI)F /T
-            """
-    }
+    // stage('Folder Security') {
+    //         bat """
+    //         icacls "${iisApplicationPath}" /grant ${userName}:(OI)(CI)F /T
+    //         """
+    // }
 }
 
