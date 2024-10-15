@@ -500,7 +500,7 @@ function woocommerce_basgate_init()
     add_filter('woocommerce_payment_gateways', 'woocommerce_add_basgate_gateway');
     function woocommerce_add_basgate_gateway($methods)
     {
-        $methods[] = 'WC_basgate';
+        $methods[] = 'WC_Basgate';
         return $methods;
     }
 
