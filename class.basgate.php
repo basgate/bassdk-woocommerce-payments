@@ -410,12 +410,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         // $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
         // <script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
-        $wait_msg = '
-                    <div id="basgate-pg-spinner" class="basgate-woopg-loader"><div class="bounce1"></div>
-                    <div class="bounce2"></div><div class="bounce3"></div><div class="bounce4"></div><div class="bounce5">
-                    </div><p class="loading-basgate">Loading Basgate</p></div><div class="basgate-overlay basgate-woopg-loader"></div>
-                    <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
-                    <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a></div>';
+        // $wait_msg = '';
 
         $paramData = array(
             'amount' => $getOrderInfo['amount'],
@@ -434,7 +429,7 @@ class WC_Basgate extends WC_Payment_Gateway
             throw new Exception(__('Could not retrieve the Transaction Token, please try again.', BasgateConstants::ID));
         }
 
-?>
+        return ?>
         <div class="pg-basgate-checkout">
             <script type="text/javascript">
                 function invokeBlinkCheckoutPopup() {
@@ -460,9 +455,9 @@ class WC_Basgate extends WC_Payment_Gateway
                                     jQuery(".basgate-woopg-loader").hide();
                                     jQuery(".basgate-overlay").hide();
                                     jQuery(".refresh-payment").show();
-                                    if (jQuery(".pg-basgate-checkout").length > 1) {
-                                        jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
-                                    }
+                                    // if (jQuery(".pg-basgate-checkout").length > 1) {
+                                    //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
+                                    // }
                                     basCheckOutCallback(result, "<?php esc_attr($data['callBackUrl']); ?>");
                                 } else {
                                     return null
@@ -474,15 +469,29 @@ class WC_Basgate extends WC_Payment_Gateway
                 }
                 invokeBlinkCheckoutPopup();
             </script>
-            <?php echo esc_js($wait_msg); ?>
+            <div id="basgate-pg-spinner" class="basgate-woopg-loader">
+                <div class="bounce1"></div>
+                <div class="bounce2"></div>
+                <div class="bounce3"></div>
+                <div class="bounce4"></div>
+                <div class="bounce5">
+                </div>
+                <p class="loading-basgate">Loading Basgate</p>
+            </div>
+            <div class="basgate-overlay basgate-woopg-loader"></div>
+            <!-- <div class="basgate-action-btn"><a href="" class="refresh-payment re-invoke">Pay Now</a>
+                <a href="' . wc_get_checkout_url() . '" class="refresh-payment">Cancel</a>
+            </div> -->
         </div>
     <?php
     }
 
-    public function generate_basgate_callback($order_id)
+    public function generate_basgate_callback()
     {
+        BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
+
         return ?>
-        <script>
+        <script type="text/javascript">
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
                 var $ = jQuery;
@@ -493,7 +502,9 @@ class WC_Basgate extends WC_Payment_Gateway
                     $.post(ajaxurl, {
                         data: resData,
                         nonce: nonce,
-                    }, function(data, textStatus) {});
+                    }, function(data, textStatus) {
+                        console.log('===== basCheckOutCallback data:', JSON.stringify(data))
+                    });
                 } else {
                     //TODO:Handle errors message return from getBasPayment 
                 }
