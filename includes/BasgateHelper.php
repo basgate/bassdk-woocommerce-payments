@@ -209,16 +209,17 @@ if (!class_exists('BasgateHelper')) :
             }
         }
 
-       static function basgate_log( $message ) {
-            if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+        static function basgate_log($message)
+        {
+            if (! defined('WP_DEBUG') || ! WP_DEBUG) {
                 return; // Only log if WP_DEBUG is enabled
             }
-        
-            $log_file = plugin_dir_path( __FILE__ ) . 'my-custom-gateway-log.txt'; // Specify the log file path
-            $timestamp = current_time( 'Y-m-d H:i:s' );
+
+            $log_file = plugin_dir_path(__FILE__) . 'my-custom-gateway-log.txt'; // Specify the log file path
+            $timestamp = current_time('Y-m-d H:i:s');
             $log_entry = "[$timestamp] $message\n";
-        
-            file_put_contents( $log_file, $log_entry, FILE_APPEND );
+
+            file_put_contents($log_file, $log_entry, FILE_APPEND);
         }
     }
 endif;

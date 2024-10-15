@@ -322,7 +322,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
     {
         BasgateHelper::basgate_log('====== STARTED woocommerce_basgate_add_css_js');
 
-        ?>
+?>
         <style>
             #basgate_payment_area .message {
                 float: left;
@@ -425,7 +425,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-        <?php
+    <?php
     }
 
 
