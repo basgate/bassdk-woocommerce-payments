@@ -159,7 +159,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
     //Function changes for woocommerce HPOS features
     function add_basgate_payment_block()
     {
-
+        BasgateHelper::basgate_log('====== STARTED add_basgate_payment_block');
         global $wpdb;
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
         $post_id1 = sanitize_text_field(isset($_GET['post']) ? $_GET['post'] : '');
@@ -194,6 +194,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
     function _basgate_response_table($post = array(), $data = array())
     {
+        BasgateHelper::basgate_log('====== STARTED _basgate_response_table');
         //Echoing HTML safely start
         global $allowedposttags;
         $allowed_atts = array(
@@ -424,7 +425,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-            <?php
+        <?php
     }
 
 
@@ -432,7 +433,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
     function savetxnstatus()
     {
-
+        BasgateHelper::basgate_log('====== STARTED savetxnstatus');
         if (!wp_verify_nonce($_POST['basgate_woo_nonce'], 'basgate_woo_nonce')) die('You are not authorised!');
 
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
@@ -469,6 +470,8 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
      */
     function saveTxnResponse($order_id, $id = false, $data  = array())
     {
+        BasgateHelper::basgate_log('====== STARTED saveTxnResponse');
+
         global $wpdb;
         if (empty($data['STATUS'])) return false;
 

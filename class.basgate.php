@@ -676,6 +676,7 @@ class WC_Basgate extends WC_Payment_Gateway
             exit;
         }
     }
+    
     /**
      * Show template while response 
      */
