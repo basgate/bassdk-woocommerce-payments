@@ -4,7 +4,7 @@
  * Plugin Name: Bassdk WooCommerce Payment
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية
- * Version: 0.1.113
+ * Version: 0.1.114
  * Author: Basgate Super APP 
  * Author URI: https://basgate.com/
  * Developer: Abdullah AlAnsi
@@ -113,7 +113,7 @@ function install_basgate_plugin()
 			`order_id` int(11) NOT NULL,
 			`basgate_order_id` VARCHAR(255) NOT NULL,
 			`transaction_id` VARCHAR(255) NOT NULL,
-			`status` ENUM('0', '1')  DEFAULT '0' NOT NULL,
+			`status` VARCHAR(255) NOT NULL,
 			`basgate_response` TEXT,
 			`date_added` DATETIME NOT NULL,
 			`date_modified` DATETIME NOT NULL,
@@ -475,16 +475,16 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         global $wpdb;
         if (empty($data['status'])) return false;
 
-        $status             = (!empty($data['status']) && (int)$data['status'] > 0) ? (int)$data['status'] : 0;
+        $status             = (!empty($data['status'])) ? (int)$data['status'] : '0';
         $basgate_order_id     = (!empty($data['orderId']) ? $data['orderId'] : '');
         $transaction_id     = (!empty($data['trxId']) ? $data['trxId'] : '');
 
         if ($id !== false) {
-            $sql =  "UPDATE `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . (int)$status . "', `basgate_response` = '" . json_encode($data) . "', `date_modified` = NOW() WHERE `id` = '" . (int)$id . "' AND `basgate_order_id` = '" . $basgate_order_id . "'";
+            $sql =  "UPDATE `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . json_encode($data) . "', `date_modified` = NOW() WHERE `id` = '" . (int)$id . "' AND `basgate_order_id` = '" . $basgate_order_id . "'";
             $wpdb->query($sql);
             return $id;
         } else {
-            $sql =  "INSERT INTO `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . (int)$status . "', `basgate_response` = '" . json_encode($data) . "', `date_added` = NOW(), `date_modified` = NOW()";
+            $sql =  "INSERT INTO `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . json_encode($data) . "', `date_added` = NOW(), `date_modified` = NOW()";
             $wpdb->query($sql);
             return $wpdb->insert_id;
         }

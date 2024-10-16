@@ -690,7 +690,9 @@ class WC_Basgate extends WC_Payment_Gateway
                         if (!isset($resParams['status'])) {
                             $resParams = $data;
                         } else {
-                            $reqParams = isset($resParams['data']) ? $resParams['data'] : $resParams;
+                            //TODO: Add checksum verify
+                            $head=isset($resParams['head']) ? $resParams['head'] : '';
+                            $reqParams = isset($resParams['body']) ? $resParams['body'] : $resParams;
                         }
 
                         BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS reqParams:' . json_encode($reqParams));
@@ -709,7 +711,7 @@ class WC_Basgate extends WC_Payment_Gateway
                             $trxStatusId = (int)$resParams['trxStatusId'];
                             BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus);
 
-                            if ($trxStatus == 'success' || $trxStatusId == 1003) {
+                            if ($trxStatus == 'completed' || $trxStatusId == 1003) {
 
                                 if ($order->status !== 'completed') {
 
