@@ -495,14 +495,14 @@ class WC_Basgate extends WC_Payment_Gateway
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
                 var $ = jQuery;
-                console.log("basCheckOutCallback() resData:", JSON.stringify(resData))
-
+                console.log("==== STARTED basCheckOutCallback() ")
                 if (resData.hasOwnProperty('trxId')) {
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
                     $.post(ajaxurl, {
                         data: resData,
                         nonce: nonce,
                     }, function(data, textStatus) {
+                        console.log('===== basCheckOutCallback textStatus:', textStatus)
                         console.log('===== basCheckOutCallback data:', JSON.stringify(data))
                     });
                 } else {
