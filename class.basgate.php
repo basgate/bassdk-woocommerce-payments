@@ -712,17 +712,17 @@ class WC_Basgate extends WC_Payment_Gateway
                             $post_checksum = isset($head['signature']) ? $head['signature'] : '';
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $post_checksum:' . $post_checksum);
                             $statusData = isset($resParams['body']) ? $resParams['body'] : $resParams;
-                            $statusData['orderId'] = isset($resParams['order']['orderId']) ? $resParams['order']['orderId'] : $resParams['orderId'];
+                            $statusData['orderId'] = isset($statusData['order']['orderId']) ? $statusData['order']['orderId'] : $order_id;
                             $isValidChecksum = BasgateChecksum::verifySignature(json_encode($statusData), $this->getSetting('bas_merchant_key'), $post_checksum);
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $isValidChecksum:' . $isValidChecksum);
                         }
 
                         BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS statusData:' . json_encode($statusData));
-                        BasgateHelper::basgate_log('====== check_basgate_response trxStatus:' . $statusData['trxStatus']);
+                        BasgateHelper::basgate_log('====== check_basgate_response trxStatus:' . $statusData['trxStatus'] . ' , orderId: ' . $statusData['orderId']);
 
                         /* save basgate response in db */
                         if (BasgateConstants::SAVE_BASGATE_RESPONSE && isset($statusData['trxStatusId'])) {
-                            saveTxnResponse(BasgateHelper::getOrderId($statusData['orderId']), $order_data_id, $statusData);
+                            saveTxnResponse(BasgateHelper::getOrderId(sanitize_text_field($statusData['orderId'])), $order_data_id, $statusData);
                         }
                         /* save basgate response in db */
 
