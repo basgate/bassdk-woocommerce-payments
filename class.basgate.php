@@ -723,9 +723,10 @@ class WC_Basgate extends WC_Payment_Gateway
                             $trxStatus = strtolower($statusData['trxStatus']);
                             $trxStatusId = (int)$statusData['trxStatusId'];
                             $trxId = $statusData['trxId'];
-                            BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus . ' , $trxStatusId:' . $trxStatusId);
 
                             if ($trxStatus == 'completed' || $trxStatusId == 1003) {
+
+                                BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus . ' , $order->status:' . $order->status);
 
                                 if ($order->status !== 'completed') {
 
@@ -766,12 +767,14 @@ class WC_Basgate extends WC_Payment_Gateway
                 }
 
                 $redirect_url = $this->redirectUrl($order);
+                BasgateHelper::basgate_log('====== check_basgate_response $redirect_url:' . $redirect_url);
 
                 $this->setMessages($this->msg['message'], $this->msg['class']);
 
                 if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
                     echo "Webhook Received";
                 } else {
+                    BasgateHelper::basgate_log('====== check_basgate_response else wp_redirect($redirect_url):' . $redirect_url);
                     wp_redirect($redirect_url);
                 }
             }
@@ -797,6 +800,8 @@ class WC_Basgate extends WC_Payment_Gateway
 
     private function setMessages($message = '', $class = '')
     {
+        BasgateHelper::basgate_log('====== STARTED setMessages $class:' . $class . ' , $message:' . $message);
+
         global $woocommerce;
         if (function_exists('wc_add_notice')) {
             wc_add_notice($message, $class);
@@ -812,6 +817,8 @@ class WC_Basgate extends WC_Payment_Gateway
 
     private function redirectUrl($order)
     {
+        BasgateHelper::basgate_log('====== STARTED redirectUrl ');
+
         global $woocommerce;
         // Redirection after basgate payments response.
         if (!empty($order)) {
