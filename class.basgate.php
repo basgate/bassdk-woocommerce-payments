@@ -52,7 +52,6 @@ class WC_Basgate extends WC_Payment_Gateway
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
     }
 
-
     private function getSetting($key)
     {
         return $this->settings[$key];
@@ -338,7 +337,15 @@ class WC_Basgate extends WC_Payment_Gateway
 
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
                 $header = array('Accept: text/plain', 'Content-Type: application/json');
-                $res = BasgateHelper::httpPost($url, $reqBody, $header);
+
+                // $res = BasgateHelper::httpPost($url, $reqBody, $header);
+                /* number of retries untill cURL gets success */
+                $retry = 1;
+                do {
+                    $res = BasgateHelper::httpPost($url, $reqBody, $header);
+                    $retry++;
+                } while (!$res['status'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+                /* number of retries untill cURL gets success */
 
                 // BasgateHelper::basgate_log('====== blinkCheckoutSend $reqBody:' . $reqBody);
                 // BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
@@ -473,7 +480,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     // if (jQuery(".pg-basgate-checkout").length > 1) {
                                     //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
                                     // }
-                                    basCheckOutCallback(result.data, "' . $data['callBackUrl'] . '");
+                                    basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
                                 } else {
                                     return null
                                 }
@@ -497,11 +504,12 @@ class WC_Basgate extends WC_Payment_Gateway
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
                 var $ = jQuery;
-                console.log("==== STARTED basCheckOutCallback() ")
-                if (resData.hasOwnProperty('trxId')) {
+                console.log("==== STARTED basCheckOutCallback() resData.status:", resData.status)
+                if (resData.hasOwnProperty('status')) {
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
                     $.post(ajaxurl, {
-                        data: resData,
+                        data: resData.data,
+                        status: resData.status,
                         nonce: nonce,
                     }, function(data, textStatus) {
                         console.log('===== basCheckOutCallback textStatus:', textStatus)
@@ -571,22 +579,16 @@ class WC_Basgate extends WC_Payment_Gateway
      **/
     public function check_basgate_response()
     {
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response');
-
-        if (
-            ! isset($_POST['nonce']) ||
-            ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')
-        ) {
-            die(esc_html("ERROR check_basgate_response wrong nonce"));
-        }
-
-
         global $woocommerce;
 
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . json_encode($_POST));
 
+        if (! isset($_POST['nonce']) ||            ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')) {
+            die(esc_html("ERROR check_basgate_response wrong nonce"));
+        }
+
         if (!empty($_POST['data'])) {
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["data"] :' . $_POST['data']);
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["data"] :' . json_encode($_POST['data']));
             $data = $_POST['data'];
             // $data = isset($data['data']) ? json_decode($data['data'], true) : null;
             $status = isset($data['status']) ? $data['status'] : '';
@@ -701,8 +703,11 @@ class WC_Basgate extends WC_Payment_Gateway
                         /* save basgate response in db */
                         if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($resParams['trxStatusId'])) {
                             saveTxnResponse(BasgateHelper::getOrderId($resParams['orderId']), $order_data_id, $resParams);
+                            BasgateHelper::basgate_log('====== check_basgate_response trxStatusId:' . $resParams['trxStatusId']);
                         }
                         /* save basgate response in db */
+
+                        BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $resParams['trxStatus'] . ' , trxStatusId:' . $resParams['trxStatusId']);
 
                         // if curl failed to fetch response
                         if (!isset($resParams['trxStatusId'])) {
@@ -710,7 +715,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         } else {
                             $trxStatus = strtolower($resParams['trxStatus']);
                             $trxStatusId = (int)$resParams['trxStatusId'];
-                            BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus);
+                            BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus . ' , $trxStatusId:' . $trxStatusId);
 
                             if ($trxStatus == 'completed' || $trxStatusId == 1003) {
 
