@@ -651,7 +651,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     }
 
                     if (!empty($order)) {
-                        BasgateHelper::basgate_log('====== check_basgate_response $order :' . print_r($order, true));
+                        BasgateHelper::basgate_log('====== check_basgate_response isset($order) :' . isset($order));
                         $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
                         $requestTimestamp = (string)time();
                         $reqParams = array(
@@ -695,7 +695,10 @@ class WC_Basgate extends WC_Payment_Gateway
                         } else {
                             //TODO: Add checksum verify
                             $head = isset($resParams['head']) ? $resParams['head'] : '';
+                            $post_checksum = isset($head['signature']) ? $head['signature'] : '';
                             $reqParams = isset($resParams['body']) ? $resParams['body'] : $resParams;
+                            $isValidChecksum = BasgateChecksum::verifySignature($reqParams, $this->getSetting('bas_merchant_key'), $post_checksum);
+                            BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $isValidChecksum:' . $isValidChecksum);
                         }
 
                         BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS reqParams:' . json_encode($reqParams));
