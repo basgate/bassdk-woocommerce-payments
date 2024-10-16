@@ -473,13 +473,13 @@ class WC_Basgate extends WC_Payment_Gateway
                             .then(function(result) {
                                 console.log("===== basPayment Result:", JSON.stringify(result));
                                 if (result && result.status == 1) {
-                                    jQuery(".loading-basgate").hide();
-                                    jQuery(".basgate-woopg-loader").hide();
-                                    jQuery(".basgate-overlay").hide();
-                                    jQuery(".refresh-payment").show();
-                                    // if (jQuery(".pg-basgate-checkout").length > 1) {
-                                    //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
-                                    // }
+                                    // jQuery(".loading-basgate").hide();
+                                    // jQuery(".basgate-woopg-loader").hide();
+                                    // jQuery(".basgate-overlay").hide();
+                                    // jQuery(".refresh-payment").show();
+                                    // // if (jQuery(".pg-basgate-checkout").length > 1) {
+                                    // //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
+                                    // // }
                                     basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
                                 } else {
                                     return null
@@ -689,6 +689,8 @@ class WC_Basgate extends WC_Payment_Gateway
                             $retry++;
                         } while (!$resParams['status'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
                         /* number of retries untill cURL gets success */
+
+                        BasgateHelper::basgate_log('====== check_basgate_response $resParams:' . json_encode($resParams));
 
                         if (!isset($resParams['status'])) {
                             $resParams = $data;
