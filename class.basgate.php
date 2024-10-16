@@ -696,11 +696,12 @@ class WC_Basgate extends WC_Payment_Gateway
                             $resParams = $data;
                         } else {
                             //TODO: Add checksum verify
-                            // $head = isset($resParams['head']) ? $resParams['head'] : '';
-                            // $post_checksum = isset($head['signature']) ? $head['signature'] : '';
+                            $head = isset($resParams['head']) ? $resParams['head'] : '';
+                            $post_checksum = isset($head['signature']) ? $head['signature'] : '';
+                            BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $post_checksum:' . $post_checksum);
                             $reqParams = isset($resParams['body']) ? $resParams['body'] : $resParams;
-                            // $isValidChecksum = BasgateChecksum::verifySignature($reqParams, $this->getSetting('bas_merchant_key'), $post_checksum);
-                            // BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $isValidChecksum:' . $isValidChecksum);
+                            $isValidChecksum = BasgateChecksum::verifySignature(json_encode($reqParams), $this->getSetting('bas_merchant_key'), $post_checksum);
+                            BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $isValidChecksum:' . $isValidChecksum);
                         }
 
                         BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS reqParams:' . json_encode($reqParams));
