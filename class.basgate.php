@@ -649,7 +649,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     }
 
                     if (!empty($order)) {
-                        BasgateHelper::basgate_log('====== check_basgate_response $order :' . json_encode($order));
+                        BasgateHelper::basgate_log('====== check_basgate_response $order :' . print_r($order, true));
                         $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
                         $requestTimestamp = (string)time();
                         $reqParams = array(
