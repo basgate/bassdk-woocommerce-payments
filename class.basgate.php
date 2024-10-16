@@ -544,14 +544,14 @@ class WC_Basgate extends WC_Payment_Gateway
         }
 
         if (version_compare(WOOCOMMERCE_VERSION, '2.1', '>=')) {
-            $data = array(
-                'result' => 'success',
-                'redirect' => $this->get_return_url($order)
-            );
             // $data = array(
             //     'result' => 'success',
-            //     'redirect' => add_query_arg('key', $order_key, $order->get_checkout_payment_url(true))
+            //     'redirect' => $this->get_return_url($order)
             // );
+            $data = array(
+                'result' => 'success',
+                'redirect' => add_query_arg('key', $order_key, $order->get_checkout_payment_url(true))
+            );
             BasgateHelper::basgate_log('==== STARTED process_payment  $data: ' . print_r($data, true));
 
             return $data;
