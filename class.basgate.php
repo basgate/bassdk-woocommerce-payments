@@ -584,13 +584,13 @@ class WC_Basgate extends WC_Payment_Gateway
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . json_encode($_POST));
 
         if (isset($_POST['data'])) {
-            $post = $_POST['data'];
-            $data = isset($post['data']) ? json_decode($post['data'], true) : null;
-            $status = isset($post['status']) ? $post['status'] : 0;
+            $data = json_decode($_POST['data']);
+            // $data = isset($data['data']) ? json_decode($data['data'], true) : null;
+            $status = isset($data['status']) ? $data['status'] : '';
 
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $$status :' . $$status);
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $status :' . $status);
 
-            if ((string)$status == '1') {
+            if (!empty($status)) {
                 BasgateHelper::basgate_log('====== check_basgate_response $data :' . json_encode($data));
                 //check order status before executing webhook call
                 // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
@@ -620,14 +620,14 @@ class WC_Basgate extends WC_Payment_Gateway
                 // $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
                 $isValidChecksum = !empty($data['authenticated']) && $data['authenticated'] === "true";
                 $transaction_id     = !empty($data['trxId']) ? $data['trxId'] : '';
-                $responseDescription = (!empty($post['messages'])) ? sanitize_text_field(implode(' -- ', $post['messages'])) : "";
+                $responseDescription = (!empty($data['messages'])) ? sanitize_text_field(implode(' -- ', $data['messages'])) : "";
 
                 if ($isValidChecksum === true) {
                     $order_id = !empty($data['orderId']) ? BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])) : 0;
                     BasgateHelper::basgate_log('====== check_basgate_response $order_id :' . $order_id);
 
                     /* save basgate response in db */
-                    if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($post['status'])) {
+                    if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($data['status'])) {
                         $order_data_id = saveTxnResponse(BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])), $data);
                         BasgateHelper::basgate_log('====== check_basgate_response $order_data_id :' . $order_data_id);
                     }
