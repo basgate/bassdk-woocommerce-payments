@@ -706,10 +706,11 @@ class WC_Basgate extends WC_Payment_Gateway
 
                         BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS reqParams:' . json_encode($reqParams));
 
+                        BasgateHelper::basgate_log('====== check_basgate_response trxStatusId:' . $resParams['trxStatusId']);
+
                         /* save basgate response in db */
                         if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($resParams['trxStatusId'])) {
                             saveTxnResponse(BasgateHelper::getOrderId($resParams['orderId']), $order_data_id, $resParams);
-                            BasgateHelper::basgate_log('====== check_basgate_response trxStatusId:' . $resParams['trxStatusId']);
                         }
                         /* save basgate response in db */
 
