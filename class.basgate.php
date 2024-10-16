@@ -678,6 +678,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
                         $url = BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment'));
                         $header = array('Accept: text/plain', 'Content-Type: application/json');
+                        BasgateHelper::basgate_log('====== check_basgate_response $reqBody:' . $reqBody);
 
                         /* number of retries untill cURL gets success */
                         $retry = 1;
