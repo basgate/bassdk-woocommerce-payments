@@ -690,7 +690,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         } while (!$resParams['status'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
                         /* number of retries untill cURL gets success */
 
-                        BasgateHelper::basgate_log('====== check_basgate_response $resParams:' . json_encode($resParams));
+                        BasgateHelper::basgate_log('====== check_basgate_response $retry:' . $retry . ' , $resParams:' . json_encode($resParams));
 
                         if (!isset($resParams['status'])) {
                             $resParams = $data;
@@ -699,29 +699,30 @@ class WC_Basgate extends WC_Payment_Gateway
                             $head = isset($resParams['head']) ? $resParams['head'] : '';
                             $post_checksum = isset($head['signature']) ? $head['signature'] : '';
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $post_checksum:' . $post_checksum);
-                            $reqParams = isset($resParams['body']) ? $resParams['body'] : $resParams;
-                            $reqParams['orderId'] = isset($resParams['order']['orderId']) ? $resParams['order']['orderId'] : $resParams['orderId'];
-                            $isValidChecksum = BasgateChecksum::verifySignature(json_encode($reqParams), $this->getSetting('bas_merchant_key'), $post_checksum);
+                            $statusData = isset($resParams['body']) ? $resParams['body'] : $resParams;
+                            $statusData['orderId'] = isset($resParams['order']['orderId']) ? $resParams['order']['orderId'] : $resParams['orderId'];
+                            $isValidChecksum = BasgateChecksum::verifySignature(json_encode($statusData), $this->getSetting('bas_merchant_key'), $post_checksum);
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $isValidChecksum:' . $isValidChecksum);
                         }
 
-                        BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS reqParams:' . json_encode($reqParams));
-                        BasgateHelper::basgate_log('====== check_basgate_response trxStatus:' . $resParams['trxStatus']);
+                        BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS statusData:' . json_encode($statusData));
+                        BasgateHelper::basgate_log('====== check_basgate_response trxStatus:' . $statusData['trxStatus']);
 
                         /* save basgate response in db */
-                        if (BasgateConstants::SAVE_BASGATE_RESPONSE && isset($resParams['trxStatusId'])) {
-                            saveTxnResponse(BasgateHelper::getOrderId($resParams['order']['orderId']), $order_data_id, $resParams);
+                        if (BasgateConstants::SAVE_BASGATE_RESPONSE && isset($statusData['trxStatusId'])) {
+                            saveTxnResponse(BasgateHelper::getOrderId($statusData['order']['orderId']), $order_data_id, $statusData);
                         }
                         /* save basgate response in db */
 
-                        BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $resParams['trxStatus'] . ' , trxStatusId:' . $resParams['trxStatusId']);
+                        BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $statusData['trxStatus'] . ' , trxStatusId:' . $statusData['trxStatusId']);
 
                         // if curl failed to fetch response
-                        if (!isset($resParams['trxStatusId'])) {
+                        if (!isset($statusData['trxStatusId'])) {
                             $this->fireFailure($order, __(BasgateConstants::ERROR_SERVER_COMMUNICATION));
                         } else {
-                            $trxStatus = strtolower($resParams['trxStatus']);
-                            $trxStatusId = (int)$resParams['trxStatusId'];
+                            $trxStatus = strtolower($statusData['trxStatus']);
+                            $trxStatusId = (int)$statusData['trxStatusId'];
+                            $trxId = $statusData['trxId'];
                             BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus . ' , $trxStatusId:' . $trxStatusId);
 
                             if ($trxStatus == 'completed' || $trxStatusId == 1003) {
@@ -732,10 +733,10 @@ class WC_Basgate extends WC_Payment_Gateway
                                     $this->msg['class'] = 'success';
 
                                     if ($order->status !== 'processing') {
-                                        $order->payment_complete($transaction_id);
+                                        $order->payment_complete($trxId);
                                         $order->reduce_order_stock();
 
-                                        $message = "<br/>" . sprintf(__(BasgateConstants::TRANSACTION_ID), $resParams['TXNID']) . "<br/>" . sprintf(__(BasgateConstants::BASGATE_ORDER_ID), $resParams['orderId']);
+                                        $message = "<br/>" . sprintf(__(BasgateConstants::TRANSACTION_ID), $statusData['trxId']) . "<br/>" . sprintf(__(BasgateConstants::BASGATE_ORDER_ID), $statusData['orderId']);
                                         $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
                                         $order->add_order_note($this->msg['message'] . $message);
                                         $woocommerce->cart->empty_cart();
