@@ -631,7 +631,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
                     /* save basgate response in db */
                     if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($data['status'])) {
-                        $order_data_id = saveTxnResponse(BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])), $data);
+                        $order_data_id = saveTxnResponse(BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])), false, $data);
                         BasgateHelper::basgate_log('====== check_basgate_response $order_data_id :' . $order_data_id);
                     }
                     /* save basgate response in db */
@@ -691,7 +691,7 @@ class WC_Basgate extends WC_Payment_Gateway
                             $resParams = $data;
                         } else {
                             //TODO: Add checksum verify
-                            $head=isset($resParams['head']) ? $resParams['head'] : '';
+                            $head = isset($resParams['head']) ? $resParams['head'] : '';
                             $reqParams = isset($resParams['body']) ? $resParams['body'] : $resParams;
                         }
 
