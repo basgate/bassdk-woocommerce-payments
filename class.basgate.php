@@ -480,7 +480,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     // // if (jQuery(".pg-basgate-checkout").length > 1) {
                                     // //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
                                     // // }
-                                    basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
+                                  return basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
                                 } else {
                                     return null
                                 }
@@ -514,6 +514,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     }, function(data, textStatus) {
                         console.log('===== basCheckOutCallback textStatus:', textStatus)
                         console.log('===== basCheckOutCallback data:', JSON.stringify(data))
+                        return data;
                     });
                 } else {
                     //TODO:Handle errors message return from getBasPayment 
@@ -545,8 +546,12 @@ class WC_Basgate extends WC_Payment_Gateway
         if (version_compare(WOOCOMMERCE_VERSION, '2.1', '>=')) {
             $data = array(
                 'result' => 'success',
-                'redirect' => add_query_arg('key', $order_key, $order->get_checkout_payment_url(true))
+                'redirect' => $this->get_return_url($order)
             );
+            // $data = array(
+            //     'result' => 'success',
+            //     'redirect' => add_query_arg('key', $order_key, $order->get_checkout_payment_url(true))
+            // );
             BasgateHelper::basgate_log('==== STARTED process_payment  $data: ' . print_r($data, true));
 
             return $data;
@@ -726,7 +731,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
                             if ($trxStatus == 'completed' || $trxStatusId == 1003) {
 
-                                BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus . ' , $order->status:' . $order->status);
+                                BasgateHelper::basgate_log('====== check_basgate_response $trxStatus : ' . $trxStatus . ' , $order->status : ' . $order->status);
 
                                 if ($order->status !== 'completed') {
 
