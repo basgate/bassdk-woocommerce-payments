@@ -4,7 +4,7 @@
  * Plugin Name: Bassdk WooCommerce Payment
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية
- * Version: 0.1.114
+ * Version: 0.1.115
  * Author: Basgate Super APP 
  * Author URI: https://basgate.com/
  * Developer: Abdullah AlAnsi
@@ -470,7 +470,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
      */
     function saveTxnResponse($order_id, $id = false, $data  = array())
     {
-        BasgateHelper::basgate_log('====== STARTED saveTxnResponse');
+        BasgateHelper::basgate_log('====== STARTED saveTxnResponse $order_id :' . $order_id . ' , $id:' . $id);
 
         global $wpdb;
         if (empty($data['status'])) return false;
@@ -479,14 +479,19 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         $basgate_order_id     = (!empty($data['orderId']) ? $data['orderId'] : '');
         $transaction_id     = (!empty($data['trxId']) ? $data['trxId'] : '');
 
+        BasgateHelper::basgate_log('====== STARTED saveTxnResponse $status:' . $status . ' , $basgate_order_id:' . $basgate_order_id . ' , $transaction_id:' . $transaction_id);
+
         if ($id !== false) {
             $sql =  "UPDATE `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . json_encode($data) . "', `date_modified` = NOW() WHERE `id` = '" . (int)$id . "' AND `basgate_order_id` = '" . $basgate_order_id . "'";
             $wpdb->query($sql);
+            BasgateHelper::basgate_log('====== STARTED saveTxnResponse after UPDATE  $id:' . $id);
             return $id;
         } else {
             $sql =  "INSERT INTO `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . json_encode($data) . "', `date_added` = NOW(), `date_modified` = NOW()";
             $wpdb->query($sql);
-            return $wpdb->insert_id;
+            $result = $wpdb->insert_id;
+            BasgateHelper::basgate_log('====== STARTED saveTxnResponse after INSERT  $result:' . $result);
+            return $result;
         }
     }
 }
