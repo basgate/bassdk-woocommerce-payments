@@ -747,7 +747,6 @@ class WC_Basgate extends WC_Payment_Gateway
 
                                     if ($order->status !== 'processing') {
                                         $order->payment_complete($trxId);
-
                                         $order->reduce_order_stock();
                                         $message = "<br/>" . sprintf(__(BasgateConstants::TRANSACTION_ID), $statusData['trxId']) . "<br/>" . sprintf(__(BasgateConstants::BASGATE_ORDER_ID), $statusData['orderId']);
                                         $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
