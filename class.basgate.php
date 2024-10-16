@@ -288,7 +288,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 exit;
             }
             $callBackURL = $this->getCallbackUrl();
-            $callBackURL = add_query_arg('ORDERID', $paramData['order_id'], $callBackURL);
+            $callBackURL = add_query_arg('orderId', $paramData['order_id'], $callBackURL);
             BasgateHelper::basgate_log('====== blinkCheckoutSend $callBackURL:' . $callBackURL);
 
             $data = array();
@@ -579,144 +579,183 @@ class WC_Basgate extends WC_Payment_Gateway
 
         global $woocommerce;
 
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r(json_encode($_REQUEST), true));
+        // BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r(json_encode($_REQUEST), true));
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . json_encode($_POST));
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response _GET :' . print_r(json_encode($_GET), true));
+        // BasgateHelper::basgate_log('====== STARTED check_basgate_response _GET :' . print_r(json_encode($_GET), true));
 
-        if (isset($_POST['DATA'])) {
-            $data = $_POST['DATA'];
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["DATA"] :' . print_r($_POST['DATA'], true));
-            //check order status before executing webhook call
-            // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
-            //     $getOrderId = !empty($_POST['ORDERID']) ? BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])) : 0;
-            //     if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
-            //         $orderCheck = new WC_Order($getOrderId);
-            //     } else {
-            //         $orderCheck = new woocommerce_order($getOrderId);
-            //     }
-            //     $result = getBasgateOrderData($getOrderId);
-            //     if (isset($result) && json_decode($result['basgate_response'], true)['STATUS'] == "TXN_SUCCESS") {
-            //         exit;
-            //     }
-            //     if ($orderCheck->status == "processing" || $orderCheck->status == "completed") {
-            //         exit;
-            //     }
-            // }
-            //end webhook check
+        if (isset($_POST['data'])) {
+            $post = $_POST['data'];
+            $data = isset($post['data']) ? json_decode($post['data'], true) : null;
+            $status = isset($post['status']) ? $post['status'] : 0;
+            if ((int)$status === 1) {
+                BasgateHelper::basgate_log('====== check_basgate_response $data :' . json_encode($data));
+                //check order status before executing webhook call
+                // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
+                //     $getOrderId = !empty($data['orderId']) ? BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])) : 0;
+                //     if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
+                //         $orderCheck = new WC_Order($getOrderId);
+                //     } else {
+                //         $orderCheck = new woocommerce_order($getOrderId);
+                //     }
+                //     $result = getBasgateOrderData($getOrderId);
+                //     if (isset($result) && json_decode($result['basgate_response'], true)['STATUS'] == "TXN_SUCCESS") {
+                //         exit;
+                //     }
+                //     if ($orderCheck->status == "processing" || $orderCheck->status == "completed") {
+                //         exit;
+                //     }
+                // }
+                //end webhook check
 
-            if (!empty($_POST['CHECKSUMHASH'])) {
-                $post_checksum = sanitize_text_field($_POST['CHECKSUMHASH']);
-                unset($_POST['CHECKSUMHASH']);
-            } else {
-                $post_checksum = "";
-            }
-            $order = array();
-            $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
-            if ($isValidChecksum === true) {
-                $order_id = !empty($_POST['ORDERID']) ? BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])) : 0;
-
-                /* save basgate response in db */
-                if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($_POST['STATUS'])) {
-                    $order_data_id = saveTxnResponse(BasgateHelper::getOrderId(sanitize_text_field($_POST['ORDERID'])), $_POST);
-                }
-                /* save basgate response in db */
-
-                $responseDescription = (!empty($_POST['RESPMSG'])) ? sanitize_text_field($_POST['RESPMSG']) : "";
-
-                if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
-                    $order = new WC_Order($order_id);
+                if (!empty($_POST['CHECKSUMHASH'])) {
+                    $post_checksum = sanitize_text_field($_POST['CHECKSUMHASH']);
+                    unset($_POST['CHECKSUMHASH']);
                 } else {
-                    $order = new woocommerce_order($order_id);
+                    $post_checksum = "";
                 }
-                if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
-                    $through = "webhook_" . time();
-                } else {
-                    $through = "callback_" . time();
-                }
-                if (!empty($order)) {
+                $order = array();
+                // $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
+                $isValidChecksum = !empty($data['authenticated']) && $data['authenticated'] === "true";
+                $transaction_id     = !empty($data['trxId']) ? $data['trxId'] : '';
+                $responseDescription = (!empty($post['messages'])) ? sanitize_text_field($post['messages']) : "";
 
-                    $reqParams = array(
-                        "appId" => $this->getSetting('bas_application_id'),
-                        "ORDERID" => sanitize_text_field($_POST['ORDERID']),
-                    );
-
-                    $reqParams['CHECKSUMHASH'] = BasgateChecksum::generateSignature($reqParams, $this->getSetting('bas_merchant_key'));
-
-                    /* number of retries untill cURL gets success */
-                    $retry = 1;
-                    do {
-                        $resParams = BasgateHelper::executecUrl(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')), $reqParams);
-                        $retry++;
-                    } while (!$resParams['STATUS'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
-                    /* number of retries untill cURL gets success */
-
-                    if (!isset($resParams['STATUS'])) {
-                        $resParams = $_POST;
-                    }
+                if ($isValidChecksum === true) {
+                    $order_id = !empty($data['orderId']) ? BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])) : 0;
+                    BasgateHelper::basgate_log('====== check_basgate_response $order_id :' . $order_id);
 
                     /* save basgate response in db */
-                    if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($resParams['STATUS'])) {
-                        saveTxnResponse(BasgateHelper::getOrderId($resParams['ORDERID']), $order_data_id, $resParams);
+                    if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($post['status'])) {
+                        $order_data_id = saveTxnResponse(BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])), $data);
+                        BasgateHelper::basgate_log('====== check_basgate_response $order_data_id :' . $order_data_id);
                     }
                     /* save basgate response in db */
 
-                    // if curl failed to fetch response
-                    if (!isset($resParams['STATUS'])) {
-                        $this->fireFailure($order, __(BasgateConstants::ERROR_SERVER_COMMUNICATION));
+
+                    if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
+                        $order = new WC_Order($order_id);
                     } else {
-                        if ($resParams['STATUS'] == 'TXN_SUCCESS') {
+                        $order = new woocommerce_order($order_id);
+                    }
+                    if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
+                        $through = "webhook_" . time();
+                    } else {
+                        $through = "callback_" . time();
+                    }
 
-                            if ($order->status !== 'completed') {
+                    if (!empty($order)) {
+                        BasgateHelper::basgate_log('====== check_basgate_response $order :' . json_encode($order));
+                        $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
+                        $requestTimestamp = (string)time();
+                        $reqParams = array(
+                            "appId" => $this->getSetting('bas_application_id'),
+                            "orderId" => sanitize_text_field($data['orderId']),
+                            "requestTimestamp" => $requestTimestamp
+                        );
 
-                                $this->msg['message'] = __(BasgateConstants::SUCCESS_ORDER_MESSAGE);
-                                $this->msg['class'] = 'success';
-
-                                if ($order->status !== 'processing') {
-                                    $order->payment_complete($resParams['TXNID']);
-                                    $order->reduce_order_stock();
-
-                                    $message = "<br/>" . sprintf(__(BasgateConstants::TRANSACTION_ID), $resParams['TXNID']) . "<br/>" . sprintf(__(BasgateConstants::BASGATE_ORDER_ID), $resParams['ORDERID']);
-                                    $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
-                                    $order->add_order_note($this->msg['message'] . $message);
-                                    $woocommerce->cart->empty_cart();
-                                }
-                            }
-                        } else if ($resParams['STATUS'] == 'PENDING') {
-                            $message = __(BasgateConstants::PENDING_ORDER_MESSAGE);
-                            if (!empty($responseDescription)) {
-                                $message .= sprintf(__(BasgateConstants::REASON), $responseDescription);
-                            }
-                            $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
-                            $this->setStatusMessage($order, $message, 'pending');
-                        } else {
-                            $message = __(BasgateConstants::ERROR_ORDER_MESSAGE);
-                            if (!empty($responseDescription)) {
-                                $message .= sprintf(__(BasgateConstants::REASON), $responseDescription);
-                            }
-                            $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
-                            $this->setStatusMessage($order, $message);
+                        $bodystr = json_encode($reqParams, JSON_UNESCAPED_SLASHES);
+                        $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
+                        if ($checksum === false) {
+                            error_log(
+                                sprintf(
+                                    /* translators: 1: Event data. */
+                                    __('Could not retrieve signature, please try again Data: %1$s.'),
+                                    $bodystr
+                                )
+                            );
+                            throw new Exception(__('Could not retrieve signature, please try again.', BasgateConstants::ID));
                         }
+
+                        /* prepare JSON string for request */
+                        $reqBody = str_replace('bodyy', $bodystr, $reqBody);
+                        $reqBody = str_replace('sigg', $checksum, $reqBody);
+                        $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
+
+                        $url = BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment'));
+                        $header = array('Accept: text/plain', 'Content-Type: application/json');
+
+                        /* number of retries untill cURL gets success */
+                        $retry = 1;
+                        do {
+                            $resParams = BasgateHelper::httpPost($url, $reqBody, $header);
+                            $retry++;
+                        } while (!$resParams['status'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+                        /* number of retries untill cURL gets success */
+
+                        if (!isset($resParams['status'])) {
+                            $resParams = $data;
+                        } else {
+                            $reqParams = isset($resParams['data']) ? $resParams['data'] : $resParams;
+                        }
+
+                        BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS reqParams:' . json_encode($reqParams));
+
+                        /* save basgate response in db */
+                        if (BasgateConstants::SAVE_BASGATE_RESPONSE && !empty($resParams['trxStatusId'])) {
+                            saveTxnResponse(BasgateHelper::getOrderId($resParams['orderId']), $order_data_id, $resParams);
+                        }
+                        /* save basgate response in db */
+
+                        // if curl failed to fetch response
+                        if (!isset($resParams['trxStatusId'])) {
+                            $this->fireFailure($order, __(BasgateConstants::ERROR_SERVER_COMMUNICATION));
+                        } else {
+                            $trxStatus = strtolower($resParams['trxStatus']);
+                            $trxStatusId = (int)$resParams['trxStatusId'];
+                            BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $trxStatus);
+
+                            if ($trxStatus == 'success' || $trxStatusId == 1003) {
+
+                                if ($order->status !== 'completed') {
+
+                                    $this->msg['message'] = __(BasgateConstants::SUCCESS_ORDER_MESSAGE);
+                                    $this->msg['class'] = 'success';
+
+                                    if ($order->status !== 'processing') {
+                                        $order->payment_complete($transaction_id);
+                                        $order->reduce_order_stock();
+
+                                        $message = "<br/>" . sprintf(__(BasgateConstants::TRANSACTION_ID), $resParams['TXNID']) . "<br/>" . sprintf(__(BasgateConstants::BASGATE_ORDER_ID), $resParams['orderId']);
+                                        $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
+                                        $order->add_order_note($this->msg['message'] . $message);
+                                        $woocommerce->cart->empty_cart();
+                                    }
+                                }
+                            } else if ($trxStatus == 'pending') {
+                                $message = __(BasgateConstants::PENDING_ORDER_MESSAGE);
+                                if (!empty($responseDescription)) {
+                                    $message .= sprintf(__(BasgateConstants::REASON), $responseDescription);
+                                }
+                                $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
+                                $this->setStatusMessage($order, $message, 'pending');
+                            } else {
+                                $message = __(BasgateConstants::ERROR_ORDER_MESSAGE);
+                                if (!empty($responseDescription)) {
+                                    $message .= sprintf(__(BasgateConstants::REASON), $responseDescription);
+                                }
+                                $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
+                                $this->setStatusMessage($order, $message);
+                            }
+                        }
+                    } else {
+                        $this->setStatusMessage($order, __(BasgateConstants::ERROR_INVALID_ORDER));
                     }
                 } else {
-                    $this->setStatusMessage($order, __(BasgateConstants::ERROR_INVALID_ORDER));
+                    $this->setStatusMessage($order, __(BasgateConstants::ERROR_CHECKSUM_MISMATCH) . $responseDescription);
                 }
-            } else {
-                $this->setStatusMessage($order, __(BasgateConstants::ERROR_CHECKSUM_MISMATCH));
+
+                $redirect_url = $this->redirectUrl($order);
+
+                $this->setMessages($this->msg['message'], $this->msg['class']);
+
+                if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
+                    echo "Webhook Received";
+                } else {
+                    wp_redirect($redirect_url);
+                }
             }
-
-            $redirect_url = $this->redirectUrl($order);
-
-            $this->setMessages($this->msg['message'], $this->msg['class']);
-
-            if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
-                echo "Webhook Received";
-            } else {
-                wp_redirect($redirect_url);
-            }
-
             exit;
         } else {
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response else !empty($_POST["STATUS"]) :' . print_r(!empty($_POST['STATUS']), true));
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response else isset($_POST["data"]) :' . isset($_POST['data']));
         }
     }
 

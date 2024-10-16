@@ -4,7 +4,7 @@
  * Plugin Name: Bassdk WooCommerce Payment
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية
- * Version: 0.1.109
+ * Version: 0.1.110
  * Author: Basgate Super APP 
  * Author URI: https://basgate.com/
  * Developer: Abdullah AlAnsi
@@ -322,7 +322,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
     {
         BasgateHelper::basgate_log('====== STARTED woocommerce_basgate_add_css_js');
 
-        ?>
+?>
         <style>
             #basgate_payment_area .message {
                 float: left;
@@ -411,8 +411,8 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                                 var html = '';
                                 $.each(data.response, function(index, value) {
                                     html += "<tr>";
-                                    html += "<td>" + index + "</td>";
-                                    html += "<td>" + value + "</td>";
+                                    html += "<td> 1 - " + index + "</td>";
+                                    html += "<td> 2 - " + value + "</td>";
                                     html += "</tr>";
                                 });
                                 jQuery('#basgate_payment_table').html(html);
@@ -425,7 +425,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-        <?php
+    <?php
     }
 
 
@@ -473,11 +473,11 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         BasgateHelper::basgate_log('====== STARTED saveTxnResponse');
 
         global $wpdb;
-        if (empty($data['STATUS'])) return false;
+        if (empty($data['status'])) return false;
 
-        $status             = (!empty($data['STATUS']) && $data['STATUS'] == 'TXN_SUCCESS') ? 1 : 0;
-        $basgate_order_id     = (!empty($data['ORDERID']) ? $data['ORDERID'] : '');
-        $transaction_id     = (!empty($data['TXNID']) ? $data['TXNID'] : '');
+        $status             = (!empty($data['status']) && (int)$data['status'] > 0) ? (int)$data['status'] : 0;
+        $basgate_order_id     = (!empty($data['orderId']) ? $data['orderId'] : '');
+        $transaction_id     = (!empty($data['trxId']) ? $data['trxId'] : '');
 
         if ($id !== false) {
             $sql =  "UPDATE `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . (int)$status . "', `basgate_response` = '" . json_encode($data) . "', `date_modified` = NOW() WHERE `id` = '" . (int)$id . "' AND `basgate_order_id` = '" . $basgate_order_id . "'";
