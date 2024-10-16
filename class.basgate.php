@@ -735,7 +735,6 @@ class WC_Basgate extends WC_Payment_Gateway
                             $trxStatus = strtolower($statusData['trxStatus']);
                             $trxStatusId = (int)$statusData['trxStatusId'];
                             $trxId = $statusData['trxId'];
-
                             if ($trxStatus == 'completed' || $trxStatusId == 1003) {
 
                                 BasgateHelper::basgate_log('====== check_basgate_response $trxStatus : ' . $trxStatus . ' , $order->status : ' . $order->status);
@@ -744,14 +743,16 @@ class WC_Basgate extends WC_Payment_Gateway
 
                                     $this->msg['message'] = __(BasgateConstants::SUCCESS_ORDER_MESSAGE);
                                     $this->msg['class'] = 'success';
+                                    $responseDescription = isset($statusData['order']['description']) ? $statusData['order']['description'] : $this->msg['message'];
 
                                     if ($order->status !== 'processing') {
                                         $order->payment_complete($trxId);
-                                        $order->reduce_order_stock();
 
+                                        $order->reduce_order_stock();
                                         $message = "<br/>" . sprintf(__(BasgateConstants::TRANSACTION_ID), $statusData['trxId']) . "<br/>" . sprintf(__(BasgateConstants::BASGATE_ORDER_ID), $statusData['orderId']);
                                         $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
                                         $order->add_order_note($this->msg['message'] . $message);
+                                        $this->setStatusMessage($order, $responseDescription, 'completed');
                                         $woocommerce->cart->empty_cart();
                                     }
                                 }
