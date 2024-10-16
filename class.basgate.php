@@ -629,7 +629,6 @@ class WC_Basgate extends WC_Payment_Gateway
                 $order = array();
                 // $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
                 $isValidChecksum = !empty($data['authenticated']) && $data['authenticated'] === "true";
-                $transaction_id     = !empty($data['trxId']) ? $data['trxId'] : '';
                 $responseDescription = (!empty($data['messages'])) ? sanitize_text_field(implode(' -- ', $data['messages'])) : "";
 
                 if ($isValidChecksum === true) {
@@ -780,7 +779,11 @@ class WC_Basgate extends WC_Payment_Gateway
                     echo "Webhook Received";
                 } else {
                     BasgateHelper::basgate_log('====== check_basgate_response else wp_redirect($redirect_url):' . $redirect_url);
-                    wp_redirect($redirect_url);
+                    // wp_redirect($redirect_url);
+                    return  array(
+                        'result' => 'success',
+                        'redirect' => $redirect_url
+                    );
                 }
             }
             exit;
