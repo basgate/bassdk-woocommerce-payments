@@ -513,8 +513,16 @@ class WC_Basgate extends WC_Payment_Gateway
                         nonce: nonce,
                     }, function(data, textStatus) {
                         console.log('===== basCheckOutCallback textStatus:', textStatus)
-                        console.log('===== basCheckOutCallback data:', JSON.stringify(data))
-                        return data;
+                        console.log('===== basCheckOutCallback data:', data)
+                        try {
+                            var res = JSON.parse(data);
+                            if ('redirect' in res) {
+                                window.location = res['redirect']
+                            }
+                        } catch (error) {
+
+                        }
+                        // return data;
                     });
                 } else {
                     //TODO:Handle errors message return from getBasPayment 
@@ -779,11 +787,11 @@ class WC_Basgate extends WC_Payment_Gateway
                     echo "Webhook Received";
                 } else {
                     BasgateHelper::basgate_log('====== check_basgate_response else wp_redirect($redirect_url):' . $redirect_url);
-                    // wp_redirect($redirect_url);
-                    return  array(
+                    $returnData = array(
                         'result' => 'success',
                         'redirect' => $redirect_url
                     );
+                    die(json_encode($returnData));
                 }
             }
             exit;
