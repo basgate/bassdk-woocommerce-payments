@@ -750,7 +750,9 @@ class WC_Basgate extends WC_Payment_Gateway
                                         $order->reduce_order_stock();
                                         $message = "<br/>" . sprintf(__(BasgateConstants::TRANSACTION_ID), $statusData['trxId']) . "<br/>" . sprintf(__(BasgateConstants::BASGATE_ORDER_ID), $statusData['orderId']);
                                         $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . ' ' . $responseDescription . '</span>';
-                                        $order->add_order_note($this->msg['message'] . $message);
+                                        $this->msg['class'] = 'error';
+
+                                        $order->add_order_note($this->msg['message'] . $responseDescription);
                                         $order->update_status('completed');
                                         $woocommerce->cart->empty_cart();
                                     }
