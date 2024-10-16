@@ -344,6 +344,8 @@ class WC_Basgate extends WC_Payment_Gateway
                 // BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
 
                 if (!empty($res['body']['trxToken'])) {
+                    BasgateHelper::basgate_log('====== blinkCheckoutSend $res :' . json_encode($res));
+
                     $data['trxToken'] = $res['body']['trxToken'];
                     $data['trxId'] = $res['body']['trxId'];
                     $data['callBackUrl'] = $callBackURL;
@@ -583,15 +585,16 @@ class WC_Basgate extends WC_Payment_Gateway
 
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . json_encode($_POST));
 
-        if (isset($_POST['data'])) {
-            $data = json_decode($_POST['data']);
+        if (!empty($_POST['data'])) {
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["data"] :' . $_POST['data']);
+            $data = $_POST['data'];
             // $data = isset($data['data']) ? json_decode($data['data'], true) : null;
             $status = isset($data['status']) ? $data['status'] : '';
 
             BasgateHelper::basgate_log('====== STARTED check_basgate_response $status :' . $status);
 
             if (!empty($status)) {
-                BasgateHelper::basgate_log('====== check_basgate_response $data :' . json_encode($data));
+                BasgateHelper::basgate_log('====== check_basgate_response inside if()');
                 //check order status before executing webhook call
                 // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
                 //     $getOrderId = !empty($data['orderId']) ? BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])) : 0;
