@@ -178,11 +178,20 @@ if (!class_exists('BasgateHelper')) :
 
                 $response = curl_exec($curl);
                 $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+                $error = curl_error($curl);
 
-                if ($httpCode != 200) {
+                if ($httpCode == 400) {
+                    try {
+                        $data = json_decode($response, true);
+                        if (array_key_exists('messages', $data)) {
+                            wc_add_notice("Error: " . implode(' -- ', $data['messages']), 'error');
+                        }
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
+                } else if ($httpCode != 200) {
                     $msg = "Return httpCode is {$httpCode} \n"
                         . curl_error($curl) . "URL: " . $url;
-                    $error = curl_error($curl);
                     if ($error) {
                         wc_add_notice("Error: " . $error, 'error');
                     }

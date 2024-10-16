@@ -617,7 +617,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 // $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
                 $isValidChecksum = !empty($data['authenticated']) && $data['authenticated'] === "true";
                 $transaction_id     = !empty($data['trxId']) ? $data['trxId'] : '';
-                $responseDescription = (!empty($post['messages'])) ? sanitize_text_field($post['messages']) : "";
+                $responseDescription = (!empty($post['messages'])) ? sanitize_text_field(implode(' -- ', $post['messages'])) : "";
 
                 if ($isValidChecksum === true) {
                     $order_id = !empty($data['orderId']) ? BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])) : 0;
