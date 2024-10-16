@@ -460,8 +460,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         await getBasPayment(config)
                             .then(function(result) {
                                 console.log("===== basPayment Result:", JSON.stringify(result));
-                                if (result) {
-                                    console.log("notifyMerchant handler function called");
+                                if (result && result.status == 1) {
                                     jQuery(".loading-basgate").hide();
                                     jQuery(".basgate-woopg-loader").hide();
                                     jQuery(".basgate-overlay").hide();
@@ -469,7 +468,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     // if (jQuery(".pg-basgate-checkout").length > 1) {
                                     //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
                                     // }
-                                    basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
+                                    basCheckOutCallback(result.data, "' . $data['callBackUrl'] . '");
                                 } else {
                                     return null
                                 }
@@ -495,7 +494,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 var $ = jQuery;
                 console.log("basCheckOutCallback() resData:", JSON.stringify(resData))
 
-                if (resData.hasOwnProperty('status')) {
+                if (resData.hasOwnProperty('trxId')) {
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
                     $.post(ajaxurl, {
                         data: resData,
@@ -579,15 +578,16 @@ class WC_Basgate extends WC_Payment_Gateway
 
         global $woocommerce;
 
-        // BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . print_r(json_encode($_REQUEST), true));
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . json_encode($_POST));
-        // BasgateHelper::basgate_log('====== STARTED check_basgate_response _GET :' . print_r(json_encode($_GET), true));
 
         if (isset($_POST['data'])) {
             $post = $_POST['data'];
             $data = isset($post['data']) ? json_decode($post['data'], true) : null;
             $status = isset($post['status']) ? $post['status'] : 0;
-            if ((int)$status === 1) {
+
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $$status :' . $$status);
+
+            if ((string)$status == '1') {
                 BasgateHelper::basgate_log('====== check_basgate_response $data :' . json_encode($data));
                 //check order status before executing webhook call
                 // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
@@ -607,12 +607,12 @@ class WC_Basgate extends WC_Payment_Gateway
                 // }
                 //end webhook check
 
-                if (!empty($_POST['CHECKSUMHASH'])) {
-                    $post_checksum = sanitize_text_field($_POST['CHECKSUMHASH']);
-                    unset($_POST['CHECKSUMHASH']);
-                } else {
-                    $post_checksum = "";
-                }
+                // if (!empty($_POST['CHECKSUMHASH'])) {
+                //     $post_checksum = sanitize_text_field($_POST['CHECKSUMHASH']);
+                //     unset($_POST['CHECKSUMHASH']);
+                // } else {
+                //     $post_checksum = "";
+                // }
                 $order = array();
                 // $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
                 $isValidChecksum = !empty($data['authenticated']) && $data['authenticated'] === "true";
