@@ -17,7 +17,7 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->method_title = BasgateConstants::METHOD_TITLE;
         $this->method_description = BasgateConstants::METHOD_DESCRIPTION;
         // $this->icon = esc_url("https://ykbsocial.com/basgate/reportlogo.png");
-        $this->icon = apply_filters('woocommerce_gateway_icon', '<img src="https://ykbsocial.com/basgate/reportlogo.png"  height="24px;" > ');
+        $this->icon = apply_filters('woocommerce_gateway_icon', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/images/bassdk-icon.svg');
         $this->has_fields = false;
         $this->init_form_fields();
         $this->init_settings();

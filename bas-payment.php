@@ -552,11 +552,16 @@ function woocommerce_basgate_init()
                 border-color: #c3e6cb;
             }
         </style>
-<?php
+    <?php
     }
 
     function basgateResponseMessage($content)
     {
         return '<div class="basgate_response box ' . htmlentities(sanitize_text_field($_GET['type'])) . '-box">' . htmlentities(urldecode(sanitize_text_field($_GET['basgate_response']))) . '</div>' . $content;
     }
+}
+
+function plugin_root()
+{
+    return __FILE__;
 }
