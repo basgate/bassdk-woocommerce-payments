@@ -103,6 +103,7 @@
 label[for=payment_method_basgate] img
 {
     max-width: 350px !important;
+    max-height:64px !important;
     width: 100%;
     display: block !important;
     visibility: visible;
