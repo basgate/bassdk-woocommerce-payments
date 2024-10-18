@@ -51,13 +51,13 @@ class BasgateConstants
     const BASGATE_ORDER_ID = "<b>Basgate Order ID:</b> %s";
 
     const REASON = " Reason: %s";
-    const FETCH_BUTTON = "Fetch Status";
+    const FETCH_BUTTON = 'Fetch Status';
 
     //Success
     const SUCCESS_ORDER_MESSAGE = "Thank you for your order. Your payment has been successfully received.";
-    const RESPONSE_SUCCESS = "Updated <b>STATUS</b> has been fetched";
+    const RESPONSE_SUCCESS = 'Updated <b>STATUS</b> has been fetched';
     const RESPONSE_STATUS_SUCCESS = " and Transaction Status has been updated <b>PENDING</b> to <b>%s</b>";
-    const RESPONSE_ERROR = "Something went wrong. Please again'";
+    const RESPONSE_ERROR = 'Something went wrong. Please again';
 
     //Error
     const PENDING_ORDER_MESSAGE = "Your payment has been pending!";
