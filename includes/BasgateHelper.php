@@ -122,7 +122,7 @@ if (!class_exists('BasgateHelper')) :
             }
             $args = array(
                 'headers' => $headers,
-                'body'      => json_encode($requestParamList, JSON_UNESCAPED_SLASHES),
+                'body'      => $requestParamList, 
                 'method'    => $method,
             );
 
