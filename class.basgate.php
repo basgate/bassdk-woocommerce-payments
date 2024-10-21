@@ -33,6 +33,8 @@ class WC_Basgate extends WC_Payment_Gateway
      */
     private function initHooks()
     {
+        BasgateHelper::basgate_log('===== STARTED initHooks()');
+
         add_action('init', array(&$this, 'check_basgate_response'));
         //update for woocommerce >2.0
         add_action('woocommerce_api_' . strtolower(get_class($this)), array($this, 'check_basgate_response'));
@@ -491,7 +493,7 @@ class WC_Basgate extends WC_Payment_Gateway
     {
         BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
 
-?>
+        ?>
         <script type="text/javascript">
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
@@ -521,7 +523,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 }
             }
         </script>
-<?php
+        <?php
     }
 
     /**

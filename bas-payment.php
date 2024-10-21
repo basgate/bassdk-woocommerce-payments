@@ -97,11 +97,9 @@ function basgate_register_order_approval_payment_method_type()
 /* ************************************************ */
 
 /* Create table 'basgate_order_data' after install basgate plugin */
-if (function_exists('register_activation_hook'))
-    register_activation_hook(__FILE__, 'install_basgate_plugin');
+if (function_exists('register_activation_hook'))    register_activation_hook(__FILE__, 'install_basgate_plugin');
 /* Drop table 'basgate_order_data' after uninstall basgate plugin */
-if (function_exists('register_deactivation_hook'))
-    register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
+if (function_exists('register_deactivation_hook'))    register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 
 
 function install_basgate_plugin()
@@ -271,7 +269,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 $table_html .= '<table class="basgate_payment_block" id="basgate_payment_table">';
                 foreach ($basgate_data as $key => $value) {
                     if ($key !== 'request') {
-                        $table_html .= '<tr><td> 3- ' . $key . '</td><td> 4- ' . $value . '</td></tr>';
+                        $table_html .= '<tr><td> ' . $key . '</td><td> ' . $value . '</td></tr>';
                     }
                 }
                 $table_html .= '</table>';
@@ -552,7 +550,7 @@ function woocommerce_basgate_init()
                 border-color: #c3e6cb;
             }
         </style>
-    <?php
+<?php
     }
 
     function basgateResponseMessage($content)

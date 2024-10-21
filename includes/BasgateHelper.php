@@ -224,7 +224,7 @@ if (!class_exists('BasgateHelper')) :
                 return; // Only log if WP_DEBUG is enabled
             }
 
-            $log_file = plugin_dir_path(plugin_root()) . 'bassdk-woocommerce-payments.log.txt'; // Specify the log file path
+            $log_file = plugin_dir_path(plugin_root()) . 'bassdk-woocommerce-payments.log'; // Specify the log file path
             // $log_file = plugins_url('bassdk-woocommerce-payments.log', plugin_root()); // Specify the log file path
             $timestamp = current_time('Y-m-d H:i:s');
             $log_entry = "[$timestamp] $message\n";
