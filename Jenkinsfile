@@ -27,6 +27,7 @@ node () {
             xcopy * "${iisApplicationPath}" /Y /E
             """
       }
+    }
     stage('Delete .hidden files'){
       dir("""${iisApplicationPath}""") {
             bat """
