@@ -743,7 +743,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     if ($order->status !== 'processing') {
                                         $order->payment_complete($trxId);
                                         $order->reduce_order_stock();
-                                        $message = "<br/>" . __("<b>Transaction ID:</b>", 'bassdk-woocommerce-payments') . $statusData['trxId'] . "<br/>" . __("<b>Basgate Order ID:</b> ", 'bassdk-woocommerce-payments') . $statusData['orderId'];
+                                        $message = "<br/>" . esc_html__("<b>Transaction ID:</b>", 'bassdk-woocommerce-payments') . $statusData['trxId'] . "<br/>" . esc_html__("<b>Basgate Order ID:</b> ", 'bassdk-woocommerce-payments') . $statusData['orderId'];
                                         $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . ' ' . $responseDescription . '</span>';
 
                                         $this->msg['class'] = 'warrning';
