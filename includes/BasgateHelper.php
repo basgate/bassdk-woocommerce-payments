@@ -122,7 +122,7 @@ if (!class_exists('BasgateHelper')) :
             }
             $args = array(
                 'headers' => $headers,
-                'body'      => $requestParamList, 
+                'body'      => $requestParamList,
                 'method'    => $method,
             );
 
@@ -133,14 +133,14 @@ if (!class_exists('BasgateHelper')) :
                 error_log(
                     sprintf(
                         /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
-                        __('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s'),
+                        __('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s', 'bassdk-woocommerce-payments'),
                         $apiURL,
                         $result->get_error_code(),
                         $result->get_error_message(),
                         wp_json_encode($args)
                     )
                 );
-                throw new Exception(__('Could not retrieve the access token, please try again!!!.', BasgateConstants::ID));
+                throw new Exception(__('Could not retrieve the access token, please try again!!!.', 'bassdk-woocommerce-payments'));
             }
 
             if (200 !==  $response_code) {
@@ -157,7 +157,7 @@ if (!class_exists('BasgateHelper')) :
                         $resp
                     )
                 );
-                throw new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
+                throw new Exception(__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
             } else {
                 $response_body = wp_remote_retrieve_body($result);
                 return json_decode($response_body, true);
@@ -198,7 +198,7 @@ if (!class_exists('BasgateHelper')) :
                     error_log(
                         sprintf(
                             /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg. */
-                            __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s'),
+                            __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s', 'bassdk-woocommerce-payments'),
                             $url,
                             $httpCode,
                             $data,
@@ -206,7 +206,7 @@ if (!class_exists('BasgateHelper')) :
                         )
                     );
                     curl_close($curl);
-                    return new Exception(__('Could not retrieve the access token, please try again.', BasgateConstants::ID));
+                    return new Exception(__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
                     // return $msg;
                     //return $response;
                 } else {

@@ -35,7 +35,7 @@ if (! is_plugin_active('woocommerce/woocommerce.php')) {
     add_action(
         'admin_notices',
         function () {
-            echo '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires WooCommerce to be installed and active. You can download %s here.', 'bassdk-woocommerce-payments'), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>') . '</strong></p></div>';
+            echo '<div class="error"><p><strong>' . esc_html__('Basgate Payment requires WooCommerce to be installed and active. You can download <a href="https://woocommerce.com/" target="_blank">WooCommerce</a> here.', 'bassdk-woocommerce-payments') . '</strong></p></div>';
         }
     );
 
@@ -46,7 +46,7 @@ if (! is_plugin_active('bassdk-wp-login/bassdk-wp-login.php')) {
     add_action(
         'admin_notices',
         function () {
-            echo '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires Basgate Login SDK to be installed and active. You can download %s here.', 'bassdk-woocommerce-payments'), '<a href="https://basgate.github.io/" target="_blank">Basgate Login SDK</a>') . '</strong></p></div>';
+            echo '<div class="error"><p><strong>' . esc_html__('Basgate Payment requires Basgate Login SDK to be installed and active. You can download <a href="https://basgate.github.io/" target="_blank">Basgate Login SDK</a> here.', 'bassdk-woocommerce-payments') . '</strong></p></div>';
         }
     );
 
@@ -402,7 +402,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                             order_data_id: order_data_id,
                             basgate_woo_nonce: basgate_woo_nonce
                         },
-                        url: "<?php echo admin_url("admin-ajax.php"); ?>",
+                        url: "<?php echo esc_url(admin_url("admin-ajax.php")); ?>",
                         success: function(data) {
                             $('.basgate-img-loader').hide();
                             if (data.success == true) {
@@ -435,9 +435,8 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         if (!wp_verify_nonce($_POST['basgate_woo_nonce'], 'basgate_woo_nonce')) die('You are not authorised!');
 
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
-        $response_error=BasgateConstants::RESPONSE_ERROR;
-        $json = array("success" => false, "response" => '', 'message' => __($response_error,'bassdk-woocommerce-payments'));
-        $save_response=BasgateConstants::SAVE_BASGATE_RESPONSE;
+        $json = array("success" => false, "response" => '', 'message' => __('Something went wrong. Please again', 'bassdk-woocommerce-payments'));
+        $save_response = BasgateConstants::SAVE_BASGATE_RESPONSE;
         if (!empty($_POST['basgate_order_id']) && $save_response) {
             $reqParams = array(
                 "MID"        => $settings['bas_application_id'],
@@ -455,8 +454,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
             if (!empty($resParams['STATUS'])) {
                 $response = saveTxnResponse(sanitize_text_field($_POST['basgate_order_id']), sanitize_text_field($_POST['order_data_id']), $resParams);
                 if ($response) {
-                    $response_success=BasgateConstants::RESPONSE_SUCCESS;
-                    $message = __($response_success,'bassdk-woocommerce-payments');
+                    $message = __('Updated <b>STATUS</b> has been fetched', 'bassdk-woocommerce-payments');
                     $json = array("success" => true, "response" => $resParams, 'message' => $message);
                 }
             }
