@@ -743,7 +743,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     if ($order->status !== 'processing') {
                                         $order->payment_complete($trxId);
                                         $order->reduce_order_stock();
-                                        $message = "<br/>" . sprintf(__("<b>Transaction ID:</b> %s", 'bassdk-woocommerce-payments'), $statusData['trxId']) . "<br/>" . sprintf(__("<b>Basgate Order ID:</b> %s", 'bassdk-woocommerce-payments'), $statusData['orderId']);
+                                        $message = "<br/>" . __("<b>Transaction ID:</b>", 'bassdk-woocommerce-payments') . $statusData['trxId'] . "<br/>" . __("<b>Basgate Order ID:</b> ", 'bassdk-woocommerce-payments') . $statusData['orderId'];
                                         $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . ' ' . $responseDescription . '</span>';
 
                                         $this->msg['class'] = 'warrning';
@@ -756,14 +756,14 @@ class WC_Basgate extends WC_Payment_Gateway
                             } else if ($trxStatus == 'pending') {
                                 $message = __("Your payment has been pending!", 'bassdk-woocommerce-payments');
                                 if (!empty($responseDescription)) {
-                                    $message .= sprintf(__(" Reason: %s", 'bassdk-woocommerce-payments'), $responseDescription);
+                                    $message .= __(" Reason: ", 'bassdk-woocommerce-payments') . $responseDescription;
                                 }
                                 $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
                                 $this->setStatusMessage($order, $message, 'pending');
                             } else {
                                 $message = __("Your payment has been failed!", 'bassdk-woocommerce-payments');
                                 if (!empty($responseDescription)) {
-                                    $message .= sprintf(__(" Reason: %s", 'bassdk-woocommerce-payments'), $responseDescription);
+                                    $message .= __(" Reason: ", 'bassdk-woocommerce-payments') . $responseDescription;
                                 }
                                 $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . '</span>';
                                 $this->setStatusMessage($order, $message);

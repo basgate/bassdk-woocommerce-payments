@@ -149,7 +149,7 @@ if (!class_exists('BasgateHelper')) :
                 error_log(
                     sprintf(
                         /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
-                        __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s'),
+                        __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-woocommerce-payments'),
                         $apiURL,
                         $response_code,
                         wp_json_encode($args),

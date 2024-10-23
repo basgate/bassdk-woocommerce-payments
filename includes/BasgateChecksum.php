@@ -63,7 +63,7 @@ class BasgateChecksum
 	static public function generateSignature($params, $key)
 	{
 		if (!is_array($params) && !is_string($params)) {
-			throw new Exception("string or array expected, " . gettype($params) . " given");
+			throw new Exception("string or array expected, " . esc_attr(gettype($params)) . " given");
 		}
 		if (is_array($params)) {
 			$params = self::getStringByParams($params);
@@ -74,7 +74,7 @@ class BasgateChecksum
 	static public function verifySignature($params, $key, $checksum): bool
 	{
 		if (!is_array($params) && !is_string($params)) {
-			throw new Exception("string or array expected, " . gettype($params) . " given");
+			throw new Exception("string or array expected, " . esc_attr(gettype($params)) . " given");
 		}
 		if (isset($params['CHECKSUMHASH'])) {
 			unset($params['CHECKSUMHASH']);
