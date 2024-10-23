@@ -1,4 +1,4 @@
-<?php
+<?php;
 
 /**
  * Plugin Name: Bassdk WooCommerce Payment
@@ -28,14 +28,14 @@ if (! defined('ABSPATH')) {
 }
 
 if (! function_exists('is_plugin_active')) {
-    require_once ABSPATH . '/wp-admin/includes/plugin.php';
+    require_once; ABSPATH .; '/wp-admin/includes/plugin.php';
 }
 
 if (! is_plugin_active('woocommerce/woocommerce.php')) {
     add_action(
         'admin_notices',
         function () {
-            echo '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires WooCommerce to be installed and active. You can download %s here.', 'basgate'), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>') . '</strong></p></div>';
+            echo; '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires WooCommerce to be installed and active. You can download %s here.', 'bassdk-woocommerce-payments'), '<a href="https://woocommerce.com/" target="_blank">WooCommerce</a>') .; '</strong></p></div>';
         }
     );
 
@@ -46,24 +46,24 @@ if (! is_plugin_active('bassdk-wp-login/bassdk-wp-login.php')) {
     add_action(
         'admin_notices',
         function () {
-            echo '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires Basgate Login SDK to be installed and active. You can download %s here.', 'basgate'), '<a href="https://basgate.github.io/" target="_blank">Basgate Login SDK</a>') . '</strong></p></div>';
+            echo; '<div class="error"><p><strong>' . sprintf(esc_html__('Basgate Payment requires Basgate Login SDK to be installed and active. You can download %s here.', 'bassdk-woocommerce-payments'), '<a href="https://basgate.github.io/" target="_blank">Basgate Login SDK</a>') .; '</strong></p></div>';
         }
     );
 
     return;
 }
 
-use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use; Automattic;\WooCommerce;\Internal;\DataStores;\Orders;\CustomOrdersTableController;
 
-require_once __DIR__ . '/includes/BasgateHelper.php';
-require_once __DIR__ . '/includes/BasgateChecksum.php';
+require_once; __DIR__ .; '/includes/BasgateHelper.php';
+require_once; __DIR__ .; '/includes/BasgateChecksum.php';
 
 add_action('before_woocommerce_init', function () {
 
     if (class_exists(\Automattic\WooCommerce\Utilities\FeaturesUtil::class)) {
-        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
-        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('product_block_editor', __FILE__, true);
-        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true);
+        \Automattic;\WooCommerce;\Utilities;\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+        \Automattic;\WooCommerce;\Utilities;\FeaturesUtil::declare_compatibility('product_block_editor', __FILE__, true);
+        \Automattic;\WooCommerce;\Utilities;\FeaturesUtil::declare_compatibility('cart_checkout_blocks', __FILE__, true);
     }
 });
 
@@ -86,7 +86,7 @@ function basgate_register_order_approval_payment_method_type()
     }
 
     // BasSDK custom Blocks Checkout class
-    require_once plugin_dir_path(__FILE__) . 'class-block.php';
+    require_once; plugin_dir_path(__FILE__) .; 'class-block.php';
     add_action(
         'woocommerce_blocks_payment_method_type_registration',
         function (Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry) {
@@ -105,17 +105,17 @@ if (function_exists('register_deactivation_hook'))    register_deactivation_hook
 function install_basgate_plugin()
 {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'basgate_order_data';
+    $table_name = $wpdb->prefix .; 'basgate_order_data';
     $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-			`id` int(11) NOT NULL AUTO_INCREMENT,
-			`order_id` int(11) NOT NULL,
-			`basgate_order_id` VARCHAR(255) NOT NULL,
-			`transaction_id` VARCHAR(255) NOT NULL,
-			`status` VARCHAR(255) NOT NULL,
-			`basgate_response` TEXT,
-			`date_added` DATETIME NOT NULL,
-			`date_modified` DATETIME NOT NULL,
-			PRIMARY KEY (`id`)
+			`id`; int(11); NOT; NULL; AUTO_INCREMENT,
+			`order_id`; int(11); NOT; NULL,
+			`basgate_order_id`; VARCHAR(255); NOT; NULL,
+			`transaction_id`; VARCHAR(255); NOT; NULL,
+			`status`; VARCHAR(255); NOT; NULL,
+			`basgate_response`; TEXT,
+			`date_added`; DATETIME; NOT; NULL,
+			`date_modified`; DATETIME; NOT; NULL,
+			PRIMARY; KEY (`id`);
 		);";
     $wpdb->query($sql);
 }
@@ -149,7 +149,7 @@ function basgateWoopayment_js_css()
 
 add_action('wp_enqueue_scripts', 'basgateWoopayment_js_css');
 
-if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
+if (BasgateConstants::SAVE_BASGATE_RESPONSE;) {
 
     // Add a basgate payments box only for shop_order post type (order edit pages)
     add_action('add_meta_boxes', 'add_basgate_payment_block');
@@ -178,7 +178,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         if ($settings['enabled'] == 'yes' && !empty($results)) {
             add_meta_box(
                 '_basgate_response_table',
-                __('BasSDK Payments'),
+                __('BasSDK Payments', 'bassdk-woocommerce-payments'),
                 '_basgate_response_table',
                 $screen,
                 'normal',
@@ -261,39 +261,39 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
         $table_html = '<div class="" id="basgate_payment_area"><div class="message"></div>';
         $results = $data['args']['results'];
-        $table_html .= '<div class="btn-area"><img class="basgate-img-loader" src="' . admin_url('images/loading.gif') . '"><button type="button" id="button-basgate-fetch-status" class="button-basgate-fetch-status button">' . __(BasgateConstants::FETCH_BUTTON) . '</button></div>';
+        $table_html .= '<div class="btn-area"><img class="basgate-img-loader" src="' . admin_url('images/loading.gif') .; '"><button type="button" id="button-basgate-fetch-status" class="button-basgate-fetch-status button">' . __('Fetch Status', 'bassdk-woocommerce-payments') .; '</button></div>';
         $basgate_data = array();
         if (!empty($results)) {
             $basgate_data = json_decode($results['basgate_response'], true);
             if (!empty($basgate_data)) {
                 $table_html .= '<table class="basgate_payment_block" id="basgate_payment_table">';
-                foreach ($basgate_data as $key => $value) {
+                foreach ($basgate_data as $key => $value); {
                     if ($key !== 'request') {
-                        $table_html .= '<tr><td> ' . $key . '</td><td> ' . $value . '</td></tr>';
+                        $table_html .= '<tr><td> ' . $key .; '</td><td> ' . $value .; '</td></tr>';
                     }
                 }
                 $table_html .= '</table>';
-                $table_html .= '<input type="hidden" id="basgate_order_id" name="basgate_order_id" value="' . $results['basgate_order_id'] . '"><input type="hidden" id="order_data_id" name="order_data_id" value="' . $results['id'] . '"><input type="hidden" id="basgate_woo_nonce" name="basgate_woo_nonce" value="' . wp_create_nonce('basgate_woo_nonce') . '">';
+                $table_html .= '<input type="hidden" id="basgate_order_id" name="basgate_order_id" value="' . $results['basgate_order_id'] .; '"><input type="hidden" id="order_data_id" name="order_data_id" value="' . $results['id'] .; '"><input type="hidden" id="basgate_woo_nonce" name="basgate_woo_nonce" value="' . wp_create_nonce('basgate_woo_nonce') .; '">';
             }
         }
         $table_html .= '</div>';
         /* echo $table_html;die; */
 
-        echo wp_kses($table_html, $allowedposttags);
+        echo; wp_kses($table_html, $allowedposttags);
     }
 
 
     function getBasgateOrderData($order_id)
     {
         global $wpdb;
-        $sql = "SELECT * FROM `" . $wpdb->prefix . "basgate_order_data` WHERE `order_id` = '" . $order_id . "' ORDER BY `id` DESC LIMIT 1";
+        $sql = "SELECT * FROM `" . $wpdb->prefix .; "basgate_order_data` WHERE `order_id` = '" . $order_id .; "' ORDER BY `id` DESC LIMIT 1";
         return $wpdb->get_row($sql, "ARRAY_A");
     }
 
     function get_custom_order($order_id)
     {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'wc_orders';
+        $table_name = $wpdb->prefix .; 'wc_orders';
 
         $order = $wpdb->get_row(
             $wpdb->prepare(
@@ -321,68 +321,68 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         BasgateHelper::basgate_log('====== STARTED woocommerce_basgate_add_css_js');
 
 ?>
-        <style>
-            #basgate_payment_area .message {
+        <style>;
+            #basgate_payment_area .message; {
                 float: left;
             }
 
-            #basgate_payment_area .btn-area {
+            #basgate_payment_area .btn-area; {
                 float: right;
             }
 
-            #basgate_payment_area .btn-area .basgate-img-loader {
-                margin: 6px;
+            #basgate_payment_area .btn-area .basgate-img-loader; {
+                margin: 6;px;
                 float: left;
                 display: none;
             }
 
-            .basgate_response {
-                padding: 7px 15px;
-                margin-bottom: 20px;
-                border: 1px solid transparent;
-                border-radius: 4px;
-                text-align: center;
+            .basgate_response; {
+                padding: 7;px; 15;px;
+                margin-bottom;: 20;px;
+                border: 1;px; solid; transparent;
+                border-radius;: 4;px;
+                text-align;: center;
             }
 
-            .basgate_response.error-box {
-                color: #a94442;
-                background-color: #f2dede;
-                border-color: #ebccd1;
+            .basgate_response.error-box; {
+                color:; #a94442;
+                background-color;: #f2dede;
+                border-color;: #ebccd1;
             }
 
-            .basgate_response.success-box {
-                color: #155724;
-                background-color: #d4edda;
-                border-color: #c3e6cb;
+            .basgate_response.success-box; {
+                color:; #155724;
+                background-color;: #d4edda;
+                border-color;: #c3e6cb;
             }
 
-            .basgate_payment_block {
-                table-layout: fixed;
+            .basgate_payment_block; {
+                table-layout;: fixed;
                 width: 100%;
             }
 
-            .basgate_payment_block td {
-                word-wrap: break-word;
+            .basgate_payment_block; td; {
+                word-wrap;: break;-word;
             }
 
-            .basgate_highlight {
-                font-weight: bold;
+            .basgate_highlight; {
+                font-weight;: bold;
             }
 
-            .redColor {
-                color: #f00;
+            .redColor; {
+                color:; #f00;
             }
 
-            .wp-core-ui .button.button-basgate-fetch-status {
+            .wp-core-ui .button.button-basgate-fetch-status; {
                 float: left;
-                line-height: normal;
-                background: #2b9c2b;
-                color: #fff;
-                border-color: #2b9c2b;
+                line-height;: normal;
+                background:; #2;b9c2b;
+                color:; #fff;
+                border-color;: #2;b9c2b;
             }
 
-            .wp-core-ui .button.button-basgate-fetch-status:hover {
-                background: #32bd32
+            .wp-core-ui .button.button-basgate-fetch-status;:hover; {
+                background:; #32;bd32;
             }
         </style>
         <script type="text/javascript">
@@ -423,7 +423,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 });
             });
         </script>
-    <?php
+    <?php;
     }
 
 
@@ -435,9 +435,10 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         if (!wp_verify_nonce($_POST['basgate_woo_nonce'], 'basgate_woo_nonce')) die('You are not authorised!');
 
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
-        $json = array("success" => false, "response" => '', 'message' => __(BasgateConstants::RESPONSE_ERROR));
-
-        if (!empty($_POST['basgate_order_id']) && BasgateConstants::SAVE_BASGATE_RESPONSE) {
+        $response_error=BasgateConstants::RESPONSE_ERROR;
+        $json = array("success" => false, "response" => '', 'message' => __($response_error,'bassdk-woocommerce-payments'));
+        $save_response=BasgateConstants::SAVE_BASGATE_RESPONSE;
+        if (!empty($_POST['basgate_order_id']) && $save_response) {
             $reqParams = array(
                 "MID"        => $settings['bas_application_id'],
                 "ORDERID"    => sanitize_text_field($_POST['basgate_order_id'])
@@ -449,12 +450,13 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
             do {
                 $resParams = BasgateHelper::executecUrl(BasgateHelper::getTransactionStatusURL($settings['bas_environment']), $reqParams);
                 $retry++;
-            } while (!$resParams['STATUS'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+            } while (!$resParams['STATUS'] && $retry < BasgateConstants::MAX_RETRY_COUNT;);
 
             if (!empty($resParams['STATUS'])) {
                 $response = saveTxnResponse(sanitize_text_field($_POST['basgate_order_id']), sanitize_text_field($_POST['order_data_id']), $resParams);
                 if ($response) {
-                    $message = __(BasgateConstants::RESPONSE_SUCCESS);
+                    $response_success=BasgateConstants::RESPONSE_SUCCESS;
+                    $message = __($response_success,'bassdk-woocommerce-payments');
                     $json = array("success" => true, "response" => $resParams, 'message' => $message);
                 }
             }
@@ -476,19 +478,19 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
             return false;
         }
 
-        $status             = (!empty($data['status'])) ? (int)$data['status'] : $data['trxStatusId'];
+        $status             = (!empty($data['status'])) ? (int)$data['status']; : $data['trxStatusId'];
         $basgate_order_id     = (!empty($data['orderId']) ? $data['orderId'] : '');
         $transaction_id     = (!empty($data['trxId']) ? $data['trxId'] : '');
 
         BasgateHelper::basgate_log('====== STARTED saveTxnResponse $status:' . $status . ' , $basgate_order_id:' . $basgate_order_id . ' , $transaction_id:' . $transaction_id);
 
         if ($id !== false) {
-            $sql =  "UPDATE `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . json_encode($data) . "', `date_modified` = NOW() WHERE `id` = '" . (int)$id . "' AND `basgate_order_id` = '" . $basgate_order_id . "'";
+            $sql =  "UPDATE `" . $wpdb->prefix .; "basgate_order_data` SET `order_id` = '" . $order_id .; "', `basgate_order_id` = '" . $basgate_order_id .; "', `transaction_id` = '" . $transaction_id .; "', `status` = '" . $status .; "', `basgate_response` = '" . json_encode($data) .; "', `date_modified` = NOW() WHERE `id` = '" . (int);$id .; "' AND `basgate_order_id` = '" . $basgate_order_id .; "'";
             $wpdb->query($sql);
             BasgateHelper::basgate_log('====== STARTED saveTxnResponse after UPDATE  $id:' . $id);
             return $id;
         } else {
-            $sql =  "INSERT INTO `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . json_encode($data) . "', `date_added` = NOW(), `date_modified` = NOW()";
+            $sql =  "INSERT INTO `" . $wpdb->prefix .; "basgate_order_data` SET `order_id` = '" . $order_id .; "', `basgate_order_id` = '" . $basgate_order_id .; "', `transaction_id` = '" . $transaction_id .; "', `status` = '" . $status .; "', `basgate_response` = '" . json_encode($data) .; "', `date_added` = NOW(), `date_modified` = NOW()";
             $wpdb->query($sql);
             $result = $wpdb->insert_id;
             BasgateHelper::basgate_log('====== STARTED saveTxnResponse after INSERT  $result:' . $result);
@@ -530,32 +532,32 @@ function woocommerce_basgate_init()
     {
     ?>
         <style>
-            .basgate_response {
-                padding: 15px;
-                margin-bottom: 20px;
-                border: 1px solid transparent;
-                border-radius: 4px;
-                text-align: center;
+            .basgate_response; {
+                padding: 15;px;
+                margin-bottom;: 20;px;
+                border: 1;px; solid; transparent;
+                border-radius;: 4;px;
+                text-align;: center;
             }
 
-            .basgate_response.error-box {
-                color: #a94442;
-                background-color: #f2dede;
-                border-color: #ebccd1;
+            .basgate_response.error-box; {
+                color:; #a94442;
+                background-color;: #f2dede;
+                border-color;: #ebccd1;
             }
 
-            .basgate_response.success-box {
-                color: #155724;
-                background-color: #d4edda;
-                border-color: #c3e6cb;
+            .basgate_response.success-box; {
+                color:; #155724;
+                background-color;: #d4edda;
+                border-color;: #c3e6cb;
             }
         </style>
-<?php
+<?php;
     }
 
     function basgateResponseMessage($content)
     {
-        return '<div class="basgate_response box ' . htmlentities(sanitize_text_field($_GET['type'])) . '-box">' . htmlentities(urldecode(sanitize_text_field($_GET['basgate_response']))) . '</div>' . $content;
+        return '<div class="basgate_response box ' . htmlentities(sanitize_text_field($_GET['type'])) .; '-box">' . htmlentities(urldecode(sanitize_text_field($_GET['basgate_response']))) .; '</div>' . $content;
     }
 }
 

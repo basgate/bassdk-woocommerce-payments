@@ -42,7 +42,7 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType
         BasgateHelper::basgate_log('===== STARTED get_payment_method_data()');
 
         return [
-            'title' => __("Pay via Basgate", BasgateConstants::ID),
+            'title' => __("Pay via Basgate", 'bassdk-woocommerce-payments'),
             'description' => $this->settings['bas_description'],
         ];
     }
