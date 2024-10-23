@@ -79,7 +79,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 'type'          => 'textarea',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
                 'description'   => __('This controls the description which the user sees during checkout.', 'bassdk-woocommerce-payments'),
-                'default'       => __('The best payment gateway provider in Yemen for e-payment through most of wallets and banks <img src="https://ykbsocial.com/basgate/reportlogo.png" height="24px;" />', 'bassdk-woocommerce-payments')
+                'default'       => sprintf(esc_html__('The best payment gateway provider in Yemen for e-payment through most of wallets and banks <img src="%s" height="24px;" />', 'bassdk-woocommerce-payments'), esc_url('https://ykbsocial.com/basgate/reportlogo.png'))
             ),
             'bas_environment' => array(
                 'title'         => __('Environment Mode', 'bassdk-woocommerce-payments'),
@@ -203,7 +203,7 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->generate_settings_html();
         echo wp_kses('</table>', $allowed_tags);
 
-        $last_updated = date("d F Y", strtotime(BasgateConstants::LAST_UPDATED)) . ' - ' . BasgateConstants::PLUGIN_VERSION;
+        $last_updated = date("d F Y", strtotime('20241023')) . ' - ' . BasgateConstants::PLUGIN_VERSION;
 
         $footer_text = '<div style="text-align: center;"><hr/>';
         $footer_text .= '<strong>' . __('PHP Version', 'bassdk-woocommerce-payments') . '</strong> ' . PHP_VERSION . ' | ';
@@ -311,7 +311,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "TotalPrice" => (float) $paramData['amount'],
                     )
                 );
-                $bodystr = json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
+                $bodystr = wp_json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
                 $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
@@ -346,7 +346,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 // BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
 
                 if (!empty($res['body']['trxToken'])) {
-                    BasgateHelper::basgate_log('====== blinkCheckoutSend $res :' . json_encode($res));
+                    BasgateHelper::basgate_log('====== blinkCheckoutSend $res :' . wp_json_encode($res));
 
                     $data['trxToken'] = $res['body']['trxToken'];
                     $data['trxId'] = $res['body']['trxId'];
@@ -446,7 +446,7 @@ class WC_Basgate extends WC_Payment_Gateway
             throw new Exception(esc_attr(__('Could not retrieve the Transaction Token, please try again.', 'bassdk-woocommerce-payments')));
         }
 
-        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . json_encode($data));
+        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . wp_json_encode($data));
 
         return '<div class="pg-basgate-checkout">
             <script type="text/javascript">
@@ -589,14 +589,14 @@ class WC_Basgate extends WC_Payment_Gateway
     {
         global $woocommerce;
 
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . json_encode($_POST));
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . wp_json_encode($_POST));
 
         if (! isset($_POST['nonce']) ||            ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')) {
             die(esc_html("ERROR check_basgate_response wrong nonce"));
         }
 
         if (!empty($_POST['data'])) {
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["data"] :' . json_encode($_POST['data']));
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["data"] :' . wp_json_encode($_POST['data']));
             $data = $_POST['data'];
             // $data = isset($data['data']) ? json_decode($data['data'], true) : null;
             $status = isset($data['status']) ? $data['status'] : '';
@@ -667,7 +667,7 @@ class WC_Basgate extends WC_Payment_Gateway
                             "requestTimestamp" => $requestTimestamp
                         );
 
-                        $bodystr = json_encode($reqParams, JSON_UNESCAPED_SLASHES);
+                        $bodystr = wp_json_encode($reqParams, JSON_UNESCAPED_SLASHES);
                         $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
                         if ($checksum === false) {
                             error_log(
@@ -697,7 +697,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         } while (!$resParams['status'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
                         /* number of retries untill cURL gets success */
 
-                        BasgateHelper::basgate_log('====== check_basgate_response $retry:' . $retry . ' , $resParams:' . json_encode($resParams));
+                        BasgateHelper::basgate_log('====== check_basgate_response $retry:' . $retry . ' , $resParams:' . wp_json_encode($resParams));
 
                         if (!isset($resParams['status'])) {
                             $resParams = $data;
@@ -708,11 +708,11 @@ class WC_Basgate extends WC_Payment_Gateway
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $post_checksum:' . $post_checksum);
                             $statusData = isset($resParams['body']) ? $resParams['body'] : $resParams;
                             $statusData['orderId'] = isset($statusData['order']['orderId']) ? $statusData['order']['orderId'] : $order_id;
-                            $isValidChecksum = BasgateChecksum::verifySignature(json_encode($statusData), $this->getSetting('bas_merchant_key'), $post_checksum);
+                            $isValidChecksum = BasgateChecksum::verifySignature(wp_json_encode($statusData), $this->getSetting('bas_merchant_key'), $post_checksum);
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $isValidChecksum:' . $isValidChecksum);
                         }
 
-                        BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS statusData:' . json_encode($statusData));
+                        BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS statusData:' . wp_json_encode($statusData));
                         BasgateHelper::basgate_log('====== check_basgate_response trxStatus:' . $statusData['trxStatus'] . ' , orderId: ' . $statusData['orderId']);
 
                         /* save basgate response in db */
@@ -789,7 +789,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         'result' => 'success',
                         'redirect' => $redirect_url
                     );
-                    die(json_encode($returnData));
+                    die(wp_json_encode($returnData));
                 }
             }
             exit;
@@ -879,7 +879,7 @@ class WC_Basgate extends WC_Payment_Gateway
 //         "paymentNotificationUrl" => $webhookUrl
 
 //     );
-//     $checksum = BasgateChecksum::generateSignature(json_encode($basgateParams, JSON_UNESCAPED_SLASHES), $mkey);
+//     $checksum = BasgateChecksum::generateSignature(wp_json_encode($basgateParams, JSON_UNESCAPED_SLASHES), $mkey);
 //     $res = BasgateHelper::executecUrl($url . 'api/v1/external/putMerchantInfo', $basgateParams, $method = 'PUT', ['x-checksum' => $checksum]);
 //     // print_r($res);
 //     if (isset($res['success'])) {
@@ -895,7 +895,7 @@ class WC_Basgate extends WC_Payment_Gateway
 //         $message = "Something went wrong while configuring webhook. Please login to configure.";
 //         $showMsg = true;
 //     }
-//     echo json_encode(array('message' => $message, 'response' => $response, 'showMsg' => $showMsg));
+//     echo wp_json_encode(array('message' => $message, 'response' => $response, 'showMsg' => $showMsg));
 
 //     die();
 // }

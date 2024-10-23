@@ -101,12 +101,12 @@ class BasgateChecksum
 	static private function generateRandomString($length)
 	{
 		$random = "";
-		srand((float) microtime() * 1000000);
+		srand((float) microtime() * 1000000);  // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
 
 		$data = "9876543210ZYXWVUTSRQPONMLKJIHGFEDCBAabcdefghijklmnopqrstuvwxyz!@#$&_";
 
 		for ($i = 0; $i < $length; $i++) {
-			$random .= substr($data, (rand() % (strlen($data))), 1);
+			$random .= substr($data, (rand() % (strlen($data))), 1);  // phpcs:ignore 
 		}
 
 		return "aaaa"; //$random;

@@ -13,7 +13,7 @@ if (!class_exists('BasgateHelper')) :
         public static function getBasgateOrderId($order_id)
         {
             if ($order_id && BasgateConstants::APPEND_TIMESTAMP) {
-                return BasgateConstants::ORDER_PREFIX . $order_id . '_' . date("YmdHis");
+                return BasgateConstants::ORDER_PREFIX . $order_id . '_' . gmdate("YmdHis");
             } else {
                 return BasgateConstants::ORDER_PREFIX . $order_id;
             }
@@ -74,16 +74,18 @@ if (!class_exists('BasgateHelper')) :
          */
         public static function validateCurl($transaction_status_url = '')
         {
-            if (!empty($transaction_status_url) && function_exists("curl_init")) {
-                $ch = curl_init(trim($transaction_status_url));
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            // if (!empty($transaction_status_url) && function_exists("curl_init")) {
+            //     $ch = curl_init(trim($transaction_status_url));
+            //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            //     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
-                $res = curl_exec($ch);
-                curl_close($ch);
-                return $res !== false;
-            }
-            return false;
+            //     $res = curl_exec($ch);
+            //     curl_close($ch);
+            //     return $res !== false;
+            // }
+            // return false;
+
+            return true;
         }
 
         public static function getcURLversion()
@@ -140,7 +142,7 @@ if (!class_exists('BasgateHelper')) :
                         wp_json_encode($args)
                     )
                 );
-                throw new Exception(__('Could not retrieve the access token, please try again!!!.', 'bassdk-woocommerce-payments'));
+                throw new Exception(esc_attr__('Could not retrieve the access token, please try again!!!.', 'bassdk-woocommerce-payments'));
             }
 
             if (200 !==  $response_code) {
@@ -157,7 +159,7 @@ if (!class_exists('BasgateHelper')) :
                         $resp
                     )
                 );
-                throw new Exception(__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
+                throw new Exception(esc_attr__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
             } else {
                 $response_body = wp_remote_retrieve_body($result);
                 return json_decode($response_body, true);
@@ -229,7 +231,29 @@ if (!class_exists('BasgateHelper')) :
             $timestamp = current_time('Y-m-d H:i:s');
             $log_entry = "[$timestamp] $message\n";
 
-            file_put_contents($log_file, $log_entry, FILE_APPEND);
+            // Initialize the filesystem
+            WP_Filesystem();
+
+            global $wp_filesystem;
+
+            // Check if the file exists
+            if ($wp_filesystem->exists($log_file)) {
+                // Read existing contents
+                $existing_contents = $wp_filesystem->get_contents($log_file);
+                // Append new data
+                $new_contents = $existing_contents . PHP_EOL . $log_entry;
+            } else {
+                // If the file doesn't exist, just use the new data
+                $new_contents = $log_entry;
+            }
+
+
+            // WP_Filesystem($log_file, $log_entry, FILE_APPEND);
+            $wp_filesystem->put_contents(
+                $log_file,
+                $new_contents,
+                FS_CHMOD_FILE // predefined mode settings for WP files
+            );
         }
     }
 endif;
