@@ -271,8 +271,12 @@ if (!class_exists('BasgateHelper')) :
                 return; // Only log if WP_DEBUG is enabled
             }
 
+
+            if (! function_exists('get_filesystem_method')) {
+                require_once(ABSPATH . 'wp-admin/includes/file.php');
+            }
+
             $log_file = plugin_dir_path(plugin_root()) . 'bassdk-woocommerce-payments.log'; // Specify the log file path
-            // $log_file = plugins_url('bassdk-woocommerce-payments.log', plugin_root()); // Specify the log file path
             $timestamp = current_time('Y-m-d H:i:s');
             $log_entry = "[$timestamp] $message\n";
 
@@ -283,17 +287,12 @@ if (!class_exists('BasgateHelper')) :
 
             // Check if the file exists
             if ($wp_filesystem->exists($log_file)) {
-                // Read existing contents
                 $existing_contents = $wp_filesystem->get_contents($log_file);
-                // Append new data
                 $new_contents = $existing_contents . PHP_EOL . $log_entry;
             } else {
-                // If the file doesn't exist, just use the new data
                 $new_contents = $log_entry;
             }
 
-
-            // WP_Filesystem($log_file, $log_entry, FILE_APPEND);
             $wp_filesystem->put_contents(
                 $log_file,
                 $new_contents,
