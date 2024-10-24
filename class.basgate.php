@@ -311,7 +311,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
 
                 if ($checksum === false) {
-                    error_log(
+                    BasgateHelper::basgate_log(
                         sprintf(
                             /* translators: 1: Event data. */
                             __('Could not retrieve signature, please try again Data: %1$s.', 'bassdk-woocommerce-payments'),
@@ -343,7 +343,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         $data['trxId'] = $res['body']['trxId'];
                         $data['callBackUrl'] = $callBackURL;
                     } else {
-                        error_log(
+                        BasgateHelper::basgate_log(
                             sprintf(
                                 /* translators: 1: bodystr, 2:. */
                                 __('trxToken empty \n bodystr: %1$s , \n $checksum: %2$s.', 'bassdk-woocommerce-payments'),

@@ -172,7 +172,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
         if ($post_id == '' && get_option("woocommerce_custom_orders_table_enabled") == 'yes') {
             // phpcs:ignore WordPress.Security.NonceVerification
-            $post_id = isset($_GET['id']) ? wp_unslash($_GET['id']) : '';
+            $post_id = isset($_GET['id']) ? sanitize_text_field(wp_unslash($_GET['id'])) : '';
         }
 
         if (! $post_id) return; // Exit
@@ -294,11 +294,9 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'basgate_order_data';
-        $sql = $wpdb->prepare(
-            "SELECT * FROM $table_name WHERE order_id = %d ORDER BY id DESC LIMIT 1",
-            $order_id
-        );
-        $results = $wpdb->get_row($sql, ARRAY_A);
+        $sql = "SELECT * FROM {$table_name} WHERE order_id = %d ORDER BY id DESC LIMIT 1";
+        $prepared_sql = $wpdb->prepare($sql, $order_id);
+        $results = $wpdb->get_row($prepared_sql, ARRAY_A);
         return $results;
     }
 
@@ -496,8 +494,8 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
         if ($id !== false) {
             $sql = "UPDATE `" . $wpdb->prefix . "basgate_order_data` 
-                SET `order_id` = %d, `basgate_order_id` = %s, `transaction_id` = %s, `status` = %s, `basgate_response` = %s, `date_modified` = NOW() 
-                WHERE `id` = %d AND `basgate_order_id` = %s";
+            SET `order_id` = %d, `basgate_order_id` = %s, `transaction_id` = %s, `status` = %s, `basgate_response` = %s, `date_modified` = NOW() 
+            WHERE `id` = %d AND `basgate_order_id` = %s";
             $wpdb->query($wpdb->prepare($sql, $order_id, $basgate_order_id, $transaction_id, $status, wp_json_encode($data), (int)$id, $basgate_order_id));
             BasgateHelper::basgate_log('====== STARTED saveTxnResponse after UPDATE  $id:' . $id);
             return $id;
@@ -505,7 +503,8 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
             $sql = "INSERT INTO `" . $wpdb->prefix . "basgate_order_data` 
                     (`order_id`, `basgate_order_id`, `transaction_id`, `status`, `basgate_response`, `date_added`, `date_modified`) 
                     VALUES (%d, %s, %s, %s, %s, NOW(), NOW())";
-            $wpdb->query($wpdb->prepare($sql, $order_id, $basgate_order_id, $transaction_id, $status, wp_json_encode($data)));
+            $prepared_sql = $wpdb->prepare($sql, $order_id, $basgate_order_id, $transaction_id, $status, wp_json_encode($data));
+            $wpdb->query($prepared_sql);
             $result = $wpdb->insert_id;
             BasgateHelper::basgate_log('====== STARTED saveTxnResponse after INSERT  $result:' . $result);
             return $result;
