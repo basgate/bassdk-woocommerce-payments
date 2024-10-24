@@ -20,7 +20,7 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType
         BasgateHelper::basgate_log('===== STARTED get_payment_method_script_handles()');
         wp_register_script(
             'basgate-blocks-integration',
-            plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/admin/checkout-block.js',
+            plugin_dir_url(__FILE__) . 'assets/js/admin/checkout-block.js',
             [
                 'wc-blocks-registry',
                 'wc-settings',

@@ -137,8 +137,8 @@ function uninstall_basgate_plugin()
 }
 function basgateWoopayment_enqueue_style()
 {
-    wp_enqueue_style('basgateWoopayment', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/css/basgate-payments.css', array(), time(), '');
-    wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/basgate-payments.js', array('jquery'), time(), true);
+    wp_enqueue_style('basgateWoopayment', plugin_dir_url(__FILE__) . 'assets/css/basgate-payments.css', array(), time(), '');
+    wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/js/basgate-payments.js', array('jquery'), time(), true);
 }
 
 function basgateWoopayment_js_css()
@@ -453,7 +453,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
             do {
                 $resParams = BasgateHelper::executecUrl(BasgateHelper::getTransactionStatusURL($settings['bas_environment']), $reqParams);
                 $retry++;
-            } while (!$resParams['STATUS'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+            } while (!isset($resParams['body']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
 
             if (!empty($resParams['STATUS'])) {
                 $response = saveTxnResponse(sanitize_text_field($_POST['basgate_order_id']), sanitize_text_field($_POST['order_data_id']), $resParams);

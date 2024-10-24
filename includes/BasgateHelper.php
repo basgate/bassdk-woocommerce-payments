@@ -100,125 +100,188 @@ if (!class_exists('BasgateHelper')) :
         }
 
 
-        /* public static function executecUrlOld($apiURL, $requestParamList) //not in use
-        {
-            $jsonResponse = wp_remote_post(
-                $apiURL, array(
-                'headers'     => array("Content-Type"=> "application/json"),
-                'body'        => json_encode($requestParamList, JSON_UNESCAPED_SLASHES),
-                ) 
-            );
+        // public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
+        // {
+        //     $headers = array("Content-Type" => "application/json");
+        //     if (!empty($extraHeaders)) {
+        //         $headers = array_merge($headers, $extraHeaders);
+        //     }
+        //     $args = array(
+        //         'headers' => $headers,
+        //         'body'      => $requestParamList,
+        //         'method'    => $method,
+        //     );
 
-            //$response_code = wp_remote_retrieve_response_code( $jsonResponse );
-            $response_body = wp_remote_retrieve_body($jsonResponse);
-            $responseParamList = json_decode($response_body, true);
-            $responseParamList['request'] = $requestParamList;
-            return $responseParamList;
-        }*/
+        //     $result =  wp_remote_request($apiURL, $args);
+        //     $response_code = wp_remote_retrieve_response_code($result);
 
-        public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
-        {
-            $headers = array("Content-Type" => "application/json");
-            if (!empty($extraHeaders)) {
-                $headers = array_merge($headers, $extraHeaders);
-            }
-            $args = array(
-                'headers' => $headers,
-                'body'      => $requestParamList,
-                'method'    => $method,
-            );
+        //     if (is_wp_error($result)) {
+        //         error_log(
+        //             sprintf(
+        //                 /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
+        //                 __('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s', 'bassdk-woocommerce-payments'),
+        //                 $apiURL,
+        //                 $result->get_error_code(),
+        //                 $result->get_error_message(),
+        //                 wp_json_encode($args)
+        //             )
+        //         );
+        //         throw new Exception(esc_attr__('Could not retrieve the access token, please try again!!!.', 'bassdk-woocommerce-payments'));
+        //     }
 
-            $result =  wp_remote_request($apiURL, $args);
-            $response_code = wp_remote_retrieve_response_code($result);
-
-            if (is_wp_error($result)) {
-                error_log(
-                    sprintf(
-                        /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
-                        __('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s', 'bassdk-woocommerce-payments'),
-                        $apiURL,
-                        $result->get_error_code(),
-                        $result->get_error_message(),
-                        wp_json_encode($args)
-                    )
-                );
-                throw new Exception(esc_attr__('Could not retrieve the access token, please try again!!!.', 'bassdk-woocommerce-payments'));
-            }
-
-            if (200 !==  $response_code) {
-                $error = wp_remote_retrieve_response_message($result);
-                $resp = wp_remote_retrieve_body($result);
-                error_log(
-                    sprintf(
-                        /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
-                        __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-woocommerce-payments'),
-                        $apiURL,
-                        $response_code,
-                        wp_json_encode($args),
-                        $error,
-                        $resp
-                    )
-                );
-                throw new Exception(esc_attr__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
-            } else {
-                $response_body = wp_remote_retrieve_body($result);
-                return json_decode($response_body, true);
-            }
-        }
+        //     if (200 !==  $response_code) {
+        //         $error = wp_remote_retrieve_response_message($result);
+        //         $resp = wp_remote_retrieve_body($result);
+        //         error_log(
+        //             sprintf(
+        //                 /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
+        //                 __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-woocommerce-payments'),
+        //                 $apiURL,
+        //                 $response_code,
+        //                 wp_json_encode($args),
+        //                 $error,
+        //                 $resp
+        //             )
+        //         );
+        //         throw new Exception(esc_attr__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
+        //     } else {
+        //         $response_body = wp_remote_retrieve_body($result);
+        //         return json_decode($response_body, true);
+        //     }
+        // }
 
 
-        static function httpPost($url, $data, $header)
-        {
-            try {
-                $curl = curl_init($url);
-                curl_setopt($curl, CURLOPT_POST, true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+        // static function httpPost($url, $data, $header)
+        // {
+        //     try {
+        //         $curl = curl_init($url);
+        //         curl_setopt($curl, CURLOPT_POST, true);
+        //         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        //         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        //         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+        //         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        //         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
 
-                $response = curl_exec($curl);
-                $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-                $error = curl_error($curl);
+        //         $response = curl_exec($curl);
+        //         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        //         $error = curl_error($curl);
 
-                if ($httpCode == 400) {
-                    try {
-                        $data = json_decode($response, true);
-                        if (array_key_exists('messages', $data)) {
-                            wc_add_notice("Error: " . implode(' -- ', $data['messages']), 'error');
-                        }
-                    } catch (\Throwable $th) {
-                        //throw $th;
-                    }
-                } else if ($httpCode != 200) {
-                    $msg = "Return httpCode is {$httpCode} \n"
-                        . curl_error($curl) . "URL: " . $url;
-                    if ($error) {
-                        wc_add_notice("Error: " . $error, 'error');
-                    }
-                    error_log(
-                        sprintf(
-                            /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg. */
-                            __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s', 'bassdk-woocommerce-payments'),
-                            $url,
-                            $httpCode,
-                            $data,
-                            $error
-                        )
-                    );
-                    curl_close($curl);
-                    return new Exception(__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
-                    // return $msg;
-                    //return $response;
-                } else {
-                    curl_close($curl);
-                    return json_decode($response, true);
-                }
-            } catch (\Throwable $th) {
-                return new Exception("ERROR On httpPost :" . $th->getMessage());
-            }
-        }
+        //         if ($httpCode == 400) {
+        //             try {
+        //                 $data = json_decode($response, true);
+        //                 if (array_key_exists('messages', $data)) {
+        //                     wc_add_notice("Error: " . implode(' -- ', $data['messages']), 'error');
+        //                 }
+        //             } catch (\Throwable $th) {
+        //                 //throw $th;
+        //             }
+        //         } else if ($httpCode != 200) {
+        //             $msg = "Return httpCode is {$httpCode} \n"
+        //                 . curl_error($curl) . "URL: " . $url;
+        //             if ($error) {
+        //                 wc_add_notice("Error: " . $error, 'error');
+        //             }
+        //             error_log(
+        //                 sprintf(
+        //                     /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg. */
+        //                     __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s', 'bassdk-woocommerce-payments'),
+        //                     $url,
+        //                     $httpCode,
+        //                     $data,
+        //                     $error
+        //                 )
+        //             );
+        //             curl_close($curl);
+        //             return new Exception(__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
+        //             // return $msg;
+        //             //return $response;
+        //         } else {
+        //             curl_close($curl);
+        //             return json_decode($response, true);
+        //         }
+        //     } catch (\Throwable $th) {
+        //         return new Exception("ERROR On httpPost :" . $th->getMessage());
+        //     }
+        // }
+
+        
+	public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
+	{
+		self::basgate_log("===== STARTED executecUrl " . $method . " url:" . $apiURL);
+		// 'Accept: text/plain'
+		$headers = array("Accept" => "*");
+		if (!empty($extraHeaders)) {
+			$headers = array_merge($headers, $extraHeaders);
+		}
+		$args = array(
+			'headers' => $headers,
+			'body'      => $requestParamList,
+			'method'    => $method,
+		);
+
+		$result =  wp_remote_request($apiURL, $args);
+		$response_code = wp_remote_retrieve_response_code($result);
+		$error = wp_remote_retrieve_response_message($result);
+
+		if (is_wp_error($result)) {
+			$msg = sprintf(
+				/* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
+				__('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s', 'bassdk-wp-login'),
+				$apiURL,
+				$result->get_error_code(),
+				$result->get_error_message(),
+				wp_json_encode($args)
+			);
+			// error_log($msg);
+			BasgateHelper::basgate_log($msg);
+			return self::errorResponse($msg);
+			// throw new Exception(__('Could not retrieve the access token, please try again!!!.', BasgateConstants::ID));
+		}
+
+		$response_body = wp_remote_retrieve_body($result);
+
+		if (200 !==  $response_code) {
+			$msg = sprintf(
+				/* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
+				__('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-wp-login'),
+				$apiURL,
+				$response_code,
+				wp_json_encode($args),
+				$error,
+				$response_body
+			);
+			BasgateHelper::basgate_log($msg);
+
+			return self::errorResponse($msg);
+		} else {
+			$data = json_decode($response_body, true); // Decode JSON response
+			if (json_last_error() !== JSON_ERROR_NONE) {
+				return self::errorResponse('Error decoding JSON: ' . json_last_error_msg());
+			}
+			self::basgate_log("===== executecUrl Success: " . wp_json_encode($data));
+
+			return self::successResponse($data);
+		}
+	}
+
+	public static function errorResponse($msg)
+	{
+		self::basgate_log("ERROR errorResponse msg: " . $msg);
+		if (!empty($msg)) {
+			return array('success' => false, 'error' => $msg);
+		} else {
+			return array('success' => false, 'error' => 'Something went wrong');
+		}
+	}
+
+	public static function successResponse($data)
+	{
+		if (!empty($data)) {
+			return array('success' => true, 'body' => $data);
+		} else {
+			return array('success' => true, 'body' => array());
+		}
+	}
 
         static function basgate_log($message)
         {

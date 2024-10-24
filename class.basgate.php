@@ -17,7 +17,7 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->method_title = BasgateConstants::METHOD_TITLE;
         $this->method_description = BasgateConstants::METHOD_DESCRIPTION;
         // $this->icon = esc_url("https://ykbsocial.com/basgate/reportlogo.png");
-        $this->icon = apply_filters('woocommerce_gateway_icon', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/images/bassdk-logo.svg');
+        $this->icon = apply_filters('woocommerce_gateway_icon', plugin_dir_url(__FILE__) . 'assets/images/bassdk-logo.svg');
         $this->has_fields = false;
         $this->init_form_fields();
         $this->init_settings();
@@ -331,36 +331,40 @@ class WC_Basgate extends WC_Payment_Gateway
                 $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
 
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
-                $header = array('Accept: text/plain', 'Content-Type: application/json');
+                $header = array('Accept' => ' text/plain', 'Content-Type' => 'application/json');
 
                 // $res = BasgateHelper::httpPost($url, $reqBody, $header);
                 /* number of retries untill cURL gets success */
                 $retry = 1;
                 do {
-                    $res = BasgateHelper::httpPost($url, $reqBody, $header);
+                    $res = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
                     $retry++;
-                } while (!$res['status'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+                } while (!isset($res['body']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
                 /* number of retries untill cURL gets success */
 
                 // BasgateHelper::basgate_log('====== blinkCheckoutSend $reqBody:' . $reqBody);
                 // BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
 
-                if (!empty($res['body']['trxToken'])) {
-                    BasgateHelper::basgate_log('====== blinkCheckoutSend $res :' . wp_json_encode($res));
+                if (array_key_exists('success', $res) && $res['success'] == true) {
+                    if (!empty($res['body']['trxToken'])) {
+                        BasgateHelper::basgate_log('====== blinkCheckoutSend $res :' . wp_json_encode($res));
 
-                    $data['trxToken'] = $res['body']['trxToken'];
-                    $data['trxId'] = $res['body']['trxId'];
-                    $data['callBackUrl'] = $callBackURL;
+                        $data['trxToken'] = $res['body']['trxToken'];
+                        $data['trxId'] = $res['body']['trxId'];
+                        $data['callBackUrl'] = $callBackURL;
+                    } else {
+                        error_log(
+                            sprintf(
+                                /* translators: 1: bodystr, 2:. */
+                                __('trxToken empty \n bodystr: %1$s , \n $checksum: %2$s.', 'bassdk-woocommerce-payments'),
+                                $bodystr,
+                                $checksum
+                            )
+                        );
+                        $data['trxToken'] = "";
+                    }
                 } else {
-                    error_log(
-                        sprintf(
-                            /* translators: 1: bodystr, 2:. */
-                            __('trxToken empty \n bodystr: %1$s , \n $checksum: %2$s.', 'bassdk-woocommerce-payments'),
-                            $bodystr,
-                            $checksum
-                        )
-                    );
-                    $data['trxToken'] = "";
+                    return null;
                 }
             }
             return $data;
@@ -412,7 +416,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         // $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
-        // $checkout_url = plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/public.js';
+        // $checkout_url = plugin_dir_url(__FILE__) . 'assets/js/public.js';
         // <script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
         $wait_msg = '<div id="basgate-pg-spinner" class="basgate-woopg-loader">
                 <div class="bounce1"></div>
@@ -686,15 +690,15 @@ class WC_Basgate extends WC_Payment_Gateway
                         $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
 
                         $url = BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment'));
-                        $header = array('Accept: text/plain', 'Content-Type: application/json');
+                        $header = array('Accept' => ' text/plain', 'Content-Type' => ' application/json');
                         BasgateHelper::basgate_log('====== check_basgate_response $reqBody:' . $reqBody);
 
                         /* number of retries untill cURL gets success */
                         $retry = 1;
                         do {
-                            $resParams = BasgateHelper::httpPost($url, $reqBody, $header);
+                            $resParams = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
                             $retry++;
-                        } while (!$resParams['status'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+                        } while (!isset($resParams['body']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
                         /* number of retries untill cURL gets success */
 
                         BasgateHelper::basgate_log('====== check_basgate_response $retry:' . $retry . ' , $resParams:' . wp_json_encode($resParams));
@@ -902,8 +906,8 @@ class WC_Basgate extends WC_Payment_Gateway
 
 function basgate_enqueue_script()
 {
-    wp_enqueue_style('basgateadminWoopayment', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/css/admin/basgate-payments.css', array(), time(), '');
-    wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/' . BasgateConstants::PLUGIN_VERSION_FOLDER . '/js/admin/basgate-payments.js', array('jquery'), time(), true);
+    wp_enqueue_style('basgateadminWoopayment', plugin_dir_url(__FILE__) . 'assets/css/admin/basgate-payments.css', array(), time(), '');
+    wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/js/admin/basgate-payments.js', array('jquery'), time(), true);
 }
 
 if (current_user_can('manage_options') && isset($_GET['page']) && $_GET['page'] === 'wc-settings') {

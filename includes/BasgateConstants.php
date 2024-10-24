@@ -30,7 +30,6 @@ class BasgateConstants
 
     const LAST_UPDATED = "20241023";
     const PLUGIN_VERSION = "0.2.00";
-    const PLUGIN_VERSION_FOLDER = "0200";
 
     const CUSTOM_CALLBACK_URL = "";
 
