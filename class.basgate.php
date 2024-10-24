@@ -79,7 +79,11 @@ class WC_Basgate extends WC_Payment_Gateway
                 'type'          => 'textarea',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
                 'description'   => __('This controls the description which the user sees during checkout.', 'bassdk-woocommerce-payments'),
-                'default'       => sprintf(esc_html__('The best payment gateway provider in Yemen for e-payment through most of wallets and banks <img src="%s" height="24px;" />', 'bassdk-woocommerce-payments'), esc_url('https://ykbsocial.com/basgate/reportlogo.png'))
+                'default'       => sprintf(
+                    /* translators: 1: LogoUrl. */
+                    esc_html__('The best payment gateway provider in Yemen for e-payment through most of wallets and banks <img src="%1$s" height="24px;" />', 'bassdk-woocommerce-payments'),
+                    esc_url('https://ykbsocial.com/basgate/reportlogo.png')
+                )
             ),
             'bas_environment' => array(
                 'title'         => __('Environment Mode', 'bassdk-woocommerce-payments'),
@@ -196,7 +200,7 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->generate_settings_html();
         echo wp_kses('</table>', $allowed_tags);
 
-        $last_updated = date("d F Y", strtotime('20241023')) . ' - ' . BasgateConstants::PLUGIN_VERSION;
+        $last_updated = gmdate("d F Y", strtotime('20241023')) . ' - ' . BasgateConstants::PLUGIN_VERSION;
 
         $footer_text = '<div style="text-align: center;"><hr/>';
         $footer_text .= '<strong>' . __('PHP Version', 'bassdk-woocommerce-payments') . '</strong> ' . PHP_VERSION . ' | ';
@@ -730,7 +734,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     if ($order->status !== 'processing') {
                                         $order->payment_complete($trxId);
                                         $order->reduce_order_stock();
-                                        $message = "<br/>" . esc_html__("<b>Transaction ID:</b>", 'bassdk-woocommerce-payments') . $statusData['trxId'] . "<br/>" . esc_html__("<b>Basgate Order ID:</b> ", 'bassdk-woocommerce-payments') . $statusData['orderId'];
+                                        $message = "<br/><b>" . esc_html__("Transaction ID:", 'bassdk-woocommerce-payments') . '</b>' . $statusData['trxId'] . "<br/><b>" . esc_html__("Basgate Order ID:", 'bassdk-woocommerce-payments') . '</b> ' . $statusData['orderId'];
                                         $message .= '<br/><span class="msg-by-basgate">By: Basgate ' . $through . ' ' . $responseDescription . '</span>';
 
                                         $this->msg['class'] = 'warrning';

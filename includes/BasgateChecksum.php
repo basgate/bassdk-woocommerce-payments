@@ -101,7 +101,7 @@ class BasgateChecksum
 	static private function generateRandomString($length)
 	{
 		$random = "";
-		srand((float) microtime() * 1000000);  // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode
+		srand((float) microtime() * 1000000);  // phpcs:ignore
 
 		$data = "9876543210ZYXWVUTSRQPONMLKJIHGFEDCBAabcdefghijklmnopqrstuvwxyz!@#$&_";
 

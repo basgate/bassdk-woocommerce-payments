@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: Bassdk WooCommerce Payment
+ * Plugin Name: Bassdk Payment for WooCommerce
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية
  * Version: 0.1.124
@@ -15,7 +15,7 @@
  * Requires at least: 5.0.1
  * Tested up to: 6.5.5
  * Requires PHP: 7.4
- * Text Domain: basgate
+ * Text Domain: bassdk-woocommerce-payments
  * WC requires at least: 2.0.0
  * WC tested up to: 9.0.2
  */
@@ -108,19 +108,22 @@ function install_basgate_plugin()
 {
     global $wpdb;
     $table_name = $wpdb->prefix . 'basgate_order_data';
+    $charset_collate = $wpdb->get_charset_collate();
+
     $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-			`id` int(11) NOT NULL AUTO_INCREMENT,
-			`order_id` int(11) NOT NULL,
-			`basgate_order_id` VARCHAR(255) NOT NULL,
-			`transaction_id` VARCHAR(255) NOT NULL,
-			`status` VARCHAR(255) NOT NULL,
-			`basgate_response` TEXT,
-			`date_added` DATETIME NOT NULL,
-			`date_modified` DATETIME NOT NULL,
-			PRIMARY KEY (`id`)
-		);";
-    // require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    $wpdb->query($wpdb->prepare($sql));
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `order_id` int(11) NOT NULL,
+        `basgate_order_id` VARCHAR(255) NOT NULL,
+        `transaction_id` VARCHAR(255) NOT NULL,
+        `status` VARCHAR(255) NOT NULL,
+        `basgate_response` TEXT,
+        `date_added` DATETIME NOT NULL,
+        `date_modified` DATETIME NOT NULL,
+        PRIMARY KEY (`id`)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
 }
 
 function uninstall_basgate_plugin()
@@ -163,12 +166,13 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         BasgateHelper::basgate_log('====== STARTED add_basgate_payment_block');
         global $wpdb;
         $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
-        $post_id1 = sanitize_text_field(isset($_GET['post']) ? $_GET['post'] : '');
+        // phpcs:ignore WordPress.Security.NonceVerification
+        $post_id1 = sanitize_text_field(isset($_GET['post']) ? wp_unslash($_GET['post']) : '');
         $post_id = preg_replace('/[^a-zA-Z0-9]/', '', $post_id1);
 
-
         if ($post_id == '' && get_option("woocommerce_custom_orders_table_enabled") == 'yes') {
-            $post_id = isset($_GET['id']) ? $_GET['id'] : '';
+            // phpcs:ignore WordPress.Security.NonceVerification
+            $post_id = isset($_GET['id']) ? wp_unslash($_GET['id']) : '';
         }
 
         if (! $post_id) return; // Exit
@@ -289,8 +293,12 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
     function getBasgateOrderData($order_id)
     {
         global $wpdb;
-        $sql = "SELECT * FROM `" . $wpdb->prefix . "basgate_order_data` WHERE `order_id` = '" . $order_id . "' ORDER BY `id` DESC LIMIT 1";
-        $results = $wpdb->get_row($wpdb->prepare($sql), "ARRAY_A");
+        $table_name = $wpdb->prefix . 'basgate_order_data';
+        $sql = $wpdb->prepare(
+            "SELECT * FROM $table_name WHERE order_id = %d ORDER BY id DESC LIMIT 1",
+            $order_id
+        );
+        $results = $wpdb->get_row($sql, ARRAY_A);
         return $results;
     }
 
@@ -301,8 +309,8 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
         $order = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM $table_name WHERE id = %d",
-                $order_id
+            "SELECT * FROM {$table_name} WHERE id = %d",
+            $order_id
             ),
             ARRAY_A
         );
@@ -487,14 +495,17 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         BasgateHelper::basgate_log('====== STARTED saveTxnResponse $status:' . $status . ' , $basgate_order_id:' . $basgate_order_id . ' , $transaction_id:' . $transaction_id);
 
         if ($id !== false) {
-            $sql =  "UPDATE `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . wp_json_encode($data) . "', `date_modified` = NOW() WHERE `id` = '" . (int)$id . "' AND `basgate_order_id` = '" . $basgate_order_id . "'";
-            $wpdb->query($wpdb->prepare($sql));
+            $sql = "UPDATE `" . $wpdb->prefix . "basgate_order_data` 
+                SET `order_id` = %d, `basgate_order_id` = %s, `transaction_id` = %s, `status` = %s, `basgate_response` = %s, `date_modified` = NOW() 
+                WHERE `id` = %d AND `basgate_order_id` = %s";
+            $wpdb->query($wpdb->prepare($sql, $order_id, $basgate_order_id, $transaction_id, $status, wp_json_encode($data), (int)$id, $basgate_order_id));
             BasgateHelper::basgate_log('====== STARTED saveTxnResponse after UPDATE  $id:' . $id);
             return $id;
         } else {
-
-            $sql =  "INSERT INTO `" . $wpdb->prefix . "basgate_order_data` SET `order_id` = '" . $order_id . "', `basgate_order_id` = '" . $basgate_order_id . "', `transaction_id` = '" . $transaction_id . "', `status` = '" . $status . "', `basgate_response` = '" . wp_json_encode($data) . "', `date_added` = NOW(), `date_modified` = NOW()";
-            $wpdb->query($wpdb->prepare($sql));
+            $sql = "INSERT INTO `" . $wpdb->prefix . "basgate_order_data` 
+                    (`order_id`, `basgate_order_id`, `transaction_id`, `status`, `basgate_response`, `date_added`, `date_modified`) 
+                    VALUES (%d, %s, %s, %s, %s, NOW(), NOW())";
+            $wpdb->query($wpdb->prepare($sql, $order_id, $basgate_order_id, $transaction_id, $status, wp_json_encode($data)));
             $result = $wpdb->insert_id;
             BasgateHelper::basgate_log('====== STARTED saveTxnResponse after INSERT  $result:' . $result);
             return $result;
