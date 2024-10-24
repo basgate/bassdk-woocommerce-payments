@@ -296,7 +296,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         $table_name = $wpdb->prefix . 'basgate_order_data';
         $results = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$table_name} WHERE order_id = '%s' ORDER BY `id` DESC LIMIT 1",
+                "SELECT * FROM {$table_name} WHERE order_id = %s ORDER BY `id` DESC LIMIT 1",
                 $order_id
             ),
             ARRAY_A
@@ -499,12 +499,11 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         $table_name = $wpdb->prefix . "basgate_order_data";
 
         if ($id !== false) {
-            $sql = "UPDATE  {$table_name}
-            SET `order_id` = %d, `basgate_order_id` = %s, `transaction_id` = %s, `status` = %s, `basgate_response` = %s, `date_modified` = NOW() 
-            WHERE `id` = %d AND `basgate_order_id` = %s";
             $wpdb->query(
                 $wpdb->prepare(
-                    $sql,
+                    "UPDATE  {$table_name}
+                        SET `order_id` = %d, `basgate_order_id` = %s, `transaction_id` = %s, `status` = %s, `basgate_response` = %s, `date_modified` = NOW() 
+                        WHERE `id` = %d AND `basgate_order_id` = %s",
                     $order_id,
                     $basgate_order_id,
                     $transaction_id,
@@ -517,12 +516,11 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
             BasgateHelper::basgate_log('====== STARTED saveTxnResponse after UPDATE  $id:' . $id);
             return $id;
         } else {
-            $sql = "INSERT INTO {$table_name} 
-                    (`order_id`, `basgate_order_id`, `transaction_id`, `status`, `basgate_response`, `date_added`, `date_modified`) 
-                    VALUES (%d, %s, %s, %s, %s, NOW(), NOW())";
             $wpdb->query(
                 $wpdb->prepare(
-                    $sql,
+                    "INSERT INTO {$table_name} 
+                        (`order_id`, `basgate_order_id`, `transaction_id`, `status`, `basgate_response`, `date_added`, `date_modified`) 
+                        VALUES (%d, %s, %s, %s, %s, NOW(), NOW())",
                     $order_id,
                     $basgate_order_id,
                     $transaction_id,
