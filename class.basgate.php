@@ -182,13 +182,6 @@ class WC_Basgate extends WC_Payment_Gateway
         echo wp_kses('<p>' . __('Online payment solutions for all your transactions by Basgate', 'bassdk-woocommerce-payments') . '</p>', $allowed_tags);
         echo wp_kses('<p>' . __('Please note disabled settings can be modified from ', 'bassdk-woocommerce-payments') . '<a href="' . esc_url(admin_url('admin.php?page=basgate')) . '">Basgate Login SDK</a></p>', $allowed_tags);
 
-        // Check cUrl is enabled or not
-        $curl_version = BasgateHelper::getcURLversion();
-
-        if (empty($curl_version)) {
-            echo wp_kses('<div class="basgate_response error-box">' . BasgateConstants::ERROR_CURL_DISABLED . '</div>', $allowed_tags);
-        }
-
         // Transaction URL is not working properly or not able to communicate with basgate
         if (!empty(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')))) {
             //wp_remote_get($url, array('sslverify' => FALSE));
@@ -207,7 +200,6 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $footer_text = '<div style="text-align: center;"><hr/>';
         $footer_text .= '<strong>' . __('PHP Version', 'bassdk-woocommerce-payments') . '</strong> ' . PHP_VERSION . ' | ';
-        $footer_text .= '<strong>' . __('cURL Version', 'bassdk-woocommerce-payments') . '</strong> ' . $curl_version . ' | ';
         $footer_text .= '<strong>' . __('Wordpress Version', 'bassdk-woocommerce-payments') . '</strong> ' . get_bloginfo('version') . ' | ';
         $footer_text .= '<strong>' . __('WooCommerce Version', 'bassdk-woocommerce-payments') . '</strong> ' . WOOCOMMERCE_VERSION . ' | ';
         $footer_text .= '<strong>' . __('Last Updated', 'bassdk-woocommerce-payments') . '</strong> ' . $last_updated . ' | ';
@@ -333,17 +325,11 @@ class WC_Basgate extends WC_Payment_Gateway
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
                 $header = array('Accept' => ' text/plain', 'Content-Type' => 'application/json');
 
-                // $res = BasgateHelper::httpPost($url, $reqBody, $header);
-                /* number of retries untill cURL gets success */
                 $retry = 1;
                 do {
                     $res = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
                     $retry++;
                 } while (!isset($res['body']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
-                /* number of retries untill cURL gets success */
-
-                // BasgateHelper::basgate_log('====== blinkCheckoutSend $reqBody:' . $reqBody);
-                // BasgateHelper::basgate_log('====== blinkCheckoutSend $res:' . $res);
 
                 if (array_key_exists('success', $res) && $res['success'] == true) {
                     if (!empty($res['body']['trxToken'])) {
@@ -693,13 +679,11 @@ class WC_Basgate extends WC_Payment_Gateway
                         $header = array('Accept' => ' text/plain', 'Content-Type' => ' application/json');
                         BasgateHelper::basgate_log('====== check_basgate_response $reqBody:' . $reqBody);
 
-                        /* number of retries untill cURL gets success */
                         $retry = 1;
                         do {
                             $resParams = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
                             $retry++;
                         } while (!isset($resParams['body']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
-                        /* number of retries untill cURL gets success */
 
                         BasgateHelper::basgate_log('====== check_basgate_response $retry:' . $retry . ' , $resParams:' . wp_json_encode($resParams));
 
@@ -727,7 +711,6 @@ class WC_Basgate extends WC_Payment_Gateway
 
                         BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $statusData['trxStatus'] . ' , trxStatusId:' . $statusData['trxStatusId']);
 
-                        // if curl failed to fetch response
                         if (!isset($statusData['trxStatusId'])) {
                             $this->fireFailure($order, __("It seems some issue in server to server communication. Kindly connect with us.", 'bassdk-woocommerce-payments'));
                         } else {

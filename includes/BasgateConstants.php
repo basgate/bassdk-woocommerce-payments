@@ -66,7 +66,6 @@ class BasgateConstants
     const ERROR_CHECKSUM_MISMATCH = "Security Error. Checksum Mismatched!";
     const ERROR_AMOUNT_MISMATCH = "Security Error. Amount Mismatched!";
     const ERROR_INVALID_ORDER = "No order found to process. Kindly contact with us.";
-    const ERROR_CURL_DISABLED = "cURL is not enabled properly. Please verify.";
     const ERROR_CURL_WARNING = "Your server is unable to connect with us. Please contact to Basgate Support.";
 
     const WEBHOOK_STAGING_URL = "https://api-tst.basgate.com:4951/";

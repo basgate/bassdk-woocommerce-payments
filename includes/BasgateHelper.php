@@ -69,24 +69,6 @@ if (!class_exists('BasgateHelper')) :
                 return BasgateConstants::TRANSACTION_STATUS_URL_STAGING;
             }
         }
-        /**
-         * Check and test cURL is working or able to communicate properly with basgate
-         */
-        public static function validateCurl($transaction_status_url = '')
-        {
-            // if (!empty($transaction_status_url) && function_exists("curl_init")) {
-            //     $ch = curl_init(trim($transaction_status_url));
-            //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            //     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-
-            //     $res = curl_exec($ch);
-            //     curl_close($ch);
-            //     return $res !== false;
-            // }
-            // return false;
-
-            return true;
-        }
 
         public static function getcURLversion()
         {
@@ -204,84 +186,84 @@ if (!class_exists('BasgateHelper')) :
         //     }
         // }
 
-        
-	public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
-	{
-		self::basgate_log("===== STARTED executecUrl " . $method . " url:" . $apiURL);
-		// 'Accept: text/plain'
-		$headers = array("Accept" => "*");
-		if (!empty($extraHeaders)) {
-			$headers = array_merge($headers, $extraHeaders);
-		}
-		$args = array(
-			'headers' => $headers,
-			'body'      => $requestParamList,
-			'method'    => $method,
-		);
 
-		$result =  wp_remote_request($apiURL, $args);
-		$response_code = wp_remote_retrieve_response_code($result);
-		$error = wp_remote_retrieve_response_message($result);
+        public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
+        {
+            self::basgate_log("===== STARTED executecUrl " . $method . " url:" . $apiURL);
+            // 'Accept: text/plain'
+            $headers = array("Accept" => "*");
+            if (!empty($extraHeaders)) {
+                $headers = array_merge($headers, $extraHeaders);
+            }
+            $args = array(
+                'headers' => $headers,
+                'body'      => $requestParamList,
+                'method'    => $method,
+            );
 
-		if (is_wp_error($result)) {
-			$msg = sprintf(
-				/* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
-				__('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s', 'bassdk-wp-login'),
-				$apiURL,
-				$result->get_error_code(),
-				$result->get_error_message(),
-				wp_json_encode($args)
-			);
-			// error_log($msg);
-			BasgateHelper::basgate_log($msg);
-			return self::errorResponse($msg);
-			// throw new Exception(__('Could not retrieve the access token, please try again!!!.', BasgateConstants::ID));
-		}
+            $result =  wp_remote_request($apiURL, $args);
+            $response_code = wp_remote_retrieve_response_code($result);
+            $error = wp_remote_retrieve_response_message($result);
 
-		$response_body = wp_remote_retrieve_body($result);
+            if (is_wp_error($result)) {
+                $msg = sprintf(
+                    /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
+                    __('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s', 'bassdk-wp-login'),
+                    $apiURL,
+                    $result->get_error_code(),
+                    $result->get_error_message(),
+                    wp_json_encode($args)
+                );
+                // error_log($msg);
+                BasgateHelper::basgate_log($msg);
+                return self::errorResponse($msg);
+                // throw new Exception(__('Could not retrieve the access token, please try again!!!.', BasgateConstants::ID));
+            }
 
-		if (200 !==  $response_code) {
-			$msg = sprintf(
-				/* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
-				__('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-wp-login'),
-				$apiURL,
-				$response_code,
-				wp_json_encode($args),
-				$error,
-				$response_body
-			);
-			BasgateHelper::basgate_log($msg);
+            $response_body = wp_remote_retrieve_body($result);
 
-			return self::errorResponse($msg);
-		} else {
-			$data = json_decode($response_body, true); // Decode JSON response
-			if (json_last_error() !== JSON_ERROR_NONE) {
-				return self::errorResponse('Error decoding JSON: ' . json_last_error_msg());
-			}
-			self::basgate_log("===== executecUrl Success: " . wp_json_encode($data));
+            if (200 !==  $response_code) {
+                $msg = sprintf(
+                    /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
+                    __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-wp-login'),
+                    $apiURL,
+                    $response_code,
+                    wp_json_encode($args),
+                    $error,
+                    $response_body
+                );
+                BasgateHelper::basgate_log($msg);
 
-			return self::successResponse($data);
-		}
-	}
+                return self::errorResponse($msg);
+            } else {
+                $data = json_decode($response_body, true); // Decode JSON response
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    return self::errorResponse('Error decoding JSON: ' . json_last_error_msg());
+                }
+                self::basgate_log("===== executecUrl Success: " . wp_json_encode($data));
 
-	public static function errorResponse($msg)
-	{
-		self::basgate_log("ERROR errorResponse msg: " . $msg);
-		if (!empty($msg)) {
-			return array('success' => false, 'error' => $msg);
-		} else {
-			return array('success' => false, 'error' => 'Something went wrong');
-		}
-	}
+                return self::successResponse($data);
+            }
+        }
 
-	public static function successResponse($data)
-	{
-		if (!empty($data)) {
-			return array('success' => true, 'body' => $data);
-		} else {
-			return array('success' => true, 'body' => array());
-		}
-	}
+        public static function errorResponse($msg)
+        {
+            self::basgate_log("ERROR errorResponse msg: " . $msg);
+            if (!empty($msg)) {
+                return array('success' => false, 'error' => $msg);
+            } else {
+                return array('success' => false, 'error' => 'Something went wrong');
+            }
+        }
+
+        public static function successResponse($data)
+        {
+            if (!empty($data)) {
+                return array('success' => true, 'body' => $data);
+            } else {
+                return array('success' => true, 'body' => array());
+            }
+        }
 
         static function basgate_log($message)
         {
