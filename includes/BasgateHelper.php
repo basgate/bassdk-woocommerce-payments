@@ -267,10 +267,20 @@ if (!class_exists('BasgateHelper')) :
 
         static function basgate_log($message)
         {
-            if (! defined('WP_DEBUG') || ! WP_DEBUG) {
+            $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+            if (!array_key_exists('debug', $settings)) {
+                $is_debug = 'yes';
+            } else {
+                $is_debug = $settings['debug'];
+            }
+
+            if ((! defined('WP_DEBUG') || ! WP_DEBUG) && $is_debug == 'no') {
                 return; // Only log if WP_DEBUG is enabled
             }
 
+            if ($is_debug == 'yes') {
+                error_log($message);
+            }
 
             if (! function_exists('get_filesystem_method')) {
                 require_once(ABSPATH . 'wp-admin/includes/file.php');

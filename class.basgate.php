@@ -125,6 +125,13 @@ class WC_Basgate extends WC_Payment_Gateway
                 'label'         => __('Enable Basgate Login/Payments.', 'bassdk-woocommerce-payments'),
                 'default'       => 'yes'
             ),
+            'debug'           => array(
+                'title'             => __('Enable Debug', 'bassdk-woocommerce-payments'),
+                'type'          => 'checkbox',
+                'custom_attributes' => array('disabled' => 'disabled', 'display' => 'none'),
+                'label'         => __('Enable debug mode to log all oprations.', 'bassdk-woocommerce-payments'),
+                'default'       => 'yes'
+            ),
         );
     }
 
