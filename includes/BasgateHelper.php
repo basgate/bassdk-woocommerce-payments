@@ -191,6 +191,11 @@ if (!class_exists('BasgateHelper')) :
         {
 
             self::basgate_log("===== STARTED executecUrl " . $method . " url:" . $apiURL);
+            $timeout = 45;
+            if (! ini_get('safe_mode')) {
+                set_time_limit($timeout + 10);
+            }
+            // 'Accept: text/plain'
             $headers = array("Accept" => "*");
             if (!empty($extraHeaders)) {
                 $headers = array_merge($headers, $extraHeaders);
@@ -199,6 +204,8 @@ if (!class_exists('BasgateHelper')) :
                 'headers' => $headers,
                 'body'      => $requestParamList,
                 'method'    => $method,
+                'timeout'     => $timeout,
+
             );
 
             $result =  wp_remote_request($apiURL, $args);
