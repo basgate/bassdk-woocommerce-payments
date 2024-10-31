@@ -351,8 +351,9 @@ class WC_Basgate extends WC_Payment_Gateway
                     } else {
                         BasgateHelper::basgate_log(
                             sprintf(
-                                /* translators: 1: bodystr, 2:. */
-                                __('trxToken empty \n bodystr: %1$s , \n $checksum: %2$s.', 'bassdk-woocommerce-payments'),
+                                /*translators: 1:response, 2: bodystr , 3:checksum. */
+                                __('trxToken empty response: %1$s , \n bodystr: %2$s , \n $checksum: %3$s.', 'bassdk-woocommerce-payments'),
+                                wp_json_encode($res),
                                 $bodystr,
                                 $checksum
                             )
