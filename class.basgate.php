@@ -231,7 +231,6 @@ class WC_Basgate extends WC_Payment_Gateway
         }
     }
 
-
     /**
      * Receipt Page
      **/
@@ -358,7 +357,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                 $checksum
                             )
                         );
-                        $data['trxToken'] = "";
+                        // $data['trxToken'] = "";
                     }
                 } else {
                     return null;
@@ -444,7 +443,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $error_msg = __('Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments');
             $this->setMessages($error_msg, "error");
             return new Exception(esc_attr($error_msg));
-            // exit;
+            exit;
         }
 
         BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . wp_json_encode($data));
@@ -494,7 +493,6 @@ class WC_Basgate extends WC_Payment_Gateway
     public function generate_basgate_callback()
     {
         BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
-
 ?>
         <script type="text/javascript">
             // eslint-disable-next-line
