@@ -443,8 +443,8 @@ class WC_Basgate extends WC_Payment_Gateway
         if (is_null($data) || empty($data) || is_wp_error($data)) {
             $error_msg = __('Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments');
             $this->setMessages($error_msg, "error");
-            return new Exception(esc_attr($error_msg));
-            exit;
+            return; //new Exception(esc_attr($error_msg));
+            // exit;
         }
 
         BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . wp_json_encode($data));
