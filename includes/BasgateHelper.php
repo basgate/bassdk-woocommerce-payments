@@ -189,7 +189,12 @@ if (!class_exists('BasgateHelper')) :
 
         public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
         {
+
             self::basgate_log("===== STARTED executecUrl " . $method . " url:" . $apiURL);
+            // $timeout = 45;
+            // if (! ini_get('safe_mode')) {
+            //     set_time_limit($timeout + 10);
+            // }
             // 'Accept: text/plain'
             $headers = array("Accept" => "*");
             if (!empty($extraHeaders)) {
@@ -199,6 +204,8 @@ if (!class_exists('BasgateHelper')) :
                 'headers' => $headers,
                 'body'      => $requestParamList,
                 'method'    => $method,
+                // 'timeout'     => $timeout,
+
             );
 
             $result =  wp_remote_request($apiURL, $args);

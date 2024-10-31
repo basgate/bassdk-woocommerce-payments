@@ -78,6 +78,13 @@ add_action('before_woocommerce_init', function () {
 //TODO: Check if is it on Bas Platform 
 if (true) {
     add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
+    add_filter( 'http_request_timeout', 'wp9838c_timeout_extend' );
+}
+
+function wp9838c_timeout_extend( $time )
+{
+    // Default timeout is 5
+    return 45;
 }
 
 function basgate_register_order_approval_payment_method_type()
