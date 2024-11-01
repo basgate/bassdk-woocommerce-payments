@@ -44,6 +44,10 @@ class WC_Basgate extends WC_Payment_Gateway
             add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
         }
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
+        wp_enqueue_script('bassdk-payment-script', plugin_dir_url(__FILE__) . 'assets/js/public.js', array(), time(),   array(
+            'strategy'  => 'async',
+            'in_footer' => true,
+        ));
     }
 
     private function getSetting($key)
@@ -425,7 +429,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         // $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
-        // $checkout_url = plugin_dir_url(__FILE__) . 'assets/js/public.js';
+        $checkout_url = plugin_dir_url(__FILE__) . 'assets/js/public.js';
         // <script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
         $wait_msg = '<div id="basgate-pg-spinner" class="basgate-woopg-loader">
                 <div class="bounce1"></div>
