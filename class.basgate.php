@@ -346,7 +346,6 @@ class WC_Basgate extends WC_Payment_Gateway
 
                 if (array_key_exists('success', $res) && $res['success'] == true) {
                     $body = !empty($res['body']) ? $res['body'] : array();
-                    $msg = array_key_exists('Messages', $body) ? $body['Messages'] : '';
                     if (!empty($body['body']['trxToken'])) {
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $body :' . wp_json_encode($body));
 
@@ -363,7 +362,8 @@ class WC_Basgate extends WC_Payment_Gateway
                                 $checksum
                             )
                         );
-                        // $data['trxToken'] = "";
+                        $msg = array_key_exists('Messages', $body) ? $body['Messages'] : 'trxToken is empty';
+                        return new Exception($msg);
                     }
                 } else {
                     return null;
