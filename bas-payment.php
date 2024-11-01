@@ -282,7 +282,7 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
             if (!empty($basgate_data)) {
                 $table_html .= '<table class="basgate_payment_block" id="basgate_payment_table">';
                 foreach ($basgate_data as $key => $value) {
-                    if ($key !== 'request') {
+                    if ($key !== 'request' && !is_array($value)) {
                         $table_html .= '<tr><td> ' . $key . '</td><td> ' . $value . '</td></tr>';
                     }
                 }

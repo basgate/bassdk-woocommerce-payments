@@ -266,8 +266,7 @@ class WC_Basgate extends WC_Payment_Gateway
             );
         }
         //TODO: Temperary for test only
-
-        $data['currency'] = 'YER';
+        // $data['currency'] = 'YER';
 
         return $data;
     }
