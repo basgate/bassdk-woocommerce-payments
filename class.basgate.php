@@ -723,21 +723,26 @@ class WC_Basgate extends WC_Payment_Gateway
 
                         BasgateHelper::basgate_log('====== check_basgate_response $retry:' . $retry . ' , $resParams:' . wp_json_encode($resParams));
 
-                        if (!isset($resParams['status'])) {
+                        if (!isset($resParams['body']['status'])) {
                             $resParams = $data;
                         } else {
                             //TODO: Add checksum verify
+                            $body = isset($resParams['body']) ? $resParams['body'] : $resParams;
                             $head = isset($resParams['head']) ? $resParams['head'] : '';
                             $post_checksum = isset($head['signature']) ? $head['signature'] : '';
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $post_checksum:' . $post_checksum);
-                            $statusData = isset($resParams['body']) ? $resParams['body'] : $resParams;
+                            $statusData = isset($body['body']) ? $body['body'] : $body;
                             $statusData['orderId'] = isset($statusData['order']['orderId']) ? $statusData['order']['orderId'] : $order_id;
                             $isValidChecksum = BasgateChecksum::verifySignature(wp_json_encode($statusData), $this->getSetting('bas_merchant_key'), $post_checksum);
                             BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS $isValidChecksum:' . $isValidChecksum);
                         }
 
-                        BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS statusData:' . wp_json_encode($statusData));
-                        BasgateHelper::basgate_log('====== check_basgate_response trxStatus:' . $statusData['trxStatus'] . ' , orderId: ' . $statusData['orderId']);
+                        try {
+                            BasgateHelper::basgate_log('====== check_basgate_response after ORDER_STATUS statusData:' . wp_json_encode($statusData));
+                            BasgateHelper::basgate_log('====== check_basgate_response trxStatus:' . $statusData['trxStatus'] . ' , orderId: ' . $statusData['orderId']);
+                        } catch (Exception $e) {
+                            BasgateHelper::basgate_log('====== check_basgate_response Exception: ' . $e->getMessage());
+                        }
 
                         /* save basgate response in db */
                         if (BasgateConstants::SAVE_BASGATE_RESPONSE && isset($statusData['trxStatusId'])) {
@@ -745,7 +750,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         }
                         /* save basgate response in db */
 
-                        BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $statusData['trxStatus'] . ' , trxStatusId:' . $statusData['trxStatusId']);
+                        // BasgateHelper::basgate_log('====== check_basgate_response $trxStatus:' . $statusData['trxStatus'] . ' , trxStatusId:' . $statusData['trxStatusId']);
 
                         if (!isset($statusData['trxStatusId'])) {
                             $this->fireFailure($order, __("It seems some issue in server to server communication. Kindly connect with us.", 'bassdk-woocommerce-payments'));
