@@ -346,7 +346,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
                 if (array_key_exists('success', $res) && $res['success'] == true) {
                     $body = !empty($res['body']) ? $res['body'] : array();
-
+                    $msg = array_key_exists('Messages', $body) ? $body['Messages'] : '';
                     if (!empty($body['body']['trxToken'])) {
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $body :' . wp_json_encode($body));
 
@@ -446,9 +446,14 @@ class WC_Basgate extends WC_Payment_Gateway
         $data = $this->blinkCheckoutSend($paramData);
 
         if (is_null($data) || empty($data) || is_wp_error($data)) {
-            $error_msg = __('Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments');
+            if (is_wp_error($data)) {
+                $mssg = $data->getMessage();
+                $error_msg = __('Could not complete the transaction, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . 'ERROR Message:' . $mssg;
+            } else {
+                $error_msg = __('Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments');
+            }
             $this->setMessages($error_msg, "error");
-            return; //new Exception(esc_attr($error_msg));
+            return new Exception(esc_attr($error_msg));
             // exit;
         }
 
