@@ -237,8 +237,8 @@ class WC_Basgate extends WC_Payment_Gateway
     public function receipt_page($order)
     {
         BasgateHelper::basgate_log('====== STARTED receipt_page');
-        echo esc_html($this->generate_basgate_form($order));
-        echo esc_html($this->generate_basgate_callback($order));
+        echo $this->generate_basgate_form($order);
+        echo $this->generate_basgate_callback($order);
     }
 
     public function getOrderInfo($order)
