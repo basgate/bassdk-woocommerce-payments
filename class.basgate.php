@@ -342,21 +342,23 @@ class WC_Basgate extends WC_Payment_Gateway
                 do {
                     $res = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
                     $retry++;
-                } while (!isset($res['body']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
+                } while (!isset($res['body']['status']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
 
                 if (array_key_exists('success', $res) && $res['success'] == true) {
-                    if (!empty($res['body']['trxToken'])) {
-                        BasgateHelper::basgate_log('====== blinkCheckoutSend $res :' . wp_json_encode($res));
+                    $body = !empty($res['body']) ? $res['body'] : array();
 
-                        $data['trxToken'] = $res['body']['trxToken'];
-                        $data['trxId'] = $res['body']['trxId'];
+                    if (!empty($body['body']['trxToken'])) {
+                        BasgateHelper::basgate_log('====== blinkCheckoutSend $body :' . wp_json_encode($body));
+
+                        $data['trxToken'] = $body['body']['trxToken'];
+                        $data['trxId'] = $body['body']['trxId'];
                         $data['callBackUrl'] = $callBackURL;
                     } else {
                         BasgateHelper::basgate_log(
                             sprintf(
-                                /*translators: 1:response, 2: bodystr , 3:checksum. */
-                                __('trxToken empty response: %1$s , \n bodystr: %2$s , \n $checksum: %3$s.', 'bassdk-woocommerce-payments'),
-                                wp_json_encode($res),
+                                /*translators: 1:body, 2: bodystr , 3:checksum. */
+                                __('trxToken empty body: %1$s , \n bodystr: %2$s , \n $checksum: %3$s.', 'bassdk-woocommerce-payments'),
+                                wp_json_encode($body),
                                 $bodystr,
                                 $checksum
                             )
