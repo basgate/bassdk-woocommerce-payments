@@ -456,7 +456,7 @@ class WC_Basgate extends WC_Payment_Gateway
             BasgateHelper::basgate_log('====== generate_basgate_form inside if $data :' . $data);
             $error_msg = __('Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments');
             $this->setMessages($error_msg, "error");
-            return new \WP_Error('connection_error', esc_attr($error_msg));
+            // return new \WP_Error('connection_error', esc_attr($error_msg));
             wp_redirect(wc_get_checkout_url());
             exit;
         }
@@ -466,7 +466,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $mssg = is_array($mssg) ? reset($mssg) : $mssg;
             $error_msg = __('Could not complete the transaction, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . 'ERROR Message:' . $mssg;
             $this->setMessages($error_msg, "error");
-            return new \WP_Error('connection_error', esc_attr($error_msg));
+            // return new \WP_Error('connection_error', esc_attr($error_msg));
             wp_redirect(wc_get_checkout_url());
             exit;
         }
