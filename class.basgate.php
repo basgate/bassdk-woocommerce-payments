@@ -366,7 +366,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         $msg = array_key_exists('Messages', $body) ? $body['Messages'] : 'trxToken is empty';
                         $msg = is_array($msg) ? reset($msg) : $msg;
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $msg :' . $msg);
-                        $this->setMessages($msg, "error");
+                        // $this->setMessages($msg, "error");
                         // throw new Exception($msg);
                         return new \WP_Error('connection_error', __($msg, 'bassdk-woocommerce-payments'));
                     }
@@ -459,20 +459,17 @@ class WC_Basgate extends WC_Payment_Gateway
             // return new \WP_Error('connection_error', esc_attr($error_msg));
             wp_redirect(wc_get_checkout_url());
             exit;
-        }
-
-        if (is_wp_error($data)) {
+        } else if (is_wp_error($data)) {
             $mssg = $data->get_error_messages();
             $mssg = is_array($mssg) ? reset($mssg) : $mssg;
-            $error_msg = __('Could not complete the transaction, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . 'ERROR Message:' . $mssg;
+            $error_msg = __('Could not complete the transaction, \n\nplease check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . '\n\n Return ERROR Message:\n\n' . $mssg;
             $this->setMessages($error_msg, "error");
             // return new \WP_Error('connection_error', esc_attr($error_msg));
             wp_redirect(wc_get_checkout_url());
             exit;
         }
 
-        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION wp_json_encode($data) :' . wp_json_encode($data));
-        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . $data);
+        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . wp_json_encode($data));
 
         return '<div class="pg-basgate-checkout">
             <script type="text/javascript">
