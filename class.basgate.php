@@ -326,7 +326,7 @@ class WC_Basgate extends WC_Payment_Gateway
                             $bodystr
                         )
                     );
-                    throw new Exception(__('Could not retrieve signature, please try again.', 'bassdk-woocommerce-payments'));
+                    return new \WP_Error('invalid_signature', __('Could not retrieve signature, please try again.', 'bassdk-woocommerce-payments'));
                 }
 
                 /* prepare JSON string for request */
@@ -368,17 +368,17 @@ class WC_Basgate extends WC_Payment_Gateway
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $msg :' . $msg);
                         $this->setMessages($msg, "error");
                         // throw new Exception($msg);
-                        return new Exception($msg);
+                        return new \WP_Error('connection_error', __($msg, 'bassdk-woocommerce-payments'));
                     }
                 } else {
-                    return new Exception(__("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
+                    return new \WP_Error('connection_error', __("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
                 }
             } else {
-                return new Exception(__("ERROR amount is empty", 'bassdk-woocommerce-payments'));
+                return new \WP_Error('invalid_data', __("ERROR amount is empty", 'bassdk-woocommerce-payments'));
             }
             // return $data;
         } catch (\Throwable $th) {
-            return new Exception("ERROR On blinkCheckoutSend :" . $th->getMessage());
+            return new \WP_Error('connection_error', "ERROR On blinkCheckoutSend :" . $th->getMessage());
         }
     }
 
