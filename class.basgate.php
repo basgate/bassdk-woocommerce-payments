@@ -363,6 +363,7 @@ class WC_Basgate extends WC_Payment_Gateway
                             )
                         );
                         $msg = array_key_exists('Messages', $body) ? $body['Messages'] : 'trxToken is empty';
+                        $msg = is_array($msg) ? reset($msg) : $msg;
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $msg :' . $msg);
                         return new Exception($msg);
                     }
