@@ -367,14 +367,14 @@ class WC_Basgate extends WC_Payment_Gateway
                         $msg = is_array($msg) ? reset($msg) : $msg;
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $msg :' . $msg);
                         $this->setMessages($msg, "error");
-                        throw new Exception($msg);
+                        // throw new Exception($msg);
                         return new Exception($msg);
                     }
                 } else {
-                    return null;
+                    return new Exception(__("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
                 }
             } else {
-                return new Exception("ERROR amount is empty");
+                return new Exception(__("ERROR amount is empty", 'bassdk-woocommerce-payments'));
             }
             // return $data;
         } catch (\Throwable $th) {
