@@ -293,6 +293,8 @@ class WC_Basgate extends WC_Payment_Gateway
                 // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
                 $requestTimestamp = (string)  time();
                 /* body parameters */
+                //TODO: Temperary for test only
+                $paramData['currency']='YER';
                 $basgateParams["body"] = array(
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
