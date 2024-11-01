@@ -290,7 +290,6 @@ class WC_Basgate extends WC_Payment_Gateway
             $callBackURL = add_query_arg('orderId', $paramData['order_id'], $callBackURL);
             BasgateHelper::basgate_log('====== blinkCheckoutSend $callBackURL:' . $callBackURL);
 
-            $data = array();
             if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
                 $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
                 // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
@@ -349,9 +348,11 @@ class WC_Basgate extends WC_Payment_Gateway
                     $status = !empty($body['status']) ? $body['status'] : 0;
                     if ($status == 1) {
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $body :' . wp_json_encode($body));
+                        $data = array();
                         $data['trxToken'] = $body['body']['trxToken'];
                         $data['trxId'] = $body['body']['trxId'];
                         $data['callBackUrl'] = $callBackURL;
+                        return $data;
                     } else {
                         BasgateHelper::basgate_log(
                             sprintf(
@@ -366,6 +367,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         $msg = is_array($msg) ? reset($msg) : $msg;
                         BasgateHelper::basgate_log('====== blinkCheckoutSend $msg :' . $msg);
                         $this->setMessages($msg, "error");
+                        throw new Exception($msg);
                         return new Exception($msg);
                     }
                 } else {
@@ -450,20 +452,26 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $data = $this->blinkCheckoutSend($paramData);
 
-        if (is_null($data) || empty($data) || is_wp_error($data)) {
+        if (is_null($data) || empty($data)) {
             BasgateHelper::basgate_log('====== generate_basgate_form inside if $data :' . $data);
-            if (is_wp_error($data)) {
-                $mssg = $data->getMessage();
-                $error_msg = __('Could not complete the transaction, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . 'ERROR Message:' . $mssg;
-            } else {
-                $error_msg = __('Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments');
-            }
+            $error_msg = __('Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments');
             $this->setMessages($error_msg, "error");
             return new Exception(esc_attr($error_msg));
             exit;
         }
 
-        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . wp_json_encode($data));
+        if (is_wp_error($data)) {
+            BasgateHelper::basgate_log('====== generate_basgate_form inside if is_wp_error $data :' . $data);
+
+            $mssg = $data->getMessage();
+            $error_msg = __('Could not complete the transaction, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . 'ERROR Message:' . $mssg;
+            $this->setMessages($error_msg, "error");
+            return new Exception(esc_attr($error_msg));
+            exit;
+        }
+
+        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION wp_json_encode($data) :' . wp_json_encode($data));
+        BasgateHelper::basgate_log('====== generate_basgate_form INITIATE_TRANSACTION $data :' . $data);
 
         return '<div class="pg-basgate-checkout">
             <script type="text/javascript">
