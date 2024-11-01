@@ -463,6 +463,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         if (is_wp_error($data)) {
             $mssg = $data->get_error_messages();
+            $mssg = is_array($mssg) ? reset($mssg) : $mssg;
             $error_msg = __('Could not complete the transaction, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . 'ERROR Message:' . $mssg;
             $this->setMessages($error_msg, "error");
             return new \WP_Error('connection_error', esc_attr($error_msg));
