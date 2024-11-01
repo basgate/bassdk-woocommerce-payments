@@ -370,8 +370,10 @@ class WC_Basgate extends WC_Payment_Gateway
                 } else {
                     return null;
                 }
+            } else {
+                return new Exception("ERROR amount is empty");
             }
-            return $data;
+            // return $data;
         } catch (\Throwable $th) {
             return new Exception("ERROR On blinkCheckoutSend :" . $th->getMessage());
         }
@@ -448,7 +450,6 @@ class WC_Basgate extends WC_Payment_Gateway
         $data = $this->blinkCheckoutSend($paramData);
 
         if (is_null($data) || empty($data) || is_wp_error($data)) {
-
             if (is_wp_error($data)) {
                 $mssg = $data->getMessage();
                 $error_msg = __('Could not complete the transaction, please check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . 'ERROR Message:' . $mssg;
