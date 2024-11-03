@@ -44,11 +44,11 @@ if (! is_plugin_active('woocommerce/woocommerce.php')) {
     return;
 }
 
-if (! is_plugin_active('bassdk-wp-login/bassdk-wp-login.php')) {
+if (! is_plugin_active('bassdk-login/bassdk-login.php')) {
     add_action(
         'admin_notices',
         function () {
-            echo '<div class="error"><p><strong>' . esc_html__('Basgate Payment requires Basgate Login SDK to be installed and active. You can download', 'bassdk-woocommerce-payments') . '<a href="' . esc_url('https://github.com/basgate/bassdk-wp-login') . '" target="_blank">Basgate Login SDK</a>' . '</strong></p></div>';
+            echo '<div class="error"><p><strong>' . esc_html__('Basgate Payment requires Basgate Login SDK to be installed and active. You can download', 'bassdk-woocommerce-payments') . '<a href="' . esc_url('https://github.com/basgate/bassdk-login') . '" target="_blank">Basgate Login SDK</a>' . '</strong></p></div>';
         }
     );
 
