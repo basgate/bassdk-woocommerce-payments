@@ -6,6 +6,7 @@ String projectName = "bassdk-woocommerce-payments"
 String userName = "basgate-_979mf9lyuyh"
 String iisApplicationPath = "C:\\inetpub\\vhosts\\basgate-sandbox.com\\wp-plugin.basgate-sandbox.com\\wp-content\\plugins\\bassdk-woocommerce-payments\\"
 
+
 node () {
     stage('Clean Workspace'){
       // cleanWs()
