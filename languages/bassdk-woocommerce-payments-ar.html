@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bassdk Payment for WooCommerce</title>
+  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+  <style>
+
+
+/*
+Based on Minimal CSS (minimalcss.com) under the MIT license.
+*/
+
+/* Reset */
+* { margin: 0; padding: 0; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+
+/* Layout */
+body { background-color: #fff; color: #333;	font: 14px/20px -apple-system, "HelveticaNeue", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+
+header { width: 100%; margin: 0 auto; position: relative; padding: 20px 0; margin-bottom: 20px; }
+
+nav ul { margin: 0; }
+nav ul li { display: inline; margin-right: 20px; font-size: 16px; line-height: 28px; color: #333; }
+nav ul li a { color: #333; }
+
+.container { position: relative; max-width: 90%; margin: 0 auto; }
+
+footer { border-top:1px solid #ccc; font-size:11px; line-height:26px; color:#999; }
+footer a { color:#999999; }
+footer a:hover { color:#105CB6; }
+footer ul li { display:inline; list-style:none; padding-left:20px; }
+
+/* Typography */
+a { color: #105CB6; text-decoration: none; }
+a:hover, a:focus { color: #105CB6; text-decoration: underline; }
+a:active { color: #105CB6; }
+
+h1 { font-size: 24px; line-height: 20px; margin: 10px 0; }
+h2 { font-size: 20px; line-height: 20px; margin: 10px 0; }
+h3 { font-size: 16px; line-height: 20px; margin: 10px 0; }
+h4 { font-size: 14px; line-height: 20px; margin: 10px 0; }
+h5 { font-size: 12px; line-height: 20px; margin: 10px 0; }
+h5 { font-size: 10px; line-height: 20px; margin: 10px 0; }
+h1,h2,h3,h4,h5,h6 { color: #333; }
+
+p { margin-bottom: 10px; }
+
+.float-left     { float: left; }
+.float-right    { float: right; }
+img.float-left  { float: left; margin: 0 20px 20px 0; }
+img.float-right { float: right; margin: 0 0 20px 20px; }
+img.center      { margin: 0 auto; display: block; }
+
+.text-left    { text-align: left; }
+.text-center  { text-align: center; }
+.text-right   { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* Misc */
+hr { background-color: #ccc; border: 0px; color: #ccc; height: 1px; margin: 8px 0 20px 0; }
+pre, code { background:#E0ECF6; display:block; margin-bottom: 20px; padding:10px; }
+
+blockquote { margin: 10px 10px 20px; padding: 9px; background-color: #f8f8f8; color: #666; border-left: 5px solid #ddd; font: 14px/20px Georgia, Times, serif; quotes: "\201C" "\201D"; }
+blockquote p { margin: 0; }
+blockquote:before { content: open-quote; font-weight: bold; }
+blockquote:after  { content: close-quote; font-weight: bold; }
+
+/* List */
+ul { list-style-position:inside; }
+ol { list-style-position:inside; }
+
+/* Table */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+th { font-weight: bold; }
+tfoot { font-style: italic; }
+
+/* Metadata part */
+
+.metadata {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-size: 90%;
+}
+table.metadata td {
+  padding-right: 20px;
+}
+
+.stats {
+  padding-top: 5px;
+  padding-bottom: 20px;
+}
+.graph {
+  width: 100%;
+}
+.graph div { float: left; }
+.graph div:first-child { border-top-left-radius: 3px; border-bottom-left-radius: 3px; }
+.graph div:last-child { border-top-right-radius: 3px; border-bottom-right-radius: 3px; }
+.percent-done    { background-color: rgb(90, 228, 140); height: 10px; }
+.percent-fuzzy   { background-color: rgb(255, 167, 52); height: 10px; }
+.percent-untrans { background-color: #F1F1F1; height: 10px; }
+.legend {
+  font-size: smaller;
+  color: #aaa;
+  padding-top: 12px;
+  text-align: center;
+}
+
+/* Translations */
+table.translations {
+  width: 100%;
+  table-layout: fixed;
+}
+table.translations th, table.translations td {
+  padding: 5px 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #E1E1E1;
+}
+table.translations th {
+  text-align: left;
+}
+table.translations th:first-child, table.translations td:first-child { padding-left: 0; }
+table.translations th:last-child, table.translations td:last-child { padding-right: 0; }
+
+.with-comments td {
+  border-bottom: none !important;
+}
+tr.comments div {
+  float: right;
+  max-width: 75%;
+  font-size: smaller;
+  color: #aaa;
+}
+tr.comments div p:last-child { margin-bottom: 0; }
+
+.fuzzy .tra {
+  color: rgb(218, 123, 0);
+}
+
+.msgctxt {
+  color: rgb(70, 109, 137);
+  font-size: smaller;
+  background-color: rgb(217, 232, 242);
+  border-radius: 2px;
+  padding: 2px 4px;
+  margin-right: 4px;
+}
+
+
+  </style>
+</head>
+<body>
+<div class='container'>
+<table class='metadata'>
+<tr><td>Project:</td><td>Bassdk Payment for WooCommerce</td></tr>
+<tr><td>Language:</td><td>Arabic</td></tr>
+</table>
+<div class='stats'>
+  <div class='graph'>
+    <div class='percent-untrans' style='width: 100%'>&nbsp;</div>
+  </div>
+  <div class='legend'>Translated: 0 of 67 (0 %)  •  Remaining: 67  </div>
+</div>
+<table class='translations'>
+  <thead>
+    <tr>
+      <th>Source text — English</th>
+      <th>Translation — Arabic</th>
+    </tr>
+  </thead>
+  <tbody>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Payment requires WooCommerce to be installed and active. You can download %s here.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Payment requires Basgate Login SDK to be installed and active. You can download %s here.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+BasSDK Payments</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Payment requires WooCommerce to be installed and active. You can download &lt;a href="https://woocommerce.com/" target="_blank"&gt;WooCommerce&lt;/a&gt; here.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Payment requires Basgate Login SDK to be installed and active. You can download &lt;a href="https://basgate.github.io/" target="_blank"&gt;Basgate Login SDK&lt;/a&gt; here.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Fetch Status</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Something went wrong. Please again</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Updated &lt;b&gt;STATUS&lt;/b&gt; has been fetched</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Pay via Basgate</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Description</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+This controls the description which the user sees during checkout.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Environment Mode</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Select "Test/Staging" to setup test transactions &amp; "Production" once you are ready to go live</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Application Id</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Based on the selected Environment Mode, copy the relevant Application ID for test or production environment you received on email.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Merchant Key</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Based on the selected Environment Mode, copy the Merchant Key for test or production environment you received on email.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Client Id</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Based on the selected Environment Mode, copy the Client Id for test or production environment you received on email.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Client Secret</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Based on the selected Environment Mode, copy the Client Secret for test or production environment you received on email.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Enable/Disable</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Enable Basgate Login/Payments.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Payment Gateway</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Online payment solutions for all your transactions by Basgate</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Please note disabled settings can be modified from </td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+PHP Version</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+cURL Version</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Wordpress Version</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+WooCommerce Version</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Last Updated</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+Could not retrieve signature, please try again Data: %1$s.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+translators: 1: Event data.<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Could not retrieve signature, please try again.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+trxToken empty \n bodystr: %1$s , \n $checksum: %2$s.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+translators: 1: bodystr, 2:.<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Could not retrieve the Transaction Token, please try again.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+The best payment gateway provider in Yemen for e-payment through most of wallets and banks &lt;img src="https://ykbsocial.com/basgate/reportlogo.png" height="24px;" /&gt;</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+It seems some issue in server to server communication. Kindly connect with us.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Thank you for your order. Your payment has been successfully received.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+&lt;b&gt;Transaction ID:&lt;/b&gt;</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+&lt;b&gt;Basgate Order ID:&lt;/b&gt; </td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Your payment has been pending!</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+ Reason: </td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Your payment has been failed!</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+No order found to process. Kindly contact with us.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Security Error. Checksum Mismatched!</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+The best payment gateway provider in Yemen for e-payment through most of wallets and banks &lt;img src="%s" height="24px;" /&gt;</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Could not retrieve the Transaction Token, please check that you are inside basgate platform and try again.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+The best payment gateway provider in Yemen for e-payment through most of wallets and banks &lt;img src="%1$s" height="24px;" /&gt;</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+translators: 1: LogoUrl.<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Transaction ID:</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Order ID:</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+translators: 1: Url, 2: Error code, 3: Error message, 4: Event data.<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Could not retrieve the access token, please try again!!!.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body.<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Could not retrieve the access token, please try again.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg.<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Payment requires WooCommerce to be installed and active. You can download.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Basgate Payment requires Basgate Login SDK to be installed and active. You can download</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Enable Debug</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+Enable debug mode to log all oprations.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+trxToken empty body: %1$s , \n bodystr: %2$s , \n $checksum: %3$s.</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+translators: 1:body, 2: bodystr , 3:checksum.<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+ERROR Can not complete the request</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans'>
+<td class='src'  lang='en'>
+ERROR amount is empty</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+Bassdk Payment for WooCommerce</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+Plugin Name of the plugin/theme<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+https://github.com/Basgate/bassdk-woocommerce-payments</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+Plugin URI of the plugin/theme<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+Description of the plugin/theme<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+Basgate Super APP</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+Author of the plugin/theme<br>
+</p>
+</div></td>
+</tr>
+<tr class='i untrans with-comments'>
+<td class='src'  lang='en'>
+https://basgate.com/</td>
+<td class='tra'  lang='ar' dir='rtl'>
+</td>
+</tr>
+<tr class='comments'>
+  <td colspan='2'><div><p>
+Author URI of the plugin/theme<br>
+</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>

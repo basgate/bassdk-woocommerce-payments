@@ -1,0 +1,501 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Bassdk Payment for WooCommerce\n"
+"POT-Creation-Date: 2024-11-04 18:16+0300\n"
+"PO-Revision-Date: 2024-11-04 18:16+0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: bas-payment.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: .history/bas-payment_20241017182437.php:38
+#: .history/bas-payment_20241020231946.php:38
+#, php-format
+msgid ""
+"Basgate Payment requires WooCommerce to be installed and active. You can "
+"download %s here."
+msgstr ""
+
+#: .history/bas-payment_20241017182437.php:49
+#: .history/bas-payment_20241020231946.php:49
+#, php-format
+msgid ""
+"Basgate Payment requires Basgate Login SDK to be installed and active. You "
+"can download %s here."
+msgstr ""
+
+#: .history/bas-payment_20241017182437.php:183
+#: .history/bas-payment_20241020231946.php:183
+#: .history/bas-payment_20241023213803.php:182
+#: .history/bas-payment_20241024192642.php:184 bas-payment.php:194
+msgid "BasSDK Payments"
+msgstr ""
+
+#: .history/bas-payment_20241023213803.php:38
+#: .history/bas-payment_20241024192642.php:40
+msgid ""
+"Basgate Payment requires WooCommerce to be installed and active. You can "
+"download <a href=\"https://woocommerce.com/\" target=\"_blank\">WooCommerce</"
+"a> here."
+msgstr ""
+
+#: .history/bas-payment_20241023213803.php:49
+#: .history/bas-payment_20241024192642.php:51
+msgid ""
+"Basgate Payment requires Basgate Login SDK to be installed and active. You "
+"can download <a href=\"https://basgate.github.io/\" target=\"_blank"
+"\">Basgate Login SDK</a> here."
+msgstr ""
+
+#: .history/bas-payment_20241023213803.php:265
+#: .history/bas-payment_20241024192642.php:267 bas-payment.php:277
+msgid "Fetch Status"
+msgstr ""
+
+#: .history/bas-payment_20241023213803.php:440
+#: .history/bas-payment_20241024192642.php:442 bas-payment.php:458
+msgid "Something went wrong. Please again"
+msgstr ""
+
+#: .history/bas-payment_20241023213803.php:459
+#: .history/bas-payment_20241024192642.php:461 bas-payment.php:477
+msgid "Updated <b>STATUS</b> has been fetched"
+msgstr ""
+
+#: .history/class-block_20241013032706.php:42
+#: .history/class-block_20241024193734.php:45 class-block.php:45
+msgid "Pay via Basgate"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:75
+#: .history/class.basgate_20241023214314.php:78
+#: .history/class.basgate_20241024192008.php:78
+#: .history/class.basgate_20241024225329.php:78 class.basgate.php:82
+msgid "Description"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:78
+#: .history/class.basgate_20241023214314.php:81
+#: .history/class.basgate_20241024192008.php:81
+#: .history/class.basgate_20241024225329.php:81 class.basgate.php:85
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:82
+#: .history/class.basgate_20241023214314.php:85
+#: .history/class.basgate_20241024192008.php:85
+#: .history/class.basgate_20241024225329.php:89 class.basgate.php:93
+msgid "Environment Mode"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:87
+#: .history/class.basgate_20241023214314.php:90
+#: .history/class.basgate_20241024192008.php:90
+#: .history/class.basgate_20241024225329.php:94 class.basgate.php:98
+msgid ""
+"Select \"Test/Staging\" to setup test transactions & \"Production\" once you "
+"are ready to go live"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:91
+#: .history/class.basgate_20241023214314.php:94
+#: .history/class.basgate_20241024192008.php:94
+#: .history/class.basgate_20241024225329.php:98 class.basgate.php:102
+msgid "Application Id"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:94
+#: .history/class.basgate_20241023214314.php:97
+#: .history/class.basgate_20241024192008.php:97
+#: .history/class.basgate_20241024225329.php:101 class.basgate.php:105
+msgid ""
+"Based on the selected Environment Mode, copy the relevant Application ID for "
+"test or production environment you received on email."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:97
+#: .history/class.basgate_20241023214314.php:100
+#: .history/class.basgate_20241024192008.php:100
+#: .history/class.basgate_20241024225329.php:104 class.basgate.php:108
+msgid "Merchant Key"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:100
+#: .history/class.basgate_20241023214314.php:103
+#: .history/class.basgate_20241024192008.php:103
+#: .history/class.basgate_20241024225329.php:107 class.basgate.php:111
+msgid ""
+"Based on the selected Environment Mode, copy the Merchant Key for test or "
+"production environment you received on email."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:103
+#: .history/class.basgate_20241023214314.php:106
+#: .history/class.basgate_20241024192008.php:106
+#: .history/class.basgate_20241024225329.php:110 class.basgate.php:114
+msgid "Client Id"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:106
+#: .history/class.basgate_20241023214314.php:109
+#: .history/class.basgate_20241024192008.php:109
+#: .history/class.basgate_20241024225329.php:113 class.basgate.php:117
+msgid ""
+"Based on the selected Environment Mode, copy the Client Id for test or "
+"production environment you received on email."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:109
+#: .history/class.basgate_20241023214314.php:112
+#: .history/class.basgate_20241024192008.php:112
+#: .history/class.basgate_20241024225329.php:116 class.basgate.php:120
+msgid "Client Secret"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:112
+#: .history/class.basgate_20241023214314.php:115
+#: .history/class.basgate_20241024192008.php:115
+#: .history/class.basgate_20241024225329.php:119 class.basgate.php:123
+msgid ""
+"Based on the selected Environment Mode, copy the Client Secret for test or "
+"production environment you received on email."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:115
+#: .history/class.basgate_20241023214314.php:118
+#: .history/class.basgate_20241024192008.php:118
+#: .history/class.basgate_20241024225329.php:122 class.basgate.php:126
+msgid "Enable/Disable"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:118
+#: .history/class.basgate_20241023214314.php:121
+#: .history/class.basgate_20241024192008.php:121
+#: .history/class.basgate_20241024225329.php:125 class.basgate.php:129
+msgid "Enable Basgate Login/Payments."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:178
+#: .history/class.basgate_20241023214314.php:181
+#: .history/class.basgate_20241024192008.php:181
+#: .history/class.basgate_20241024225329.php:185 class.basgate.php:196
+msgid "Basgate Payment Gateway"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:179
+#: .history/class.basgate_20241023214314.php:182
+#: .history/class.basgate_20241024192008.php:182
+#: .history/class.basgate_20241024225329.php:186 class.basgate.php:197
+msgid "Online payment solutions for all your transactions by Basgate"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:180
+#: .history/class.basgate_20241023214314.php:183
+#: .history/class.basgate_20241024192008.php:183
+#: .history/class.basgate_20241024225329.php:187 class.basgate.php:198
+msgid "Please note disabled settings can be modified from "
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:206
+#: .history/class.basgate_20241023214314.php:209
+#: .history/class.basgate_20241024192008.php:209
+#: .history/class.basgate_20241024225329.php:206 class.basgate.php:217
+msgid "PHP Version"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:207
+#: .history/class.basgate_20241023214314.php:210
+#: .history/class.basgate_20241024192008.php:210
+msgid "cURL Version"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:208
+#: .history/class.basgate_20241023214314.php:211
+#: .history/class.basgate_20241024192008.php:211
+#: .history/class.basgate_20241024225329.php:207 class.basgate.php:218
+msgid "Wordpress Version"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:209
+#: .history/class.basgate_20241023214314.php:212
+#: .history/class.basgate_20241024192008.php:212
+#: .history/class.basgate_20241024225329.php:208 class.basgate.php:219
+msgid "WooCommerce Version"
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:210
+#: .history/class.basgate_20241023214314.php:213
+#: .history/class.basgate_20241024192008.php:213
+#: .history/class.basgate_20241024225329.php:209 class.basgate.php:220
+msgid "Last Updated"
+msgstr ""
+
+#. translators: 1: Event data.
+#: .history/class.basgate_20241017183635.php:318
+#: .history/class.basgate_20241017183635.php:673
+#: .history/class.basgate_20241023214314.php:321
+#: .history/class.basgate_20241023214314.php:676
+#: .history/class.basgate_20241024192008.php:321
+#: .history/class.basgate_20241024192008.php:680
+#: .history/class.basgate_20241024225329.php:317
+#: .history/class.basgate_20241024225329.php:670 class.basgate.php:328
+#: class.basgate.php:701
+#, php-format
+msgid "Could not retrieve signature, please try again Data: %1$s."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:322
+#: .history/class.basgate_20241017183635.php:677
+#: .history/class.basgate_20241023214314.php:325
+#: .history/class.basgate_20241023214314.php:680
+#: .history/class.basgate_20241024192008.php:325
+#: .history/class.basgate_20241024192008.php:684
+#: .history/class.basgate_20241024225329.php:321
+#: .history/class.basgate_20241024225329.php:674 class.basgate.php:332
+#: class.basgate.php:705
+msgid "Could not retrieve signature, please try again."
+msgstr ""
+
+#. translators: 1: bodystr, 2:.
+#: .history/class.basgate_20241017183635.php:355
+#: .history/class.basgate_20241023214314.php:358
+#: .history/class.basgate_20241024192008.php:359
+#: .history/class.basgate_20241024225329.php:349
+#, php-format
+msgid "trxToken empty \\n bodystr: %1$s , \\n $checksum: %2$s."
+msgstr ""
+
+#: .history/class.basgate_20241017183635.php:440
+#: .history/class.basgate_20241017183635.php:443
+#: .history/class.basgate_20241023214314.php:443
+#: .history/class.basgate_20241023214314.php:446
+msgid "Could not retrieve the Transaction Token, please try again."
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:82
+msgid ""
+"The best payment gateway provider in Yemen for e-payment through most of "
+"wallets and banks <img src=\"https://ykbsocial.com/basgate/reportlogo.png\" "
+"height=\"24px;\" />"
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:728
+#: .history/class.basgate_20241024192008.php:732
+#: .history/class.basgate_20241024225329.php:719 class.basgate.php:755
+msgid ""
+"It seems some issue in server to server communication. Kindly connect with "
+"us."
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:739
+#: .history/class.basgate_20241024192008.php:743
+#: .history/class.basgate_20241024225329.php:730 class.basgate.php:766
+msgid "Thank you for your order. Your payment has been successfully received."
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:746
+#: .history/class.basgate_20241024192008.php:750
+msgid "<b>Transaction ID:</b>"
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:746
+#: .history/class.basgate_20241024192008.php:750
+msgid "<b>Basgate Order ID:</b> "
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:757
+#: .history/class.basgate_20241024192008.php:761
+#: .history/class.basgate_20241024225329.php:748 class.basgate.php:784
+msgid "Your payment has been pending!"
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:759
+#: .history/class.basgate_20241023214314.php:766
+#: .history/class.basgate_20241024192008.php:763
+#: .history/class.basgate_20241024192008.php:770
+#: .history/class.basgate_20241024225329.php:750
+#: .history/class.basgate_20241024225329.php:757 class.basgate.php:786
+#: class.basgate.php:793
+msgid " Reason: "
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:764
+#: .history/class.basgate_20241024192008.php:768
+#: .history/class.basgate_20241024225329.php:755 class.basgate.php:791
+msgid "Your payment has been failed!"
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:773
+#: .history/class.basgate_20241024192008.php:777
+#: .history/class.basgate_20241024225329.php:764 class.basgate.php:800
+msgid "No order found to process. Kindly contact with us."
+msgstr ""
+
+#: .history/class.basgate_20241023214314.php:776
+#: .history/class.basgate_20241024192008.php:780
+#: .history/class.basgate_20241024225329.php:767 class.basgate.php:803
+msgid "Security Error. Checksum Mismatched!"
+msgstr ""
+
+#: .history/class.basgate_20241024192008.php:82
+#, php-format
+msgid ""
+"The best payment gateway provider in Yemen for e-payment through most of "
+"wallets and banks <img src=\"%s\" height=\"24px;\" />"
+msgstr ""
+
+#: .history/class.basgate_20241024192008.php:447
+#: .history/class.basgate_20241024225329.php:437 class.basgate.php:460
+msgid ""
+"Could not retrieve the Transaction Token, please check that you are inside "
+"basgate platform and try again."
+msgstr ""
+
+#. translators: 1: LogoUrl.
+#: .history/class.basgate_20241024225329.php:84 class.basgate.php:88
+#, php-format
+msgid ""
+"The best payment gateway provider in Yemen for e-payment through most of "
+"wallets and banks <img src=\"%1$s\" height=\"24px;\" />"
+msgstr ""
+
+#: .history/class.basgate_20241024225329.php:737 class.basgate.php:773
+msgid "Transaction ID:"
+msgstr ""
+
+#: .history/class.basgate_20241024225329.php:737 class.basgate.php:773
+msgid "Basgate Order ID:"
+msgstr ""
+
+#. translators: 1: Url, 2: Error code, 3: Error message, 4: Event data.
+#: .history/includes/BasgateHelper_20241016031254.php:136
+#: .history/includes/BasgateHelper_20241020203235.php:136
+#: .history/includes/BasgateHelper_20241020231930.php:136
+#: .history/includes/BasgateHelper_20241021225122.php:136
+#: .history/includes/BasgateHelper_20241023214838.php:138
+#: .history/includes/BasgateHelper_20241024191805.php:229
+#: .history/includes/BasgateHelper_20241024225432.php:211
+#: includes/BasgateHelper.php:218
+#, php-format
+msgid ""
+"executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, "
+"Data: %4$s"
+msgstr ""
+
+#: .history/includes/BasgateHelper_20241016031254.php:143
+#: .history/includes/BasgateHelper_20241020203235.php:143
+#: .history/includes/BasgateHelper_20241020231930.php:143
+#: .history/includes/BasgateHelper_20241021225122.php:143
+#: .history/includes/BasgateHelper_20241023214838.php:145
+msgid "Could not retrieve the access token, please try again!!!."
+msgstr ""
+
+#. translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body.
+#: .history/includes/BasgateHelper_20241016031254.php:152
+#: .history/includes/BasgateHelper_20241020203235.php:152
+#: .history/includes/BasgateHelper_20241020231930.php:152
+#: .history/includes/BasgateHelper_20241021225122.php:152
+#: .history/includes/BasgateHelper_20241023214838.php:154
+#: .history/includes/BasgateHelper_20241024191805.php:246
+#: .history/includes/BasgateHelper_20241024225432.php:228
+#: includes/BasgateHelper.php:235
+#, php-format
+msgid ""
+"executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: "
+"%3$s , ErrorMsg: %4$s, Response Body:%5$s"
+msgstr ""
+
+#: .history/includes/BasgateHelper_20241016031254.php:160
+#: .history/includes/BasgateHelper_20241016031254.php:209
+#: .history/includes/BasgateHelper_20241020203235.php:160
+#: .history/includes/BasgateHelper_20241020203235.php:209
+#: .history/includes/BasgateHelper_20241020231930.php:160
+#: .history/includes/BasgateHelper_20241020231930.php:209
+#: .history/includes/BasgateHelper_20241021225122.php:160
+#: .history/includes/BasgateHelper_20241021225122.php:209
+#: .history/includes/BasgateHelper_20241023214838.php:162
+#: .history/includes/BasgateHelper_20241023214838.php:211
+msgid "Could not retrieve the access token, please try again."
+msgstr ""
+
+#. translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg.
+#: .history/includes/BasgateHelper_20241016031254.php:201
+#: .history/includes/BasgateHelper_20241020203235.php:201
+#: .history/includes/BasgateHelper_20241020231930.php:201
+#: .history/includes/BasgateHelper_20241021225122.php:201
+#: .history/includes/BasgateHelper_20241023214838.php:203
+#, php-format
+msgid ""
+"executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: "
+"%3$s , ErrorMsg: %4$s"
+msgstr ""
+
+#: bas-payment.php:39
+msgid ""
+"Basgate Payment requires WooCommerce to be installed and active. You can "
+"download."
+msgstr ""
+
+#: bas-payment.php:50
+msgid ""
+"Basgate Payment requires Basgate Login SDK to be installed and active. You "
+"can download"
+msgstr ""
+
+#: class.basgate.php:133
+msgid "Enable Debug"
+msgstr ""
+
+#: class.basgate.php:136
+msgid "Enable debug mode to log all oprations."
+msgstr ""
+
+#. translators: 1:body, 2: bodystr , 3:checksum.
+#: class.basgate.php:363
+#, php-format
+msgid "trxToken empty body: %1$s , \\n bodystr: %2$s , \\n $checksum: %3$s."
+msgstr ""
+
+#: class.basgate.php:377
+msgid "ERROR Can not complete the request"
+msgstr ""
+
+#: class.basgate.php:380
+msgid "ERROR amount is empty"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Bassdk Payment for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/Basgate/bassdk-woocommerce-payments"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من "
+"المحافظ المالية"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Basgate Super APP"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://basgate.com/"
+msgstr ""
