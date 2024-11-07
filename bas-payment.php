@@ -80,12 +80,6 @@ if (true) {
     // add_filter( 'http_request_timeout', 'wp9838c_timeout_extend' );
 }
 
-// function wp9838c_timeout_extend( $time )
-// {
-//     // Default timeout is 5
-//     return 45;
-// }
-
 function basgate_register_order_approval_payment_method_type()
 {
     // Check if the required class exists
@@ -283,6 +277,15 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
                 foreach ($basgate_data as $key => $value) {
                     if ($key !== 'request' && !is_array($value)) {
                         $table_html .= '<tr><td> ' . $key . '</td><td> ' . $value . '</td></tr>';
+                    } else 
+                        if ($key == 'order' && is_array($value)) {
+                        foreach ($value as $order_key => $order_value) {
+                            if ($order_key == 'amount') {
+                                foreach ($order_value as $amount_key => $amount_value) {
+                                    $table_html .= '<tr><td>' . $amount_key . '</td><td>' . $amount_value . '</td></tr>';
+                                }
+                            }
+                        }
                     }
                 }
                 $table_html .= '</table>';
