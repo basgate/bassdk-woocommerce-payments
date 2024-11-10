@@ -16,7 +16,6 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->id = BasgateConstants::ID;
         $this->method_title = BasgateConstants::METHOD_TITLE;
         $this->method_description = BasgateConstants::METHOD_DESCRIPTION;
-        // $this->icon = esc_url("https://ykbsocial.com/basgate/reportlogo.png");
         $this->icon = apply_filters('woocommerce_gateway_icon', plugin_dir_url(__FILE__) . 'assets/images/bassdk-logo.svg');
         $this->has_fields = false;
         $this->init_form_fields();
@@ -519,7 +518,7 @@ class WC_Basgate extends WC_Payment_Gateway
     public function generate_basgate_callback()
     {
         BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
-?>
+        ?>
         <script type="text/javascript">
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
@@ -549,7 +548,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 }
             }
         </script>
-<?php
+        <?php
     }
 
     /**

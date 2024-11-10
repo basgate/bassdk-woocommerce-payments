@@ -42,7 +42,7 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType
         BasgateHelper::basgate_log('====+++++ get_payment_method_data $isInBasPlatform :(' . BasgateHelper::$isInBasPlatform . ')');
 
         if (BasgateHelper::$isInBasPlatform == false) {
-            return;
+            return [];
         }
         BasgateHelper::basgate_log('===== STARTED get_payment_method_data()');
         return [
