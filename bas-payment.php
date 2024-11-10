@@ -587,14 +587,16 @@ function woocommerce_basgate_init()
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
-        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . $available_gateways); 
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . $available_gateways);
         if (is_cart() || is_checkout()) {
-            // Example: Hide 'paypal' if total cart amount is less than $50
-            if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
-                unset($available_gateways['paypal']);
+            // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
+            if (isset($available_gateways)) {
+                foreach ($available_gateways as $key => $value) {
+                    BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $key:' . $key . ' => ' . $value);
+                }
+                // unset($available_gateways['paypal']);
             }
 
-            // Example: Hide 'credit_card' for certain user roles
             if (current_user_can('subscriber') && isset($available_gateways['credit_card'])) {
                 unset($available_gateways['credit_card']);
             }
