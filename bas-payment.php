@@ -79,12 +79,12 @@ BasgateHelper::basgate_log('======++++++++++ $isInBasPlatform :(' . BasgateHelpe
 //TODO: Check if is it on Bas Platform 
 if (BasgateHelper::$isInBasPlatform) {
 
-    BasgateHelper::basgate_log("======++++++++++ add_action STARTED woocommerce_blocks_loaded ++++++=======");
+    BasgateHelper::basgate_log("====++++ add_action STARTED woocommerce_blocks_loaded ++++====");
     add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
     // BasgateHelper::$isInBasPlatform = false;
 } else {
 
-    BasgateHelper::basgate_log("======++++++++++ STARTED remove_action woocommerce_blocks_loaded ++++++=======");
+    BasgateHelper::basgate_log("====++++ STARTED remove_action woocommerce_blocks_loaded ++++====");
     remove_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
 }
 
