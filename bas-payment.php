@@ -74,7 +74,7 @@ add_action('before_woocommerce_init', function () {
 /**
  * Checkout Block code Start
  */
-BasgateHelper::basgate_log('======++++++++++ $isInBasPlatform :' . ${BasgateHelper::$isInBasPlatform});
+BasgateHelper::basgate_log('======++++++++++ $isInBasPlatform :' . BasgateHelper::$isInBasPlatform);
 
 //TODO: Check if is it on Bas Platform 
 if (BasgateHelper::$isInBasPlatform) {
