@@ -10,6 +10,9 @@ if (!class_exists('BasgateHelper')) :
         /* 
          * Include timestap with order id 
          */
+
+        public static $isInBasPlatform = true;
+
         public static function getBasgateOrderId($order_id)
         {
             if ($order_id && BasgateConstants::APPEND_TIMESTAMP) {

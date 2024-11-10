@@ -55,6 +55,7 @@ if (! is_plugin_active('bassdk-login/bassdk-login.php')) {
 }
 
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+use BasgateSDK\Helper;
 
 require_once __DIR__ . '/includes/BasgateHelper.php';
 require_once __DIR__ . '/includes/BasgateChecksum.php';
@@ -73,11 +74,18 @@ add_action('before_woocommerce_init', function () {
 /**
  * Checkout Block code Start
  */
+BasgateHelper::basgate_log('======++++++++++ $isInBasPlatform :' . ${BasgateHelper::$isInBasPlatform});
 
 //TODO: Check if is it on Bas Platform 
-if (false) {
-    BasgateHelper::basgate_log("======++++++++++ STARTED woocommerce_blocks_loaded ++++++=======");
+if (BasgateHelper::$isInBasPlatform) {
+
+    BasgateHelper::basgate_log("======++++++++++ add_action STARTED woocommerce_blocks_loaded ++++++=======");
     add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
+    BasgateHelper::$isInBasPlatform = false;
+} else {
+
+    BasgateHelper::basgate_log("======++++++++++ STARTED remove_action woocommerce_blocks_loaded ++++++=======");
+    remove_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
 }
 
 function basgate_register_order_approval_payment_method_type()
