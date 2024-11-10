@@ -17,7 +17,7 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType
 
     public function get_payment_method_script_handles()
     {
-        BasgateHelper::basgate_log('===== STARTED get_payment_method_script_handles()');
+        BasgateHelper::basgate_log('=====+++++ STARTED get_payment_method_script_handles()');
         wp_register_script(
             'basgate-blocks-integration',
             plugin_dir_url(__FILE__) . 'assets/js/admin/checkout-block.js',
@@ -39,6 +39,8 @@ final class WC_Basgate_Blocks extends AbstractPaymentMethodType
 
     public function get_payment_method_data()
     {
+        BasgateHelper::basgate_log('====+++++ get_payment_method_data $isInBasPlatform :(' . BasgateHelper::$isInBasPlatform . ')');
+
         if (BasgateHelper::$isInBasPlatform == false) {
             return;
         }
