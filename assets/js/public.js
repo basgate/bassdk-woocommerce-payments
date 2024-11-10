@@ -5,8 +5,8 @@
 var isJSBridgeReady = false
 var isBasInDebug = false
 var isBasAuthTokenReturned = false
-console.log("Start Basgate-ClientSDK Script");
 
+console.log("Start Basgate-ClientSDK Script initBas()");
 function initBas() {
     console.log("initBas() STARTED");
     window.addEventListener("JSBridgeReady", async (event) => {
@@ -16,10 +16,12 @@ function initBas() {
     }, false);
 }
 
+console.log("isBasSupperApp()");
 const isBasSupperApp = () => {
     return isJSBridgeReady;
 }
 
+console.log("getBasConfig()");
 /*  @getBasConfig()
     Dont call this method while your application in init mode
     return {
@@ -49,6 +51,7 @@ const getBasConfig = async () => {
     });
 }
 
+console.log("getBasAuthCode()");
 const getBasAuthCode = async (clientId) => {
     if (!isJSBridgeReady) await initBas();
     if ("JSBridge" in window) {
@@ -100,6 +103,7 @@ const getBasAuthCode = async (clientId) => {
 "status":1
 }*/
 /****** End Response Example ******/
+console.log("getBasPayment()");
 const getBasPayment = async (data) => {
     if (isBasInDebug) console.log("BasSDK getBasPayment STARTED")
     let paymentParams = {
