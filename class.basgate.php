@@ -428,7 +428,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         // $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
-        $checkout_url = plugin_dir_url(__FILE__) . 'assets/js/public.js';
+        // $checkout_url = plugin_dir_url(__FILE__) . 'assets/js/public.js';
         // <script type="application/javascript" crossorigin="anonymous" src="' . $checkout_url . '" onload="invokeBlinkCheckoutPopup();"></script>
         $wait_msg = '<div id="basgate-pg-spinner" class="basgate-woopg-loader">
                 <div class="bounce1"></div>
