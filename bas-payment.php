@@ -556,8 +556,6 @@ add_action('plugins_loaded', 'woocommerce_basgate_init', 0);
 
 function woocommerce_basgate_init()
 {
-    BasgateHelper::basgate_log('===++++ woocommerce_basgate_init 111');
-
     // If the WooCommerce payment gateway class is not available nothing will return
     if (!class_exists('WC_Payment_Gateway')) return;
 
@@ -569,9 +567,19 @@ function woocommerce_basgate_init()
     add_filter('woocommerce_payment_gateways', 'woocommerce_add_basgate_gateway');
     function woocommerce_add_basgate_gateway($methods)
     {
-        BasgateHelper::basgate_log('===++++ woocommerce_basgate_init 222');
+        BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:'.$methods);
 
-        $methods[] = 'WC_Basgate';
+        if (BasgateHelper::$isInBasPlatform == false) {
+            BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == false');
+            // Example: Remove 'cheque' payment method
+            if (($key = array_search('cheque', $methods)) !== false) {
+                unset($methods[$key]);
+            }
+        } else {
+            BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == true');
+            $methods[] = 'WC_Basgate';
+        }
+
         return $methods;
     }
 
