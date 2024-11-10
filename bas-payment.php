@@ -78,7 +78,7 @@ BasgateHelper::basgate_log('======++++++++++ $isInBasPlatform :(' . BasgateHelpe
 
 //TODO: Check if is it on Bas Platform 
 // if (BasgateHelper::$isInBasPlatform) {
-BasgateHelper::basgate_log("====++++ add_action STARTED woocommerce_blocks_loaded ++++====");
+// BasgateHelper::basgate_log("====++++ add_action STARTED woocommerce_blocks_loaded ++++====");
 add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
 // BasgateHelper::$isInBasPlatform = false;
 // } else {
@@ -89,7 +89,7 @@ add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment
 
 function basgate_register_order_approval_payment_method_type()
 {
-    BasgateHelper::basgate_log("======++++++++++++ STARTED basgate_register_order_approval_payment_method_type +++++++=======");
+    // BasgateHelper::basgate_log("======++++++++++++ STARTED basgate_register_order_approval_payment_method_type +++++++=======");
     // Check if the required class exists
     if (! class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
         return;
@@ -571,10 +571,10 @@ function woocommerce_basgate_init()
 
         if (BasgateHelper::$isInBasPlatform == false) {
             BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == false');
-            // Example: Remove 'cheque' payment method
-            if (($key = array_search('cheque', $methods)) !== false) {
-                unset($methods[$key]);
-            }
+            // // Example: Remove 'cheque' payment method
+            // if (($key = array_search('cheque', $methods)) !== false) {
+            //     unset($methods[$key]);
+            // }
         } else {
             BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == true');
             $methods[] = 'WC_Basgate';
@@ -588,19 +588,19 @@ function woocommerce_basgate_init()
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_json_encode($available_gateways));
-        if (is_cart() || is_checkout()) {
-            // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
-            if (isset($available_gateways)) {
-                foreach ($available_gateways as $key => $value) {
-                    BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $key:' . $key . ' => ' . $value);
-                }
-                // unset($available_gateways['paypal']);
+        // if (is_cart() || is_checkout()) {
+        // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
+        if (isset($available_gateways)) {
+            foreach ($available_gateways as $key => $value) {
+                BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $key:' . $key . ' => ' . $value);
             }
-
-            if (current_user_can('subscriber') && isset($available_gateways['credit_card'])) {
-                unset($available_gateways['credit_card']);
-            }
+            // unset($available_gateways['paypal']);
         }
+
+        // if (current_user_can('subscriber') && isset($available_gateways['credit_card'])) {
+        //     unset($available_gateways['credit_card']);
+        // }
+        // }
         return $available_gateways;
     }
 
