@@ -76,6 +76,7 @@ add_action('before_woocommerce_init', function () {
 
 //TODO: Check if is it on Bas Platform 
 if (true) {
+    BasgateHelper::basgate_log("============== STARTED woocommerce_blocks_loaded =======");
     add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
 }
 
