@@ -567,7 +567,7 @@ function woocommerce_basgate_init()
     add_filter('woocommerce_payment_gateways', 'woocommerce_add_basgate_gateway');
     function woocommerce_add_basgate_gateway($methods)
     {
-        BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:' . $methods);
+        BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:' . wp_json_encode($methods));
 
         if (BasgateHelper::$isInBasPlatform == false) {
             BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == false');
@@ -587,7 +587,7 @@ function woocommerce_basgate_init()
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
-        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . $available_gateways);
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_json_encode($available_gateways));
         if (is_cart() || is_checkout()) {
             // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
             if (isset($available_gateways)) {
