@@ -567,7 +567,7 @@ function woocommerce_basgate_init()
     add_filter('woocommerce_payment_gateways', 'woocommerce_add_basgate_gateway');
     function woocommerce_add_basgate_gateway($methods)
     {
-        BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:'.$methods);
+        BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:' . $methods);
 
         if (BasgateHelper::$isInBasPlatform == false) {
             BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == false');
@@ -581,6 +581,25 @@ function woocommerce_basgate_init()
         }
 
         return $methods;
+    }
+
+    add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
+
+    function custom_hide_basgate_payment_method_advanced($available_gateways)
+    {
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . $available_gateways); 
+        if (is_cart() || is_checkout()) {
+            // Example: Hide 'paypal' if total cart amount is less than $50
+            if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
+                unset($available_gateways['paypal']);
+            }
+
+            // Example: Hide 'credit_card' for certain user roles
+            if (current_user_can('subscriber') && isset($available_gateways['credit_card'])) {
+                unset($available_gateways['credit_card']);
+            }
+        }
+        return $available_gateways;
     }
 
     /**
