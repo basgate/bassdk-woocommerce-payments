@@ -591,7 +591,8 @@ function woocommerce_basgate_init()
         // if (is_cart() || is_checkout()) {
         // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
         if (isset($available_gateways['basgate'])) {
-            
+            BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced basgate:' . wp_json_encode($available_gateways['basgate']));
+
             // foreach ($available_gateways as $key => $value) {
             //     BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $key:' . $key);
             // }
