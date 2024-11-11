@@ -576,7 +576,8 @@ function woocommerce_basgate_init()
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
-        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced BasgateHelper::$isInBasPlatform:(' . BasgateHelper::$isInBasPlatform . ') $available_gateways:' . wp_json_encode($available_gateways));
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_json_encode($available_gateways));
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced BasgateHelper::$isInBasPlatform:(' . BasgateHelper::$isInBasPlatform . ') $available_gateways[basgate]:' . wp_json_encode($available_gateways['basgate']));
         // if (is_cart() || is_checkout()) {
         // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
         if (isset($available_gateways['basgate']) && BasgateHelper::$isInBasPlatform == false) {
