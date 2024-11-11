@@ -590,14 +590,14 @@ function woocommerce_basgate_init()
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_json_encode($available_gateways));
         // if (is_cart() || is_checkout()) {
         // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
-        if (isset($available_gateways['basgate'])) {
+        if (isset($available_gateways['basgate']) && BasgateHelper::$isInBasPlatform == false) {
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced basgate:' . wp_json_encode($available_gateways['basgate']));
 
             // foreach ($available_gateways as $key => $value) {
             //     BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $key:' . $key);
             // }
 
-            // unset($available_gateways['paypal']);
+            unset($available_gateways['paypal']);
         }
 
         // if (current_user_can('subscriber') && isset($available_gateways['credit_card'])) {
