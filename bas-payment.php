@@ -562,18 +562,6 @@ function woocommerce_basgate_init()
         return $methods;
     }
 
-    add_action('woocommerce_checkout_process', 'custom_set_session_variable');
-
-    function custom_set_session_variable()
-    {
-        BasgateHelper::basgate_log('===++++ custom_set_session_variable isInBasPlatform:(' . BasgateHelper::$isInBasPlatform . ')');
-
-        if (BasgateHelper::$isInBasPlatform == false) {
-            WC()->session->set('isInBasPlatform', false);
-        }
-    }
-
-
     add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
@@ -581,7 +569,7 @@ function woocommerce_basgate_init()
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' .  wp_unslash(esc_attr(wp_json_encode($available_gateways))));
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced isInBasPlatform:(' . BasgateHelper::$isInBasPlatform . ') $available_gateways(basgate):' .  wp_unslash(esc_attr(wp_json_encode($available_gateways['basgate']))));
 
-        if (WC()->session->get('isInBasPlatform')) {
+        if (BasgateHelper::$isInBasPlatform == false) {
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced isInBasPlatform==false');
             unset($available_gateways['basgate']);
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced after unset $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
