@@ -566,24 +566,14 @@ function woocommerce_basgate_init()
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
-        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_json_encode($available_gateways));
-        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced isInBasPlatform:(' . BasgateHelper::$isInBasPlatform . ') $available_gateways(basgate):' . wp_json_encode($available_gateways['basgate']));
-        // if (is_cart() || is_checkout()) {
-        // if (WC()->cart->total < 50 && isset($available_gateways['paypal'])) {
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' .  wp_unslash(esc_attr(wp_json_encode($available_gateways))));
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced isInBasPlatform:(' . BasgateHelper::$isInBasPlatform . ') $available_gateways(basgate):' .  wp_unslash(esc_attr(wp_json_encode($available_gateways['basgate']))));
+
         if (isset($available_gateways['basgate']) && BasgateHelper::$isInBasPlatform == false) {
-            BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced basgate:' . wp_json_encode($available_gateways['basgate']));
-
-            // foreach ($available_gateways as $key => $value) {
-            //     BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $key:' . $key);
-            // }
-
+            BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced isInBasPlatform==false');
             unset($available_gateways['paypal']);
+            BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced after unset $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
         }
-
-        // if (current_user_can('subscriber') && isset($available_gateways['credit_card'])) {
-        //     unset($available_gateways['credit_card']);
-        // }
-        // }
         return $available_gateways;
     }
 

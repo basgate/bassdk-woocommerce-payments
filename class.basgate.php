@@ -32,7 +32,7 @@ class WC_Basgate extends WC_Payment_Gateway
      */
     private function initHooks()
     {
-        BasgateHelper::basgate_log('===== STARTED initHooks()');
+        // BasgateHelper::basgate_log('===== STARTED initHooks()');
 
         add_action('init', array(&$this, 'check_basgate_response'));
         //update for woocommerce >2.0
