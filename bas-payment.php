@@ -571,7 +571,7 @@ function woocommerce_basgate_init()
 
         if (isset($available_gateways['basgate']) && BasgateHelper::$isInBasPlatform == false) {
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced isInBasPlatform==false');
-            unset($available_gateways['paypal']);
+            unset($available_gateways['basgate']);
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced after unset $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
         }
         return $available_gateways;
