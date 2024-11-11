@@ -1,0 +1,38 @@
+(function () {
+    jQuery(document).ready(function () {
+        console.log("===== STARTED basgate-check.js");
+
+        // eslint-disable-next-line
+        function basgateCheck() { // jshint ignore:line
+            var $ = jQuery;
+            console.log("===== STARTED basgateCheck:")
+
+            // Send the authId to the server
+            var ajaxurl = $("#basgate_payments_admin_ajxurl").val();
+            var nonce = $("#basgate_payments_nonce").val();
+            $.post(ajaxurl, {
+                action: 'process_basgate_payments',
+                nonce: nonce,
+            }, function (data, textStatus) {
+
+                console.log("basgateCheck() textStatus :", textStatus)
+                console.log("basgateCheck() data :", data)
+            });
+
+        }
+
+        try {
+            console.log("===== STARTED basgate-check.js javascript")
+            window.addEventListener("JSBridgeReady", async (event) => {
+                console.log("===== basgate-check.js JSBridgeReady READY")
+                try {
+                    basgateCheck();
+                } catch (error) {
+                    console.error("ERROR window.addEventListener(JSBridgeReady) 111:", error)
+                }
+            }, false);
+        } catch (error) {
+            console.error("ERROR on basgate-check.js:", error)
+        }
+    });
+})();

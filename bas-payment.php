@@ -151,6 +151,26 @@ function basgateWoopayment_js_css()
     }
 }
 
+add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
+
+
+function ajax_process_basgate_payments()
+{
+    BasgateHelper::basgate_log('===== STARTED ajax_process_basgate_payments() ');
+    if (
+        ! isset($_POST['nonce']) ||
+        ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_payments_nonce')
+    ) {
+        die(esc_html("ERROR wrong nonce"));
+    }
+
+    BasgateHelper::$isInBasPlatform = true;
+    $response = 'Successfully enabled basgate. :' . BasgateHelper::$isInBasPlatform;
+
+    die(esc_html($response));
+}
+
+
 add_action('wp_enqueue_scripts', 'basgateWoopayment_js_css');
 
 if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
@@ -549,6 +569,23 @@ function woocommerce_basgate_init()
     // If the WooCommerce payment gateway class is not available nothing will return
     if (!class_exists('WC_Payment_Gateway')) return;
 
+    $ajaxurl = admin_url('admin-ajax.php');
+    $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+
+    if (isset($settings['enabled']) && 'yes' === $settings['enabled']) :
+    ?>
+        <div>a
+            <input type="hidden" id="basgate_payments_admin_ajxurl" name="basgate_payments_admin_ajxurl" value="<?php echo esc_attr($ajaxurl); ?>">
+            <input type="hidden" id="basgate_payments_nonce" name="basgate_payments_nonce" value="<?php echo esc_attr(wp_create_nonce('basgate_payments_nonce')); ?>">
+        </div>
+
+    <?php
+        wp_enqueue_script('bassdk-payments-footer', plugins_url('assets/js/basgate-check.js', plugin_root()), array('jquery'), time(),   array(
+            'strategy'  => 'async',
+            'in_footer' => true,
+        ));
+    endif;
+
     // WooCommerce payment gateway class to hook Payment gateway
     require_once(plugin_basename('class.basgate.php'));
 
@@ -618,7 +655,7 @@ function woocommerce_basgate_init()
                 border-color: #c3e6cb;
             }
         </style>
-<?php
+    <?php
     }
 
     function basgateResponseMessage($content)
