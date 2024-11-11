@@ -500,7 +500,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     // // if (jQuery(".pg-basgate-checkout").length > 1) {
                                     // //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
                                     // // }
-                                  return basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
+                                    return basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
                                 } else {
                                     return null
                                 }

@@ -575,7 +575,7 @@ function woocommerce_basgate_init()
 
     if (isset($settings['enabled']) && 'yes' === $settings['enabled']) :
     ?>
-        <div>a
+        <div>
             <input type="hidden" id="basgate_payments_admin_ajxurl" name="basgate_payments_admin_ajxurl" value="<?php echo esc_attr($ajaxurl); ?>">
             <input type="hidden" id="basgate_payments_nonce" name="basgate_payments_nonce" value="<?php echo esc_attr(wp_create_nonce('basgate_payments_nonce')); ?>">
         </div>
