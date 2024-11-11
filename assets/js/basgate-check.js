@@ -8,11 +8,11 @@
             console.log("===== STARTED basgateCheck:")
 
             // Send the authId to the server
-            var ajaxurl = $("#basgate_payments_admin_ajxurl").val();
-            var nonce = $("#basgate_payments_nonce").val();
-            $.post(ajaxurl, {
+            var ajaxurl_payments = $("#basgate_payments_admin_ajxurl").val();
+            var nonce_payments = $("#basgate_payments_nonce").val();
+            $.post(ajaxurl_payments, {
                 action: 'process_basgate_payments',
-                nonce: nonce,
+                nonce: nonce_payments,
             }, function (data, textStatus) {
 
                 // window.removeEventListener("JSBridgeReady");
