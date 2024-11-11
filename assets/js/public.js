@@ -16,12 +16,12 @@ function initBas() {
     }, false);
 }
 
-console.log("isBasSupperApp()");
+// console.log("isBasSupperApp()");
 const isBasSupperApp = () => {
     return isJSBridgeReady;
 }
 
-console.log("getBasConfig()");
+// console.log("getBasConfig()");
 /*  @getBasConfig()
     Dont call this method while your application in init mode
     return {
@@ -51,7 +51,7 @@ const getBasConfig = async () => {
     });
 }
 
-console.log("getBasAuthCode()");
+// console.log("getBasAuthCode()");
 const getBasAuthCode = async (clientId) => {
     if (!isJSBridgeReady) await initBas();
     if ("JSBridge" in window) {

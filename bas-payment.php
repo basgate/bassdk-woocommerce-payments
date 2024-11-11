@@ -140,6 +140,7 @@ function basgateWoopayment_enqueue_style()
 {
     wp_enqueue_style('basgateWoopayment', plugin_dir_url(__FILE__) . 'assets/css/basgate-payments.css', array(), time(), '');
     wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/js/basgate-payments.js', array('jquery'), time(), true);
+    wp_enqueue_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
 }
 
 function basgateWoopayment_js_css()
@@ -580,10 +581,7 @@ function woocommerce_basgate_init()
         </div>
 
     <?php
-        wp_enqueue_script('bassdk-payments-footer', plugins_url('assets/js/basgate-check.js', plugin_root()), array('jquery'), time(),   array(
-            'strategy'  => 'async',
-            'in_footer' => true,
-        ));
+
     endif;
 
     // WooCommerce payment gateway class to hook Payment gateway
@@ -655,7 +653,7 @@ function woocommerce_basgate_init()
                 border-color: #c3e6cb;
             }
         </style>
-    <?php
+<?php
     }
 
     function basgateResponseMessage($content)
