@@ -567,19 +567,8 @@ function woocommerce_basgate_init()
     add_filter('woocommerce_payment_gateways', 'woocommerce_add_basgate_gateway');
     function woocommerce_add_basgate_gateway($methods)
     {
+        $methods[] = 'WC_Basgate';
         BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:' . wp_json_encode($methods));
-
-        if (BasgateHelper::$isInBasPlatform == false) {
-            BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == false');
-            // // Example: Remove 'cheque' payment method
-            // if (($key = array_search('cheque', $methods)) !== false) {
-            //     unset($methods[$key]);
-            // }
-        } else {
-            BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway == true');
-            $methods[] = 'WC_Basgate';
-        }
-
         return $methods;
     }
 
