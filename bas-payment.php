@@ -106,7 +106,7 @@ add_action('template_redirect', 'force_login_before_cart');
 
 function force_login_before_cart()
 {
-    BasgateHelper::basgate_log('===== STARTED force_login_before_cart()');
+    BasgateHelper::basgate_log('===== STARTED force_login_before_cart() get_permalink():' . get_permalink());
     if (is_cart() && !is_user_logged_in()) {
         // Redirect to login page
         wp_redirect(wp_login_url(get_permalink()));
@@ -118,7 +118,8 @@ add_action('template_redirect', 'force_login_before_adding_to_cart');
 
 function force_login_before_adding_to_cart()
 {
-    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart()');
+    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink());
+    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() _POST:' . print_r($_POST));
     if (isset($_POST['add-to-cart']) && !is_user_logged_in()) {
         // Set a transient message
         set_transient('login_redirect_message', 'You must log in to add products to your cart.', 30); // 30 seconds
@@ -193,28 +194,7 @@ function basgateWoopayment_js_css()
     }
 }
 
-// add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
-// add_action('wp_ajax_process_basgate_payments',  'ajax_process_basgate_payments');
-
-
-// function ajax_process_basgate_payments()
-// {
-//     BasgateHelper::basgate_log('===== STARTED ajax_process_basgate_payments() ');
-//     if (
-//         ! isset($_POST['nonce']) ||
-//         ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_payments_nonce')
-//     ) {
-//         die(esc_html("ERROR wrong nonce"));
-//     }
-
-//     BasgateHelper::$isInBasPlatform = true;
-//     $response = 'Successfully enabled basgate. :' . BasgateHelper::$isInBasPlatform;
-
-//     die(esc_html($response));
-// }
-
 add_action('wp_enqueue_scripts', 'basgateWoopayment_js_css');
-
 
 if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
@@ -621,7 +601,6 @@ function woocommerce_basgate_init()
     function woocommerce_add_basgate_gateway($methods)
     {
         $methods[] = 'WC_Basgate';
-        BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:' . wp_json_encode($methods));
         return $methods;
     }
 
