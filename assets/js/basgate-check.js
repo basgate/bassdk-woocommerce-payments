@@ -6,15 +6,15 @@
         } catch (error) {
             console.error("===== STARTED basgate-check.js ERROR :", error);
 
-        } var ajaxurl_payments = basgate_ajax_object ? basgate_ajax_object?.ajaxurl_payments : '';
-        var nonce_payments = basgate_ajax_object ? basgate_ajax_object?.nonce_payments : '';
+        } var ajaxurl_payments11 = basgate_ajax_object ? basgate_ajax_object?.ajaxurl_payments : '';
+        var nonce_payments11 = basgate_ajax_object ? basgate_ajax_object?.nonce_payments : '';
         // eslint-disable-next-line
         function basgateCheck() { // jshint ignore:line
             var $ = jQuery;
             console.log("===== STARTED basgateCheck:")
-            $.post(ajaxurl_payments, {
+            $.post(ajaxurl_payments11, {
                 action: 'process_basgate_payments',
-                nonce: nonce_payments,
+                nonce: nonce_payments11,
             }, function (data, textStatus) {
 
                 // window.removeEventListener("JSBridgeReady");

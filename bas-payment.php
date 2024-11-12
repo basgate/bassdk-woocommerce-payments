@@ -148,12 +148,7 @@ function basgateWoopayment_enqueue_style()
 {
     wp_enqueue_style('basgateWoopayment', plugin_dir_url(__FILE__) . 'assets/css/basgate-payments.css', array(), time(), '');
     wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/js/basgate-payments.js', array('jquery'), time(), true);
-    wp_register_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
-    wp_localize_script('bassdk-payments-footer', 'basgate_ajax_object', array(
-        'ajaxurl_payments' => admin_url('admin-ajax.php'),
-        'nonce_payments' => wp_create_nonce('basgate_payments_nonce')
-    ));
-    wp_enqueue_script('bassdk-payments-footer');
+    
 }
 
 function basgateWoopayment_js_css()
@@ -164,7 +159,10 @@ function basgateWoopayment_js_css()
         }
     }
 }
-add_action('wp_enqueue_scripts', 'basgateWoopayment_js_css');
+
+add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
+add_action('wp_ajax_process_basgate_payments',  'ajax_process_basgate_payments');
+
 
 function ajax_process_basgate_payments()
 {

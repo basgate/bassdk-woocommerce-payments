@@ -47,6 +47,13 @@ class WC_Basgate extends WC_Payment_Gateway
             'strategy'  => 'async',
             'in_footer' => true,
         ));
+
+        wp_register_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
+    wp_localize_script('bassdk-payments-footer', 'basgate_ajax_object', array(
+        'ajaxurl_payments' => admin_url('admin-ajax.php'),
+        'nonce_payments' => wp_create_nonce('basgate_payments_nonce')
+    ));
+    wp_enqueue_script('bassdk-payments-footer');
     }
 
     private function getSetting($key)
