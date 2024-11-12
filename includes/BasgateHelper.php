@@ -11,7 +11,7 @@ if (!class_exists('BasgateHelper')) :
          * Include timestap with order id 
          */
 
-        public static bool $isInBasPlatform = false;
+        public static bool $isInBasPlatform = true;
 
         public static function getBasgateOrderId($order_id)
         {

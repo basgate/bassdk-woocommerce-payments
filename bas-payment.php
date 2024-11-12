@@ -15,7 +15,7 @@
  * Requires at least: 6.0.1
  * Tested up to: 6.5.5
  * Requires PHP: 7.4
- * Requires Plugins: bassdk-login,
+ * Requires Plugins: bassdk-login,woocommerce
  * Text Domain: bassdk-woocommerce-payments
  * WC requires at least: 2.0.0
  * WC tested up to: 9.0.2
@@ -75,12 +75,12 @@ add_action('before_woocommerce_init', function () {
 /**
  * Checkout Block code Start
  */
-// BasgateHelper::basgate_log('======++++++++++ $isInBasPlatform :(' . BasgateHelper::$isInBasPlatform . ')');
 
 add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment_method_type');
 
 function basgate_register_order_approval_payment_method_type()
 {
+    BasgateHelper::basgate_log('=====---=== STARTED basgate_register_order_approval_payment_method_type() =====---===');
     // Check if the required class exists
     if (! class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
         return;
@@ -144,11 +144,11 @@ function uninstall_basgate_plugin()
     }
     delete_option(BasgateConstants::OPTION_DATA_NAME); */
 }
+
 function basgateWoopayment_enqueue_style()
 {
     wp_enqueue_style('basgateWoopayment', plugin_dir_url(__FILE__) . 'assets/css/basgate-payments.css', array(), time(), '');
     wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/js/basgate-payments.js', array('jquery'), time(), true);
-    
 }
 
 function basgateWoopayment_js_css()
@@ -160,25 +160,25 @@ function basgateWoopayment_js_css()
     }
 }
 
-add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
-add_action('wp_ajax_process_basgate_payments',  'ajax_process_basgate_payments');
+// add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
+// add_action('wp_ajax_process_basgate_payments',  'ajax_process_basgate_payments');
 
 
-function ajax_process_basgate_payments()
-{
-    BasgateHelper::basgate_log('===== STARTED ajax_process_basgate_payments() ');
-    if (
-        ! isset($_POST['nonce']) ||
-        ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_payments_nonce')
-    ) {
-        die(esc_html("ERROR wrong nonce"));
-    }
+// function ajax_process_basgate_payments()
+// {
+//     BasgateHelper::basgate_log('===== STARTED ajax_process_basgate_payments() ');
+//     if (
+//         ! isset($_POST['nonce']) ||
+//         ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_payments_nonce')
+//     ) {
+//         die(esc_html("ERROR wrong nonce"));
+//     }
 
-    BasgateHelper::$isInBasPlatform = true;
-    $response = 'Successfully enabled basgate. :' . BasgateHelper::$isInBasPlatform;
+//     BasgateHelper::$isInBasPlatform = true;
+//     $response = 'Successfully enabled basgate. :' . BasgateHelper::$isInBasPlatform;
 
-    die(esc_html($response));
-}
+//     die(esc_html($response));
+// }
 
 add_action('wp_enqueue_scripts', 'basgateWoopayment_js_css');
 
@@ -597,9 +597,9 @@ function woocommerce_basgate_init()
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' .  wp_unslash(esc_attr(wp_json_encode($available_gateways))));
-
-        if (isset($available_gateways['basgate']) && BasgateHelper::$isInBasPlatform == false) {
-            BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced isInBasPlatform==false');
+        $user = wp_get_current_user();
+        if ($user->ID && get_user_meta($user->ID, 'authenticated_by', true) !== 'basgate') {
+            BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced authenticated_by!=basgate');
             unset($available_gateways['basgate']);
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced after unset $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
         }

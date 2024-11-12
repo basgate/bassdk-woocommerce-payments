@@ -48,12 +48,12 @@ class WC_Basgate extends WC_Payment_Gateway
             'in_footer' => true,
         ));
 
-        wp_register_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
-    wp_localize_script('bassdk-payments-footer', 'basgate_ajax_object', array(
-        'ajaxurl_payments' => admin_url('admin-ajax.php'),
-        'nonce_payments' => wp_create_nonce('basgate_payments_nonce')
-    ));
-    wp_enqueue_script('bassdk-payments-footer');
+        // wp_register_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
+        // wp_localize_script('bassdk-payments-footer', 'basgate_ajax_object', array(
+        //     'ajaxurl_payments' => admin_url('admin-ajax.php'),
+        //     'nonce_payments' => wp_create_nonce('basgate_payments_nonce')
+        // ));
+        // wp_enqueue_script('bassdk-payments-footer');
     }
 
     private function getSetting($key)
@@ -525,7 +525,7 @@ class WC_Basgate extends WC_Payment_Gateway
     public function generate_basgate_callback()
     {
         BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
-        ?>
+?>
         <script type="text/javascript">
             // eslint-disable-next-line
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
@@ -555,7 +555,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 }
             }
         </script>
-        <?php
+<?php
     }
 
     /**
