@@ -102,17 +102,17 @@ if (function_exists('register_activation_hook'))    register_activation_hook(__F
 /* Drop table 'basgate_order_data' after uninstall basgate plugin */
 if (function_exists('register_deactivation_hook'))    register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 
-add_action('template_redirect', 'force_login_before_cart');
+// add_action('template_redirect', 'force_login_before_cart');
 
-function force_login_before_cart()
-{
-    BasgateHelper::basgate_log('===== STARTED force_login_before_cart() get_permalink():' . get_permalink());
-    if (is_cart() && !is_user_logged_in()) {
-        // Redirect to login page
-        wp_redirect(wp_login_url(get_permalink()));
-        exit;
-    }
-}
+// function force_login_before_cart()
+// {
+//     BasgateHelper::basgate_log('===== STARTED force_login_before_cart() get_permalink():' . get_permalink());
+//     if (is_cart() && !is_user_logged_in()) {
+//         // Redirect to login page
+//         wp_redirect(wp_login_url(get_permalink()));
+//         exit;
+//     }
+// }
 
 add_action('template_redirect', 'force_login_before_adding_to_cart');
 
@@ -124,6 +124,12 @@ function force_login_before_adding_to_cart()
         // Set a transient message
         set_transient('login_redirect_message', 'You must log in to add products to your cart.', 30); // 30 seconds
 
+        // Redirect to login page
+        wp_redirect(wp_login_url(get_permalink()));
+        exit;
+    }
+
+    if (is_cart() && !is_user_logged_in()) {
         // Redirect to login page
         wp_redirect(wp_login_url(get_permalink()));
         exit;
