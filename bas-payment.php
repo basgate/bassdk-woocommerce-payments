@@ -569,19 +569,6 @@ function woocommerce_basgate_init()
 {
     // If the WooCommerce payment gateway class is not available nothing will return
     if (!class_exists('WC_Payment_Gateway')) return;
-        $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
-
-    if (isset($settings['enabled']) && 'yes' === $settings['enabled']) {
-        $ajaxurl_payments = admin_url('admin-ajax.php');
-
-        ?>
-            <div>
-                <input type="hidden" id="basgate_payments_admin_ajxurl" name="basgate_payments_admin_ajxurl" value="<?php echo esc_attr($ajaxurl_payments); ?>">
-                <input type="hidden" id="basgate_payments_nonce" name="basgate_payments_nonce" value="<?php echo esc_attr(wp_create_nonce('basgate_payments_nonce')); ?>">
-            </div>
-        <?php
-    }
-
 
     // WooCommerce payment gateway class to hook Payment gateway
     require_once(plugin_basename('class.basgate.php'));
@@ -593,6 +580,16 @@ function woocommerce_basgate_init()
     {
         $methods[] = 'WC_Basgate';
         BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:' . wp_json_encode($methods));
+
+        $ajaxurl_payments = admin_url('admin-ajax.php');
+
+    ?>
+        <div>
+            <input type="hidden" id="basgate_payments_admin_ajxurl" name="basgate_payments_admin_ajxurl" value="<?php echo esc_attr($ajaxurl_payments); ?>">
+            <input type="hidden" id="basgate_payments_nonce" name="basgate_payments_nonce" value="<?php echo esc_attr(wp_create_nonce('basgate_payments_nonce')); ?>">
+        </div>
+    <?php
+
         return $methods;
     }
 
