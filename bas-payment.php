@@ -80,7 +80,7 @@ add_action('woocommerce_blocks_loaded', 'basgate_register_order_approval_payment
 
 function basgate_register_order_approval_payment_method_type()
 {
-    BasgateHelper::basgate_log('=====---=== STARTED basgate_register_order_approval_payment_method_type() =====---===');
+    // BasgateHelper::basgate_log('=====---=== STARTED basgate_register_order_approval_payment_method_type() =====---===');
     // Check if the required class exists
     if (! class_exists('Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType')) {
         return;
