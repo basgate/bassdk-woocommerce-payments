@@ -1,15 +1,16 @@
 (function () {
     jQuery(document).ready(function () {
-        console.log("===== STARTED basgate-check.js 111");
-
+        console.log("===== STARTED basgate-check.js basgate_ajax_object :", basgate_ajax_object?.ajaxurl_payments ?? '');
+        var ajaxurl_payments = basgate_ajax_object ? basgate_ajax_object?.ajaxurl_payments : '';
+        var nonce_payments = basgate_ajax_object ? basgate_ajax_object?.nonce_payments : '';
         // eslint-disable-next-line
         function basgateCheck() { // jshint ignore:line
             var $ = jQuery;
             console.log("===== STARTED basgateCheck:")
 
             // Send the authId to the server
-            var ajaxurl_payments = $("#basgate_payments_admin_ajxurl").val();
-            var nonce_payments = $("#basgate_payments_nonce").val();
+            //  = $("#basgate_payments_admin_ajxurl").val();
+            // var  = $("#basgate_payments_nonce").val();
             $.post(ajaxurl_payments, {
                 action: 'process_basgate_payments',
                 nonce: nonce_payments,

@@ -140,7 +140,12 @@ function basgateWoopayment_enqueue_style()
 {
     wp_enqueue_style('basgateWoopayment', plugin_dir_url(__FILE__) . 'assets/css/basgate-payments.css', array(), time(), '');
     wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/js/basgate-payments.js', array('jquery'), time(), true);
-    wp_enqueue_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
+    wp_register_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
+    wp_localize_script('bassdk-payments-footer', 'basgate_ajax_object', array(
+        'ajaxurl_payments' => admin_url('admin-ajax.php'),
+        'nonce_payments' => wp_create_nonce('basgate_payments_nonce')
+    ));
+    wp_enqueue_script('bassdk-payments-footer');
 }
 
 function basgateWoopayment_js_css()
@@ -580,16 +585,6 @@ function woocommerce_basgate_init()
     {
         $methods[] = 'WC_Basgate';
         BasgateHelper::basgate_log('===++++ woocommerce_add_basgate_gateway $methods:' . wp_json_encode($methods));
-
-        $ajaxurl_payments = admin_url('admin-ajax.php');
-
-    ?>
-        <div>
-            <input type="hidden" id="basgate_payments_admin_ajxurl" name="basgate_payments_admin_ajxurl" value="<?php echo esc_attr($ajaxurl_payments); ?>">
-            <input type="hidden" id="basgate_payments_nonce" name="basgate_payments_nonce" value="<?php echo esc_attr(wp_create_nonce('basgate_payments_nonce')); ?>">
-        </div>
-    <?php
-
         return $methods;
     }
 
