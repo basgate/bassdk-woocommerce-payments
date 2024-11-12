@@ -158,6 +158,7 @@ function basgateWoopayment_js_css()
 }
 
 add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
+add_action('wp_ajax_process_basgate_payments',  'ajax_process_basgate_payments');
 
 
 function ajax_process_basgate_payments()
