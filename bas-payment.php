@@ -102,13 +102,23 @@ if (function_exists('register_activation_hook'))    register_activation_hook(__F
 /* Drop table 'basgate_order_data' after uninstall basgate plugin */
 if (function_exists('register_deactivation_hook'))    register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 
-add_action('woocommerce_before_pay_action', 'basgate_before_pay_action', 1, 1);
+add_action('template_redirect', 'force_login_before_cart');
 
-
-function basgate_before_pay_action($order_id)
+function force_login_before_cart()
 {
-    BasgateHelper::basgate_log('===== STARTED basgate_before_pay_action() :' . $order_id);
+    BasgateHelper::basgate_log('===== STARTED force_login_before_cart()');
+    if (is_cart() && !is_user_logged_in()) {
+        // Redirect to login page
+        wp_redirect(wp_login_url(get_permalink()));
+        exit;
+    }
 }
+// add_action('woocommerce_before_pay_action', 'basgate_before_pay_action', 1, 1);
+
+// function basgate_before_pay_action($order_id)
+// {
+//     BasgateHelper::basgate_log('===== STARTED basgate_before_pay_action() :' . $order_id);
+// }
 
 function install_basgate_plugin()
 {
