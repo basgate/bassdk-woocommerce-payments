@@ -120,14 +120,14 @@ function force_login_before_adding_to_cart()
 {
     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink());
     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() _POST:' . print_r($_POST));
-    if (isset($_POST['add-to-cart']) && !is_user_logged_in()) {
-        // Set a transient message
-        set_transient('login_redirect_message', 'You must log in to add products to your cart.', 30); // 30 seconds
+    // if (isset($_POST['add-to-cart']) && !is_user_logged_in()) {
+    //     // Set a transient message
+    //     set_transient('login_redirect_message', 'You must log in to add products to your cart.', 30); // 30 seconds
 
-        // Redirect to login page
-        wp_redirect(wp_login_url(get_permalink()));
-        exit;
-    }
+    //     // Redirect to login page
+    //     wp_redirect(wp_login_url(get_permalink()));
+    //     exit;
+    // }
 
     if (is_cart() && !is_user_logged_in()) {
         // Redirect to login page
@@ -141,10 +141,10 @@ add_action('login_message', 'add_login_message');
 function add_login_message($message)
 {
     BasgateHelper::basgate_log('===== STARTED add_login_message()');
-    if ($msg = get_transient('login_redirect_message')) {
-        BasgateHelper::basgate_log('===== add_login_message() message:' . $msg);
+    if ($mssg = get_transient('login_redirect_message')) {
+        BasgateHelper::basgate_log('===== add_login_message() message:' . $mssg);
         // Append the message to the existing login message
-        $message .= '<div class="login-message" style="color: red;">' . esc_html($msg) . '</div>';
+        $message .= '<div class="login-message" style="color: red;">' . esc_html($mssg) . '</div>';
         delete_transient('login_redirect_message'); // Delete transient after displaying
     }
     return $message;
