@@ -148,7 +148,7 @@ function add_force_login_script()
                 if (!<?php echo json_encode(is_user_logged_in()); ?>) {
                     e.preventDefault(); // Prevent the default action
                     alert('You must log in to add products to your cart.');
-                    window.location.href = '<?php echo wp_login_url(); ?>'; // Redirect to login
+                    window.location.href = '<?php echo wp_login_url(get_permalink()); ?>'; // Redirect to login
                 }
             });
         });
