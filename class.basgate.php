@@ -43,17 +43,10 @@ class WC_Basgate extends WC_Payment_Gateway
             add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
         }
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
-        // wp_enqueue_script('bassdk-payment-script', plugin_dir_url(__FILE__) . 'assets/js/public.js', array(), time(),   array(
-        //     'strategy'  => 'async',
-        //     'in_footer' => true,
-        // ));
-
-        // wp_register_script('bassdk-payments-footer', plugin_dir_url(__FILE__) . 'assets/js/basgate-check.js', array('jquery'), time(), true);
-        // wp_localize_script('bassdk-payments-footer', 'basgate_ajax_object', array(
-        //     'ajaxurl_payments' => admin_url('admin-ajax.php'),
-        //     'nonce_payments' => wp_create_nonce('basgate_payments_nonce')
-        // ));
-        // wp_enqueue_script('bassdk-payments-footer');
+        wp_enqueue_script('bassdk-payment-script', plugin_dir_url(__FILE__) . 'assets/js/public.js', array(), time(),   array(
+            'strategy'  => 'async',
+            'in_footer' => true,
+        ));
     }
 
     private function getSetting($key)

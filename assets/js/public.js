@@ -2,7 +2,7 @@
 /////////// Basgate SDK for Login ///////////
 
 //#region BAS SDK Client Side 
-var isJSBridgeReady = false
+var isJSBridgeReadyPayments = false
 var isBasInDebug = false
 var isBasAuthTokenReturned = false
 
@@ -11,14 +11,14 @@ function initBas() {
     console.log("initBas() STARTED");
     window.addEventListener("JSBridgeReady", async (event) => {
         console.log("JSBridgeReady fired");
-        isJSBridgeReady = true
+        isJSBridgeReadyPayments = true
         await getBasConfig();
     }, false);
 }
 
 // console.log("isBasSupperApp()");
 const isBasSupperApp = () => {
-    return isJSBridgeReady;
+    return isJSBridgeReadyPayments;
 }
 
 // console.log("getBasConfig()");
@@ -38,7 +38,7 @@ const getBasConfig = async () => {
         console.log("basConfigs Result:", JSON.stringify(result));
         if (result) {
             if ("isInBasSuperApp" in result) {
-                isJSBridgeReady = true;
+                isJSBridgeReadyPayments = true;
             }
 
             if ("envType" in result) {
@@ -53,7 +53,7 @@ const getBasConfig = async () => {
 
 // console.log("getBasAuthCode()");
 const getBasAuthCode = async (clientId) => {
-    if (!isJSBridgeReady) await initBas();
+    if (!isJSBridgeReadyPayments) await initBas();
     if ("JSBridge" in window) {
         if (isBasInDebug) console.log("BasSDK getBasAuthCode STARTED")
         return window.JSBridge.call('basFetchAuthCode',

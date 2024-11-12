@@ -113,12 +113,35 @@ function force_login_before_cart()
         exit;
     }
 }
-// add_action('woocommerce_before_pay_action', 'basgate_before_pay_action', 1, 1);
 
-// function basgate_before_pay_action($order_id)
-// {
-//     BasgateHelper::basgate_log('===== STARTED basgate_before_pay_action() :' . $order_id);
-// }
+add_action('template_redirect', 'force_login_before_adding_to_cart');
+
+function force_login_before_adding_to_cart()
+{
+    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart()');
+    if (isset($_POST['add-to-cart']) && !is_user_logged_in()) {
+        // Set a transient message
+        set_transient('login_redirect_message', 'You must log in to add products to your cart.', 30); // 30 seconds
+
+        // Redirect to login page
+        wp_redirect(wp_login_url(get_permalink()));
+        exit;
+    }
+}
+
+add_action('login_message', 'add_login_message');
+
+function add_login_message($message)
+{
+    BasgateHelper::basgate_log('===== STARTED add_login_message()');
+    if ($msg = get_transient('login_redirect_message')) {
+        BasgateHelper::basgate_log('===== add_login_message() message:' . $msg);
+        // Append the message to the existing login message
+        $message .= '<div class="login-message" style="color: red;">' . esc_html($msg) . '</div>';
+        delete_transient('login_redirect_message'); // Delete transient after displaying
+    }
+    return $message;
+}
 
 function install_basgate_plugin()
 {
