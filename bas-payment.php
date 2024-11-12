@@ -15,6 +15,7 @@
  * Requires at least: 6.0.1
  * Tested up to: 6.5.5
  * Requires PHP: 7.4
+ * Requires Plugins: bassdk-login,
  * Text Domain: bassdk-woocommerce-payments
  * WC requires at least: 2.0.0
  * WC tested up to: 9.0.2
@@ -101,6 +102,13 @@ if (function_exists('register_activation_hook'))    register_activation_hook(__F
 /* Drop table 'basgate_order_data' after uninstall basgate plugin */
 if (function_exists('register_deactivation_hook'))    register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 
+add_action('woocommerce_before_pay_action', 'basgate_before_pay_action', 1, 1);
+
+
+function basgate_before_pay_action($order_id)
+{
+    BasgateHelper::basgate_log('===== STARTED basgate_before_pay_action() :' . $order_id);
+}
 
 function install_basgate_plugin()
 {
@@ -156,9 +164,7 @@ function basgateWoopayment_js_css()
         }
     }
 }
-
-add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
-
+add_action('wp_enqueue_scripts', 'basgateWoopayment_js_css');
 
 function ajax_process_basgate_payments()
 {
@@ -176,8 +182,8 @@ function ajax_process_basgate_payments()
     die(esc_html($response));
 }
 
+add_action('wp_ajax_nopriv_process_basgate_payments',  'ajax_process_basgate_payments');
 
-add_action('wp_enqueue_scripts', 'basgateWoopayment_js_css');
 
 if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
 
