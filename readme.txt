@@ -14,6 +14,8 @@ Tags: Basgate, BasSDK Super App, Basgate WooCommerce, BasSDK Plugin, BasSDK Paym
 
  هذه الاضافة تمكنك من تشغيل الدفع بداخل منصة بس والذي تقدم لك العديد من المحافظ المالية
 
+
+--
 == Description ==
 Description here
 
