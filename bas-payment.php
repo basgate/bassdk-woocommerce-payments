@@ -117,7 +117,7 @@ add_action('wp_ajax_nopriv_add_to_cart', 'handle_ajax_add_to_cart');
 
 function handle_ajax_add_to_cart()
 {
-    BasgateHelper::basgate_log('===== STARTED handle_ajax_add_to_cart() ');
+    // BasgateHelper::basgate_log('===== STARTED handle_ajax_add_to_cart() ');
     // Check if user is logged in
     if (!is_user_logged_in()) {
         // Return a JSON response indicating that login is required
@@ -140,7 +140,7 @@ function add_force_login_script()
 {
     // BasgateHelper::basgate_log('===== STARTED add_force_login_script() ');
 
-?>
+    ?>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
             $('body').on('click', '.add_to_cart_button', function(e) {
