@@ -664,7 +664,7 @@ function woocommerce_basgate_init()
     /**
      * Localisation
      */
-    load_plugin_textdomain('wc-basgate', false, dirname(plugin_basename(__FILE__)) . '/languages');
+    load_plugin_textdomain('bassdk-woocommerce-payments', false, dirname(plugin_basename(__FILE__)) . '/languages');
 
     if (isset($_GET['basgate_response']) && sanitize_text_field($_GET['basgate_response'])) {
         add_action('the_content', 'basgateResponseMessage');
