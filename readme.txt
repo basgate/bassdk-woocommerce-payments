@@ -24,3 +24,6 @@ Screenshots here
 
 == Changelog ==
 1- Add Auto Login
+
+
+END
