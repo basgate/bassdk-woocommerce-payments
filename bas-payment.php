@@ -22,7 +22,6 @@
  */
 
 
- 
 /**
  * Add the Gateway to WooCommerce
  **/
