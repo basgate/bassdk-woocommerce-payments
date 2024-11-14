@@ -117,7 +117,7 @@ add_action('wp_ajax_nopriv_add_to_cart', 'handle_ajax_add_to_cart');
 
 function handle_ajax_add_to_cart()
 {
-    // BasgateHelper::basgate_log('===== STARTED handle_ajax_add_to_cart() ');
+    BasgateHelper::basgate_log('===== STARTED handle_ajax_add_to_cart() ');
     // Check if user is logged in
     if (!is_user_logged_in()) {
         // Return a JSON response indicating that login is required
@@ -141,8 +141,9 @@ function add_force_login_script()
 ?>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
+            console.log('===== add_force_login_script add_to_cart_button clicked 111')
             $('body').on('click', '.add_to_cart_button', function(e) {
-                console.log('===== add_force_login_script add_to_cart_button clicked ')
+                console.log('===== add_force_login_script add_to_cart_button clicked 222')
                 if (!<?php echo json_encode(is_user_logged_in()); ?>) {
                     e.preventDefault(); // Prevent the default action
                     console.log('====== add_force_login_script You must log in to add products to your cart.');
@@ -166,7 +167,7 @@ function force_login_before_adding_to_cart()
 {
     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink());
 
-    if (is_cart() && !is_user_logged_in()) {
+    if (!is_user_logged_in()) {
         set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
         // Redirect to login page
         wp_redirect(wp_login_url(get_permalink()));
