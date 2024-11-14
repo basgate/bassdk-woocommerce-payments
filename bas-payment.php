@@ -167,7 +167,7 @@ function force_login_before_adding_to_cart()
 {
     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink());
 
-    if (!is_user_logged_in()) {
+    if (is_cart() && !is_user_logged_in()) {
         set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
         // Redirect to login page
         wp_redirect(wp_login_url(get_permalink()));
