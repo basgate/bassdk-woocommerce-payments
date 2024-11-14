@@ -16,7 +16,6 @@
  * Tested up to: 6.5.5
  * Requires PHP: 7.4
  * Requires Plugins: bassdk-login,woocommerce
- * Text Domain: bassdk-woocommerce-payments
  * WC requires at least: 2.0.0
  * WC tested up to: 9.0.2
  */
@@ -24,6 +23,7 @@
 
 /**
  * Add the Gateway to WooCommerce
+ *  * Text Domain: bassdk-woocommerce-payments
  **/
 if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly
