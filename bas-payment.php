@@ -113,32 +113,32 @@ function enqueue_force_login_scripts()
     }
 }
 
-add_action('wp_ajax_nopriv_add_to_cart', 'handle_ajax_add_to_cart');
+// add_action('wp_ajax_nopriv_add_to_cart', 'handle_ajax_add_to_cart');
 
-function handle_ajax_add_to_cart()
-{
-    BasgateHelper::basgate_log('===== STARTED handle_ajax_add_to_cart() ');
-    // Check if user is logged in
-    if (!is_user_logged_in()) {
-        // Return a JSON response indicating that login is required
-        wp_send_json_error(array('message' => 'You must log in to add products to your cart.'));
-    }
+// function handle_ajax_add_to_cart()
+// {
+//     BasgateHelper::basgate_log('===== STARTED handle_ajax_add_to_cart() ');
+//     // Check if user is logged in
+//     if (!is_user_logged_in()) {
+//         // Return a JSON response indicating that login is required
+//         wp_send_json_error(array('message' => 'You must log in to add products to your cart.'));
+//     }
 
-    // If logged in, proceed with the add to cart operation
-    // This part is handled by WooCommerce, so you can simply call the WooCommerce function if needed.
-    // For example:
-    // $product_id = intval($_POST['product_id']);
-    // WC()->cart->add_to_cart($product_id);
+//     // If logged in, proceed with the add to cart operation
+//     // This part is handled by WooCommerce, so you can simply call the WooCommerce function if needed.
+//     // For example:
+//     // $product_id = intval($_POST['product_id']);
+//     // WC()->cart->add_to_cart($product_id);
 
-    // For demonstration, we'll just send a success response
-    wp_send_json_success();
-}
+//     // For demonstration, we'll just send a success response
+//     wp_send_json_success();
+// }
 
 add_action('wp_footer', 'add_force_login_script');
 
 function add_force_login_script()
 {
-?>
+    ?>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
             console.log('===== add_force_login_script add_to_cart_button clicked 111')
