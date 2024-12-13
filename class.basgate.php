@@ -1005,6 +1005,24 @@ class WC_Basgate extends WC_Payment_Gateway
             "x-sdk-type" => "WordPress"
         );
 
+        // #region getToken 
+
+        $client_id = $this->getSetting('bas_client_id');
+        $client_secret = $this->getSetting('bas_client_secret');
+        if ($this->getSetting('bas_environment') == 1) {
+            $baseUrl = BasgateConstants::PRODUCTION_HOST . $url;
+        } else {
+            $baseUrl = BasgateConstants::STAGING_HOST . $url;
+        }
+
+        $token = BasgateHelper::getBasToken($baseUrl, $client_id, $client_secret);
+        if (isset($token['access_token'])) {
+            $header['Authorization'] = 'Bearer ' . $token['access_token'];
+        } else {
+            return new \WP_Error('connection_error', __("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
+        }
+        // #endregion
+
         $retry = 1;
         do {
             $res = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
@@ -1042,6 +1060,7 @@ class WC_Basgate extends WC_Payment_Gateway
             return new \WP_Error('connection_error', __("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
         }
     }
+
 
     /*
      * End basgate Essential Functions

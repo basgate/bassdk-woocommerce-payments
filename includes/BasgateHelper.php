@@ -152,6 +152,46 @@ if (!class_exists('BasgateHelper')) :
             }
         }
 
+        //Process Basgate Token
+        public static function getBasToken($bassdk_api, $client_id, $client_secret)
+        {
+            BasgateHelper::basgate_log("===== STARTED getBasToken ");
+            $grant_type  = "authorization_code";
+            $redirect_uri = $bassdk_api . "api/v1/auth/callback";
+
+            try {
+                //Send Post request to get token details
+                $reqBody = [
+                    'grant_type' => $grant_type,
+                    'client_id' => $client_id,
+                    'client_secret' => $client_secret,
+                    // 'code' => $code,
+                    'redirect_uri' => $redirect_uri
+                ];
+
+                $header = array("Content-type" => "application/x-www-form-urlencoded");
+
+                $retry = 1;
+                do {
+                    $response = BasgateHelper::executecUrl($bassdk_api . 'api/v1/auth/token', http_build_query($reqBody), "POST", $header);
+                    $retry++;
+                } while (!$response['success'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+                BasgateHelper::basgate_log("getBasToken response:" . wp_json_encode($response));
+                if (array_key_exists('success', $response) && $response['success'] == true) {
+                    if (array_key_exists('body', $response)) {
+                        $data = $response['body'];
+                        return  array_key_exists('access_token', $data) ? $data['access_token'] : null;
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+
         public static function errorResponse($msg)
         {
             self::basgate_log("ERROR errorResponse msg: " . $msg);
