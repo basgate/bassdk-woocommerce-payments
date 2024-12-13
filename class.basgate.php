@@ -1015,7 +1015,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $baseUrl = BasgateConstants::STAGING_HOST;
         }
 
-        $token = BasgateHelper::getBasToken($baseUrl, $client_id, $client_secret);
+        $token = BasgateHelper::getBasToken($baseUrl, $client_id, $client_secret, "client_credentials");
         if (isset($token['access_token'])) {
             $header['Authorization'] = 'Bearer ' . $token['access_token'];
         } else {

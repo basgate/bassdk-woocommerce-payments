@@ -153,10 +153,9 @@ if (!class_exists('BasgateHelper')) :
         }
 
         //Process Basgate Token
-        public static function getBasToken($bassdk_api, $client_id, $client_secret)
+        public static function getBasToken($bassdk_api, $client_id, $client_secret, $grant_type  = "authorization_code")
         {
-            BasgateHelper::basgate_log("===== STARTED getBasToken ");
-            $grant_type  = "authorization_code";
+            BasgateHelper::basgate_log("===== STARTED getBasToken $bassdk_api, $client_id, $client_secret, $grant_type");
             $redirect_uri = $bassdk_api . "api/v1/auth/callback";
 
             try {
