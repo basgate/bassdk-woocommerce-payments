@@ -963,13 +963,13 @@ class WC_Basgate extends WC_Payment_Gateway
     private function send_refund_request($order_id, $reason)
     {
         BasgateHelper::basgate_log('====== STARTED send_refund_request $order_id:' . $order_id . ' , $reason:' . $reason);
-        $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
+        $reqBody = '{"head":{"signature":"sigg","requestTimestamp":"timess"},"body":bodyy}';
         $requestTimestamp = (string)  time();
         $correlationId = wp_generate_uuid4();
         /* body parameters */
         $basgateParams["body"] = array(
-            "appId" => $this->getSetting('bas_application_id'),
             "requestTimestamp" => $requestTimestamp,
+            "appId" => $this->getSetting('bas_application_id'),
             'orderId' => $order_id,
             'reason' => $reason,
         );
@@ -996,13 +996,13 @@ class WC_Basgate extends WC_Payment_Gateway
         $url = BasgateHelper::getBasgateURL(BasgateConstants::REFUND_URL, $this->getSetting('bas_environment'));
         $header = array(
             'Content-Type' => 'application/json',
-            "User-Agent" => "BasSdk",
-            "x-client-id" => $this->getSetting('bas_client_id'),
-            "x-app-id" => $this->getSetting('bas_application_id'),
-            "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
-            "x-environment" => $this->getSetting('bas_environment'),
-            "correlationId" => $correlationId,
-            "x-sdk-type" => "WordPress"
+            // "User-Agent" => "BasSdk",
+            // "x-client-id" => $this->getSetting('bas_client_id'),
+            // "x-app-id" => $this->getSetting('bas_application_id'),
+            // "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
+            // "x-environment" => $this->getSetting('bas_environment'),
+            // "correlationId" => $correlationId,
+            // "x-sdk-type" => "WordPress"
         );
 
         // #region getToken 
