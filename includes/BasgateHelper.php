@@ -178,7 +178,12 @@ if (!class_exists('BasgateHelper')) :
                 if (array_key_exists('success', $response) && $response['success'] == true) {
                     if (array_key_exists('body', $response)) {
                         $data = $response['body'];
-                        return  array_key_exists('access_token', $data) ? $data['access_token'] : null;
+                        return $data;
+                        // if (array_key_exists('access_token', $data)) {
+                        //     return $data;
+                        // } else {
+                        //     return null;
+                        // }
                     } else {
                         return null;
                     }
