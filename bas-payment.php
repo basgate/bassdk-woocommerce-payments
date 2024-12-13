@@ -102,16 +102,17 @@ if (function_exists('register_activation_hook'))    register_activation_hook(__F
 /* Drop table 'basgate_order_data' after uninstall basgate plugin */
 if (function_exists('register_deactivation_hook'))    register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 
-add_action('wp_enqueue_scripts', 'enqueue_force_login_scripts');
+//TODO: Restore this code
+// add_action('wp_enqueue_scripts', 'enqueue_force_login_scripts');
+// function enqueue_force_login_scripts()
+// {
+//     BasgateHelper::basgate_log('===== STARTED enqueue_force_login_scripts() ');
+//     if (!is_user_logged_in()) {
+//         // Enqueue custom JavaScript
+//         wp_enqueue_script('force-login-script', plugin_dir_url(__FILE__) . 'assets/js/force-login.js', array('jquery'), null, true);
+//     }
+// }
 
-function enqueue_force_login_scripts()
-{
-    BasgateHelper::basgate_log('===== STARTED enqueue_force_login_scripts() ');
-    if (!is_user_logged_in()) {
-        // Enqueue custom JavaScript
-        wp_enqueue_script('force-login-script', plugin_dir_url(__FILE__) . 'assets/js/force-login.js', array('jquery'), null, true);
-    }
-}
 
 // add_action('wp_ajax_nopriv_add_to_cart', 'handle_ajax_add_to_cart');
 
@@ -138,7 +139,7 @@ add_action('wp_footer', 'add_force_login_script');
 
 function add_force_login_script()
 {
-    ?>
+?>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
             console.log('===== add_force_login_script add_to_cart_button clicked 111')
@@ -165,7 +166,7 @@ add_action('template_redirect', 'force_login_before_adding_to_cart');
 
 function force_login_before_adding_to_cart()
 {
-    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink());
+    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
 
     if (is_cart() && !is_user_logged_in()) {
         set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
@@ -179,6 +180,7 @@ add_action('login_message', 'add_login_message');
 
 function add_login_message($message)
 {
+    BasgateHelper::basgate_log('===== STARTED add_login_message() message:' . $message);
     if ($mssg = get_transient('login_redirect_message')) {
         // Append the message to the existing login message
         $message .= '<div class="login-message" style="color: red;">' . esc_html($mssg) . '</div>';
@@ -647,7 +649,8 @@ function woocommerce_basgate_init()
         return $methods;
     }
 
-    add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
+    //TODO: Restore this code after test
+    // add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {

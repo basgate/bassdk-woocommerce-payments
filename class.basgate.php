@@ -18,6 +18,19 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->method_description = BasgateConstants::METHOD_DESCRIPTION;
         $this->icon = apply_filters('woocommerce_gateway_icon', plugin_dir_url(__FILE__) . 'assets/images/bassdk-logo.svg');
         $this->has_fields = false;
+        $this->supports           = array(
+            'products',
+            // 'subscription_cancellation',
+            // 'subscription_reactivation',
+            // 'subscription_suspension',
+            // 'subscription_amount_changes',
+            // 'subscription_payment_method_change',
+            // 'subscription_date_changes',
+            // 'default_credit_card_form',
+            'refunds'
+            // ,
+            // 'pre-orders'
+        );
         $this->init_form_fields();
         $this->init_settings();
         $this->title = BasgateConstants::TITLE;
@@ -337,7 +350,17 @@ class WC_Basgate extends WC_Payment_Gateway
                 $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
 
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
-                $header = array('Accept' => ' text/plain', 'Content-Type' => 'application/json');
+                $correlationId = wp_generate_uuid4();
+                $header = array(
+                    'Content-Type' => 'application/json',
+                    "User-Agent" => "BasSdk",
+                    "x-client-id" => $this->getSetting('bas_client_id'),
+                    "x-app-id" => $this->getSetting('bas_application_id'),
+                    "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
+                    "x-environment" => $this->getSetting('bas_environment'),
+                    "correlationId" => $correlationId,
+                    "x-sdk-type" => "WordPress"
+                );
 
                 $retry = 1;
                 do {
@@ -615,6 +638,15 @@ class WC_Basgate extends WC_Payment_Gateway
 
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . wp_json_encode($_POST));
 
+        // if (isset($_POST['refund_order_id'])) {
+        //     $order_id = intval($_POST['refund_order_id']);
+        //     BasgateHelper::basgate_log('====== check_basgate_response refund_order_id $order_id :' . $order_id);
+        //     $result =$this->process_refund($order_id); // Call the refund function
+        //     add_action('admin_notices', function() use ($result) {
+        //         echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
+        //     });
+        // }
+
         if (! isset($_POST['nonce']) ||            ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')) {
             die(esc_html("ERROR check_basgate_response wrong nonce"));
         }
@@ -710,7 +742,18 @@ class WC_Basgate extends WC_Payment_Gateway
                         $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
 
                         $url = BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment'));
-                        $header = array('Accept' => ' text/plain', 'Content-Type' => ' application/json');
+                        $correlationId = wp_generate_uuid4();
+                        $header = array(
+                            'Content-Type' => 'application/json',
+                            "User-Agent" => "BasSdk",
+                            "x-client-id" => $this->getSetting('bas_client_id'),
+                            "x-app-id" => $this->getSetting('bas_application_id'),
+                            "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
+                            "x-environment" => $this->getSetting('bas_environment'),
+                            "correlationId" => $correlationId,
+                            "x-sdk-type" => "WordPress"
+                        );
+
                         BasgateHelper::basgate_log('====== check_basgate_response $reqBody:' . $reqBody);
 
                         $retry = 1;
@@ -874,6 +917,131 @@ class WC_Basgate extends WC_Payment_Gateway
         return $redirect_url;
     }
 
+    /**
+     * Process a refund if supported
+     *
+     * @param int $order_id
+     * @param float $amount
+     * @param string $reason
+     * @return bool|WP_Error True or false based on success, or a WP_Error object
+     */
+    public function process_refund($order_id, $amount = null, $reason = '')
+    {
+        BasgateHelper::basgate_log('====== STARTED process_refund $order_id:' . $order_id . ' , $amount:' . $amount . ' , $reason:' . $reason);
+        $order = wc_get_order($order_id);
+
+        if (!$order) {
+            return new WP_Error('invalid_order', __('Invalid order ID.', 'bassdk-woocommerce-payments'));
+        }
+
+        $response = $this->send_refund_request($order_id, $reason);
+
+        if (is_wp_error($response)) {
+            return $response;
+        }
+
+        if ($response['status'] === 'success') {
+            $order->add_order_note(
+                sprintf(
+                    __('Refunded %1$s - Reason: %2$s', 'bassdk-woocommerce-payments'),
+                    wc_price($amount),
+                    $reason
+                )
+            );
+            return true;
+        } else {
+            return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
+        }
+    }
+
+    /**
+     * Send refund request to the payment gateway
+     *
+     * @param array $refund_data
+     * @return array|WP_Error
+     */
+    private function send_refund_request($order_id, $reason)
+    {
+        BasgateHelper::basgate_log('====== STARTED send_refund_request $order_id:' . $order_id . ' , $reason:' . $reason);
+        $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
+        $requestTimestamp = (string)  time();
+        $correlationId = wp_generate_uuid4();
+        /* body parameters */
+        $basgateParams["body"] = array(
+            "appId" => $this->getSetting('bas_application_id'),
+            "requestTimestamp" => $requestTimestamp,
+            'orderId' => $order_id,
+            'reason' => $reason,
+        );
+
+        $bodystr = wp_json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
+        $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
+
+        if ($checksum === false) {
+            BasgateHelper::basgate_log(
+                sprintf(
+                    /* translators: 1: Event data. */
+                    __('Could not retrieve signature, please try again Data: %1$s.', 'bassdk-woocommerce-payments'),
+                    $bodystr
+                )
+            );
+            return new \WP_Error('invalid_signature', __('Could not retrieve signature, please try again.', 'bassdk-woocommerce-payments'));
+        }
+
+        /* prepare JSON string for request */
+        $reqBody = str_replace('bodyy', $bodystr, $reqBody);
+        $reqBody = str_replace('sigg', $checksum, $reqBody);
+        $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
+
+        $url = BasgateHelper::getBasgateURL(BasgateConstants::REFUND_URL, $this->getSetting('bas_environment'));
+        $header = array(
+            'Content-Type' => 'application/json',
+            "User-Agent" => "BasSdk",
+            "x-client-id" => $this->getSetting('bas_client_id'),
+            "x-app-id" => $this->getSetting('bas_application_id'),
+            "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
+            "x-environment" => $this->getSetting('bas_environment'),
+            "correlationId" => $correlationId,
+            "x-sdk-type" => "WordPress"
+        );
+
+        $retry = 1;
+        do {
+            $res = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
+            $retry++;
+        } while (!isset($res['body']['status']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
+
+        if (array_key_exists('success', $res) && $res['success'] == true) {
+            $body = !empty($res['body']) ? $res['body'] : array();
+            $status = !empty($body['status']) ? $body['status'] : 0;
+            if ($status == 1) {
+                BasgateHelper::basgate_log('====== blinkCheckoutSend $body :' . wp_json_encode($body));
+                $data = array();
+                $data['trxToken'] = $body['body']['trxToken'];
+                $data['trxId'] = $body['body']['trxId'];
+                $data['callBackUrl'] = $callBackURL;
+                return $data;
+            } else {
+                BasgateHelper::basgate_log(
+                    sprintf(
+                        /*translators: 1:body, 2: bodystr , 3:checksum. */
+                        __('trxToken empty body: %1$s , \n bodystr: %2$s , \n $checksum: %3$s.', 'bassdk-woocommerce-payments'),
+                        wp_json_encode($body),
+                        $bodystr,
+                        $checksum
+                    )
+                );
+                $msg = array_key_exists('Messages', $body) ? $body['Messages'] : 'trxToken is empty';
+                $msg = is_array($msg) ? reset($msg) : $msg;
+                BasgateHelper::basgate_log('====== blinkCheckoutSend $msg :' . $msg);
+                // $this->setMessages($msg, "error");
+                // throw new Exception($msg);
+                return new \WP_Error('connection_error', __($msg, 'bassdk-woocommerce-payments'));
+            }
+        } else {
+            return new \WP_Error('connection_error', __("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
+        }
+    }
 
     /*
      * End basgate Essential Functions
