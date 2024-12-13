@@ -934,24 +934,49 @@ class WC_Basgate extends WC_Payment_Gateway
             return new WP_Error('invalid_order', __('Invalid order ID.', 'bassdk-woocommerce-payments'));
         }
 
-        $response = $this->send_refund_request($order_id, $reason);
+        if ($order->get_status() === 'completed') {
+            $response = $this->send_refund_request($order_id, $reason);
 
-        if (is_wp_error($response)) {
-            return $response;
-        }
+            if (is_wp_error($response)) {
+                return $response;
+            }
 
-        if ($response['status'] === 'success') {
+            $refund_amount = $order->get_total();
+            $refund = new WC_Order_Refund();
+            $refund->set_order_id($order_id);
+            $refund->set_amount($refund_amount);
+            $refund->set_reason('Manual full refund issued.');
+
             $order->add_order_note(
                 sprintf(
                     __('Refunded %1$s - Reason: %2$s', 'bassdk-woocommerce-payments'),
-                    wc_price($amount),
-                    $reason
+                    wc_price($refund_amount),
+                    $refund->get_reason()
                 )
             );
-            return true;
+
+            foreach ($order->get_items() as $item_id => $item) {
+                $refund->add_item(array(
+                    'id' => $item_id,
+                    'qty' => $item->get_quantity(),
+                ));
+            }
+
+            $refund->save();
+            $refund->process_payment();
+
+            $result = 'Full refund issued for order ID: ' . $order_id;
+            add_action('admin_notices', function () use ($result) {
+                echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
+            });
         } else {
-            return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
+            return 'Order is not eligible for a refund.';
         }
+
+        // return true;
+        // } else {
+        //     return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
+        // }
     }
 
     /**
@@ -1051,9 +1076,6 @@ class WC_Basgate extends WC_Payment_Gateway
                 );
                 $msg = array_key_exists('Messages', $body) ? $body['Messages'] : 'trxToken is empty';
                 $msg = is_array($msg) ? reset($msg) : $msg;
-                BasgateHelper::basgate_log('====== blinkCheckoutSend $msg :' . $msg);
-                // $this->setMessages($msg, "error");
-                // throw new Exception($msg);
                 return new \WP_Error('connection_error', __($msg, 'bassdk-woocommerce-payments'));
             }
         } else {
