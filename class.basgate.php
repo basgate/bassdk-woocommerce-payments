@@ -1010,9 +1010,9 @@ class WC_Basgate extends WC_Payment_Gateway
         $client_id = $this->getSetting('bas_client_id');
         $client_secret = $this->getSetting('bas_client_secret');
         if ($this->getSetting('bas_environment') == 1) {
-            $baseUrl = BasgateConstants::PRODUCTION_HOST . $url;
+            $baseUrl = BasgateConstants::PRODUCTION_HOST;
         } else {
-            $baseUrl = BasgateConstants::STAGING_HOST . $url;
+            $baseUrl = BasgateConstants::STAGING_HOST;
         }
 
         $token = BasgateHelper::getBasToken($baseUrl, $client_id, $client_secret);
