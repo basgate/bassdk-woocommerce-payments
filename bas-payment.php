@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Plugin Name: Bassdk Payment for WooCommerce
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
