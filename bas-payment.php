@@ -137,45 +137,45 @@ if (function_exists('register_deactivation_hook'))    register_deactivation_hook
 
 // add_action('wp_footer', 'add_force_login_script');
 
-// function add_force_login_script()
-// {
-// ?>
-//     <script type="text/javascript">
-//         console.log('===== add_force_login_script add_to_cart_button clicked 111')
-//         jQuery(document).ready(function($) {
-//             console.log('===== add_force_login_script add_to_cart_button clicked 222')
-//             $('body').on('click', '.add_to_cart_button', function(e) {
-//                 console.log('===== add_force_login_script add_to_cart_button clicked 333')
-//                 if (!<?php echo json_encode(is_user_logged_in()); ?>) {
-//                     e.preventDefault(); // Prevent the default action
-//                     console.log('====== add_force_login_script You must log in to add products to your cart.');
-//                     <?php
-//                     // Set a transient message
-//                     set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
-//                     // Redirect to login page
-//                     wp_redirect(wp_login_url());
-//                     exit;
-//                     ?>
-//                 }
-//             });
-//         });
-//     </script>
-//     <?php
-// }
+function add_force_login_script()
+{
+?>
+    <script type="text/javascript">
+        console.log('===== add_force_login_script add_to_cart_button clicked 111')
+        jQuery(document).ready(function($) {
+            console.log('===== add_force_login_script add_to_cart_button clicked 222')
+            $('body').on('click', '.add_to_cart_button', function(e) {
+                console.log('===== add_force_login_script add_to_cart_button clicked 333')
+                if (!<?php echo json_encode(is_user_logged_in()); ?>) {
+                    e.preventDefault(); // Prevent the default action
+                    console.log('====== add_force_login_script You must log in to add products to your cart.');
+                    <?php
+                    // Set a transient message
+                    set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
+                    // Redirect to login page
+                    wp_redirect(wp_login_url());
+                    exit;
+                    ?>
+                }
+            });
+        });
+    </script>
+    <?php
+}
 
 // add_action('template_redirect', 'force_login_before_adding_to_cart');
 
-// function force_login_before_adding_to_cart()
-// {
-//     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
+function force_login_before_adding_to_cart()
+{
+    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
 
-//     if (is_cart() && !is_user_logged_in()) {
-//         set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
-//         // Redirect to login page
-//         wp_redirect(wp_login_url(get_permalink()));
-//         exit;
-//     }
-// }
+    if (is_cart() && !is_user_logged_in()) {
+        set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
+        // Redirect to login page
+        wp_redirect(wp_login_url(get_permalink()));
+        exit;
+    }
+}
 
 add_action('login_message', 'add_login_message');
 
