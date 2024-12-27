@@ -933,17 +933,21 @@ class WC_Basgate extends WC_Payment_Gateway
         if (!$order) {
             return new WP_Error('invalid_order', __('Invalid order ID.', 'bassdk-woocommerce-payments'));
         }
+        if (!isset($reason)) {
+            $reason = 'Manual refund issued.';
+        }
 
         if ($order->get_status() === 'completed') {
-            $response = $this->send_refund_request($order_id, $reason);
+            $results = getBasgateOrderData($order_id);
+            $basgate_data = json_decode($results['basgate_response'], true);
+            $trxToken = $basgate_data['trxToken'];
+            $response = $this->send_refund_request($reason, $order->get_currency(), $order->get_total(), $trxToken);
 
             if (is_wp_error($response)) {
                 return $response;
             }
 
-            if (!isset($reason)) {
-                $reason = 'Manual refund issued.';
-            }
+
 
             if ($response['status'] == 1) {
                 $order->update_status('refunded', __('Refunded via Basgate.', 'bassdk-woocommerce-payments'));
@@ -995,17 +999,34 @@ class WC_Basgate extends WC_Payment_Gateway
      * @param array $refund_data
      * @return array|WP_Error
      */
-    private function send_refund_request($order_id, $reason)
+    private function send_refund_request($reason, $currency, $amount, $trxToken)
     {
-        BasgateHelper::basgate_log('====== STARTED send_refund_request $order_id:' . $order_id . ' , $reason:' . $reason);
+        BasgateHelper::basgate_log('====== STARTED send_refund_request $trxToken:' . $trxToken . ' , $reason:' . $reason);
         $reqBody = '{"head":{"signature":"sigg","requestTimestamp":"timess"},"body":bodyy}';
-        $requestTimestamp = (string)  time();
+        // $requestTimestamp = (string)  time();
         /* body parameters */
+
+        //curl --location 'http://localhost:8811/api/v1/merchant/refund-payment/request' \
+        // --header 'x-client-id;' \
+        // --header 'x-app-id;' \
+        // --header 'x-environment;' \
+        // --header 'correlationId;' \
+        // --header 'Content-Type: application/json' \
+        // --header 'Authorization: ••••••' \
+        // --data '{
+        //   "trxToken": "string",
+        //   "reason": "string",
+        //   "amount": 0,
+        //   "currency": "string",
+        //   "appId": "string"
+        // }'
+
         $basgateParams["body"] = array(
-            "requestTimestamp" => $requestTimestamp,
-            "appId" => $this->getSetting('bas_application_id'),
-            'orderId' => $order_id,
+            "trxToken" => $trxToken,
             'reason' => $reason,
+            "amount" => $amount,
+            "currency" => $currency,
+            "appId" => $this->getSetting('bas_application_id'),
         );
 
         $bodystr = wp_json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
