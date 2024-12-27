@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name: Bassdk Payment for WooCommerce
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
@@ -140,10 +141,11 @@ function add_force_login_script()
 {
 ?>
     <script type="text/javascript">
+        console.log('===== add_force_login_script add_to_cart_button clicked 111')
         jQuery(document).ready(function($) {
-            console.log('===== add_force_login_script add_to_cart_button clicked 111')
+            console.log('===== add_force_login_script add_to_cart_button clicked 222')
             $('body').on('click', '.add_to_cart_button', function(e) {
-                console.log('===== add_force_login_script add_to_cart_button clicked 222')
+                console.log('===== add_force_login_script add_to_cart_button clicked 333')
                 if (!<?php echo json_encode(is_user_logged_in()); ?>) {
                     e.preventDefault(); // Prevent the default action
                     console.log('====== add_force_login_script You must log in to add products to your cart.');
@@ -161,7 +163,7 @@ function add_force_login_script()
     <?php
 }
 
-add_action('template_redirect', 'force_login_before_adding_to_cart');
+// add_action('template_redirect', 'force_login_before_adding_to_cart');
 
 function force_login_before_adding_to_cart()
 {
