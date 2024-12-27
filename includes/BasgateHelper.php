@@ -164,7 +164,7 @@ if (!class_exists('BasgateHelper')) :
                     'grant_type' => $grant_type,
                     'client_id' => $client_id,
                     'client_secret' => $client_secret,
-                    'redirect_uri' => $redirect_uri
+                    // 'redirect_uri' => $redirect_uri
                 ];
 
                 $header = array("Content-type" => "application/x-www-form-urlencoded");

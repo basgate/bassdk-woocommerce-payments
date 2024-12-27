@@ -941,34 +941,44 @@ class WC_Basgate extends WC_Payment_Gateway
                 return $response;
             }
 
-            $refund_amount = $order->get_total();
-            $refund = new WC_Order_Refund();
-            $refund->set_order_id($order_id);
-            $refund->set_amount($refund_amount);
-            $refund->set_reason('Manual full refund issued.');
-
-            $order->add_order_note(
-                sprintf(
-                    __('Refunded %1$s - Reason: %2$s', 'bassdk-woocommerce-payments'),
-                    wc_price($refund_amount),
-                    $refund->get_reason()
-                )
-            );
-
-            foreach ($order->get_items() as $item_id => $item) {
-                $refund->add_item(array(
-                    'id' => $item_id,
-                    'qty' => $item->get_quantity(),
-                ));
+            if (!isset($reason)) {
+                $reason = 'Manual refund issued.';
             }
 
-            $refund->save();
-            $refund->process_payment();
+            if ($response['status'] == 1) {
+                $order->update_status('refunded', __('Refunded via Basgate.', 'bassdk-woocommerce-payments'));
+                $refund_amount = $order->get_total();
+                $refund = new WC_Order_Refund();
+                $refund->set_order_id($order_id);
+                $refund->set_amount($refund_amount);
+                $refund->set_reason($reason);
 
-            $result = 'Full refund issued for order ID: ' . $order_id;
-            add_action('admin_notices', function () use ($result) {
-                echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
-            });
+                $order->add_order_note(
+                    sprintf(
+                        __('Refunded %1$s - Reason: %2$s', 'bassdk-woocommerce-payments'),
+                        wc_price($refund_amount),
+                        $refund->get_reason()
+                    )
+                );
+
+                foreach ($order->get_items() as $item_id => $item) {
+                    $refund->add_item(array(
+                        'id' => $item_id,
+                        'qty' => $item->get_quantity(),
+                    ));
+                }
+
+                $refund->save();
+                $refund->proccess_payment();
+
+                $result = 'Full refund issued for order ID: ' . $order_id . ' - Reason: ' . $reason;
+                add_action('admin_notices', function () use ($result) {
+                    echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
+                });
+                return true;
+            } else {
+                return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
+            }
         } else {
             return 'Order is not eligible for a refund.';
         }
@@ -990,7 +1000,6 @@ class WC_Basgate extends WC_Payment_Gateway
         BasgateHelper::basgate_log('====== STARTED send_refund_request $order_id:' . $order_id . ' , $reason:' . $reason);
         $reqBody = '{"head":{"signature":"sigg","requestTimestamp":"timess"},"body":bodyy}';
         $requestTimestamp = (string)  time();
-        $correlationId = wp_generate_uuid4();
         /* body parameters */
         $basgateParams["body"] = array(
             "requestTimestamp" => $requestTimestamp,
@@ -1034,6 +1043,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $client_id = $this->getSetting('bas_client_id');
         $client_secret = $this->getSetting('bas_client_secret');
+        BasgateHelper::basgate_log('====== send_refund_request $client_id:' . $client_id . ' , $client_secret:' . $client_secret);
         if ($this->getSetting('bas_environment') == 1) {
             $baseUrl = BasgateConstants::PRODUCTION_HOST;
         } else {
@@ -1044,7 +1054,7 @@ class WC_Basgate extends WC_Payment_Gateway
         if (isset($token['access_token'])) {
             $header['Authorization'] = 'Bearer ' . $token['access_token'];
         } else {
-            return new \WP_Error('connection_error', __("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
+            return new \WP_Error('connection_error', __("ERROR Can not complete the request invalid grant", 'bassdk-woocommerce-payments'));
         }
         // #endregion
 

@@ -7,15 +7,11 @@ class BasgateConstants
     const PRODUCTION_HOST = "https://api.basgate.com:4950/";
     const STAGING_HOST = "https://api-tst.basgate.com:4951/";
 
-    // CONST ORDER_PROCESS_URL= "api/v1/merchant/secure/transaction/initiate";
     const ORDER_STATUS_URL = "api/v1/merchant/secure/transaction/status";
     const INITIATE_TRANSACTION_URL = "api/v1/merchant/secure/transaction/initiate";
     const REFUND_URL = "api/v1/merchant/refund-payment/request";
-    // const BASGATE_SDK_URL_PRODUCTION = "https://pub-8bba29ca4a7a4024b100dca57bc15664.r2.dev/sdk/prod/";
-    // const BASGATE_SDK_URL_STAGING = "https://pub-8bba29ca4a7a4024b100dca57bc15664.r2.dev/sdk/stage/";
     const CHECKOUT_JS_URL = "https://pub-8bba29ca4a7a4024b100dca57bc15664.r2.dev/sdk/merchant/v1/public.js";
     const OPTION_DATA_NAME = "woocommerce_basgate_settings";
-
 
     const SAVE_BASGATE_RESPONSE = true;
     const CHANNEL_ID = "WEB";
