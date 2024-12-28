@@ -1032,16 +1032,15 @@ class WC_Basgate extends WC_Payment_Gateway
 
         $url = BasgateHelper::getBasgateURL(BasgateConstants::REFUND_URL, $this->getSetting('bas_environment'));
 
-        $header = array(
+        $header = wp_json_encode(array(
             'Content-Type' => 'application/json',
-            "User-Agent" => "BasSdk",
             "x-client-id" => $this->getSetting('bas_client_id'),
             "x-app-id" => $this->getSetting('bas_application_id'),
             "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
             "x-environment" => $this->getSetting('bas_environment'),
             "correlationId" => $correlationId,
             "x-sdk-type" => "WordPress"
-        );
+        ));
 
         // #region getToken 
 
