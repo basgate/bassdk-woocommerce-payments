@@ -1020,19 +1020,19 @@ class WC_Basgate extends WC_Payment_Gateway
         //   "appId": "string"
         // }'
 
-        $reqBody = array(
+        $reqBody = wp_json_encode(array(
             "trxToken" => $trxToken,
             'reason' => $reason,
             "amount" => $amount,
             "currency" => $currency,
             "appId" => $this->getSetting('bas_application_id'),
-        );
+        ));
 
         $correlationId = wp_generate_uuid4();
 
         $url = BasgateHelper::getBasgateURL(BasgateConstants::REFUND_URL, $this->getSetting('bas_environment'));
 
-        $header = wp_json_encode(array(
+        $header = array(
             'Content-Type' => 'application/json',
             "x-client-id" => $this->getSetting('bas_client_id'),
             "x-app-id" => $this->getSetting('bas_application_id'),
@@ -1040,7 +1040,7 @@ class WC_Basgate extends WC_Payment_Gateway
             "x-environment" => $this->getSetting('bas_environment'),
             "correlationId" => $correlationId,
             "x-sdk-type" => "WordPress"
-        ));
+        );
 
         // #region getToken 
 
