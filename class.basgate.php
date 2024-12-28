@@ -947,9 +947,11 @@ class WC_Basgate extends WC_Payment_Gateway
                 return $response;
             }
 
+            if (!isset($response)) {
+                return new WP_Error('refund_failed', __('Refund failed response error. Please try again.', 'bassdk-woocommerce-payments'));
+            }
 
-
-            if ($response['status'] == 1) {
+            if (array_key_exists('status', $response) && $response['status'] == 1) {
                 $order->update_status('refunded', __('Refunded via Basgate.', 'bassdk-woocommerce-payments'));
                 $refund_amount = $order->get_total();
                 $refund = new WC_Order_Refund();
@@ -1027,6 +1029,8 @@ class WC_Basgate extends WC_Payment_Gateway
             "currency" => $currency,
             "appId" => $this->getSetting('bas_application_id'),
         ));
+
+        BasgateHelper::basgate_log("====== send_refund_request reqBody: " . $reqBody);
 
         $correlationId = wp_generate_uuid4();
 
