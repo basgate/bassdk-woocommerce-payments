@@ -121,7 +121,7 @@ if (!class_exists('BasgateHelper')) :
                     wp_json_encode($args)
                 );
                 // error_log($msg);
-                BasgateHelper::basgate_log($msg);
+                BasgateHelper::basgate_log("ERROR on executecUrl is_wp_error msg :" . $msg);
                 return self::errorResponse($msg);
                 // throw new Exception(__('Could not retrieve the access token, please try again!!!.', BasgateConstants::ID));
             }
@@ -138,8 +138,7 @@ if (!class_exists('BasgateHelper')) :
                     $error,
                     $response_body
                 );
-                BasgateHelper::basgate_log($msg);
-
+                BasgateHelper::basgate_log("ERROR on executecUrl is_wp_error msg :" . $msg);
                 return self::errorResponse($msg);
             } else {
                 $data = json_decode($response_body, true); // Decode JSON response
