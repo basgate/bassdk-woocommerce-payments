@@ -1002,8 +1002,7 @@ class WC_Basgate extends WC_Payment_Gateway
     private function send_refund_request($reason, $currency, $amount, $trxToken)
     {
         BasgateHelper::basgate_log('====== STARTED send_refund_request $trxToken:' . $trxToken . ' , $reason:' . $reason);
-        // $reqBody = '{"head":{"signature":"sigg","requestTimestamp":"timess"},"body":bodyy}';
-        // $requestTimestamp = (string)  time();
+
         /* body parameters */
 
         //curl --location 'http://localhost:8811/api/v1/merchant/refund-payment/request' \
@@ -1029,27 +1028,10 @@ class WC_Basgate extends WC_Payment_Gateway
             "appId" => $this->getSetting('bas_application_id'),
         );
 
-        // $bodystr = wp_json_encode($basgateParams["body"], JSON_UNESCAPED_SLASHES);
-        // $checksum = BasgateChecksum::generateSignature($bodystr, $this->getSetting('bas_merchant_key'));
-
-        // if ($checksum === false) {
-        //     BasgateHelper::basgate_log(
-        //         sprintf(
-        //             /* translators: 1: Event data. */
-        //             __('Could not retrieve signature, please try again Data: %1$s.', 'bassdk-woocommerce-payments'),
-        //             $bodystr
-        //         )
-        //     );
-        //     return new \WP_Error('invalid_signature', __('Could not retrieve signature, please try again.', 'bassdk-woocommerce-payments'));
-        // }
-
-        // /* prepare JSON string for request */
-        // $reqBody = str_replace('bodyy', $bodystr, $reqBody);
-        // $reqBody = str_replace('sigg', $checksum, $reqBody);
-        // $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
         $correlationId = wp_generate_uuid4();
 
         $url = BasgateHelper::getBasgateURL(BasgateConstants::REFUND_URL, $this->getSetting('bas_environment'));
+
         $header = array(
             'Content-Type' => 'application/json',
             "User-Agent" => "BasSdk",
