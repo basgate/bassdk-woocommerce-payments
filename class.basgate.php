@@ -1064,11 +1064,13 @@ class WC_Basgate extends WC_Payment_Gateway
             $retry++;
         } while (!isset($res['body']['status']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
 
+        BasgateHelper::basgate_log('====== send_refund_request $retry:' . $retry . ' , $res:' . wp_json_encode($res));
+        
         if (array_key_exists('success', $res) && $res['success'] == true) {
             $body = !empty($res['body']) ? $res['body'] : array();
             $status = !empty($body['status']) ? $body['status'] : 0;
             if ($status == 1) {
-                BasgateHelper::basgate_log('====== blinkCheckoutSend $body :' . wp_json_encode($body));
+                BasgateHelper::basgate_log('====== send_refund_request $body :' . wp_json_encode($body));
                 $data = array();
                 $data['trxToken'] = $body['body']['trxToken'];
                 $data['trxId'] = $body['body']['trxId'];
