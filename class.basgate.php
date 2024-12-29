@@ -656,6 +656,8 @@ class WC_Basgate extends WC_Payment_Gateway
         try {
             // if (isset($_POST['data'])) {
             BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . wp_json_encode($_REQUEST));
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_SESSION :' . wp_json_encode($_SESSION));
+            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST :' . wp_json_encode($_POST));
             BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST[body] :' . wp_json_encode($_POST['body']));
             BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST[data] :' . wp_json_encode($_POST['data']));
             // }
