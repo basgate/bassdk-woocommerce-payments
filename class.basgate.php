@@ -557,6 +557,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
                     console.log('===== basCheckOutCallback nonce:', nonce)
                     try {
+                        ajaxurl = ajaxurl + '&' + $.param(resData.data);
                         $.post(
                             ajaxurl, {
                                 data: resData.data,
@@ -659,71 +660,33 @@ class WC_Basgate extends WC_Payment_Gateway
     public function check_basgate_response()
     {
         global $woocommerce;
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . wp_json_encode($_REQUEST));
 
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response');
-        try {
-            // if (isset($_POST['data'])) {
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . wp_json_encode($_REQUEST));
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_SESSION :' . wp_json_encode($_SESSION));
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST :' . wp_json_encode($_POST));
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST[body] :' . wp_json_encode($_POST['body']));
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST[data] :' . wp_json_encode($_POST['data']));
-            // }
-        } catch (\Throwable $th) {
-            BasgateHelper::basgate_log('====== check_basgate_response ERROR :' . $th->getMessage());
+        if (!isset($_REQUEST['orderId']) || empty($_REQUEST['orderId'])) {
+            BasgateHelper::basgate_log('====== check_basgate_response ERROR orderId is empty');
+            die(esc_html("check_basgate_response ERROR orderId is empty"));
         }
 
-        // if (isset($_POST['data'])) {     
-
-        // if (isset($_POST['refund_order_id'])) {
-        //     $order_id = intval($_POST['refund_order_id']);
-        //     BasgateHelper::basgate_log('====== check_basgate_response refund_order_id $order_id :' . $order_id);
-        //     $result =$this->process_refund($order_id); // Call the refund function
-        //     add_action('admin_notices', function() use ($result) {
-        //         echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
-        //     });
-        // }
-
-        if (! isset($_POST['nonce']) || ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')) {
-            die(esc_html("ERROR check_basgate_response wrong nonce"));
-        }
-
-        if (!empty($_POST['data'])) {
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["data"] :' . wp_json_encode($_POST['data']));
+        $order_id = $_REQUEST['orderId'];
+        $data = array(
+            "authenticated" => $_REQUEST['authenticated'],
+            "messages" => ["Authenticated successfully"],
+            "orderId" => $order_id,
+            "status" => "1",
+            "trxId" => $_REQUEST['trxId'],
+            "trxToken" => $_REQUEST['trxToken']
+        );
+        
+        if (!empty($order_id)) {
             $data = $_POST['data'];
-            // $data = isset($data['data']) ? json_decode($data['data'], true) : null;
             $status = isset($data['status']) ? $data['status'] : '';
 
             BasgateHelper::basgate_log('====== STARTED check_basgate_response $status :' . $status);
 
             if (!empty($status)) {
                 BasgateHelper::basgate_log('====== check_basgate_response inside if()');
-                //check order status before executing webhook call
-                // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
-                //     $getOrderId = !empty($data['orderId']) ? BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])) : 0;
-                //     if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
-                //         $orderCheck = new WC_Order($getOrderId);
-                //     } else {
-                //         $orderCheck = new woocommerce_order($getOrderId);
-                //     }
-                //     $result = getBasgateOrderData($getOrderId);
-                //     if (isset($result) && json_decode($result['basgate_response'], true)['STATUS'] == "TXN_SUCCESS") {
-                //         exit;
-                //     }
-                //     if ($orderCheck->status == "processing" || $orderCheck->status == "completed") {
-                //         exit;
-                //     }
-                // }
-                //end webhook check
 
-                // if (!empty($_POST['CHECKSUMHASH'])) {
-                //     $post_checksum = sanitize_text_field($_POST['CHECKSUMHASH']);
-                //     unset($_POST['CHECKSUMHASH']);
-                // } else {
-                //     $post_checksum = "";
-                // }
                 $order = array();
-                // $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
                 $isValidChecksum = !empty($data['authenticated']) && $data['authenticated'] === "true";
                 $responseDescription = (!empty($data['messages'])) ? sanitize_text_field(implode(' -- ', $data['messages'])) : "";
 
