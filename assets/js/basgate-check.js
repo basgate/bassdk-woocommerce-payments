@@ -2,7 +2,6 @@
     jQuery(document).ready(function () {
         try {
             console.log("===== STARTED basgate-check.js basgate_ajax_object :", basgate_ajax_object?.ajaxurl_payments ?? '');
-
         } catch (error) {
             console.error("===== STARTED basgate-check.js ERROR :", error);
 
