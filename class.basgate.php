@@ -310,6 +310,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
                 $requestTimestamp = (string)  time();
                 /* body parameters */
+                $order_id_timestamp = $paramData['order_id'] . $requestTimestamp;
                 $basgateParams["body"] = array(
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
@@ -476,6 +477,7 @@ class WC_Basgate extends WC_Payment_Gateway
         );
 
         $data = $this->blinkCheckoutSend($paramData);
+        BasgateHelper::basgate_log('====== generate_basgate_form blinkCheckoutSend $data :' . $data);
 
         if (is_null($data) || empty($data)) {
             BasgateHelper::basgate_log('====== generate_basgate_form inside if $data :' . $data);
