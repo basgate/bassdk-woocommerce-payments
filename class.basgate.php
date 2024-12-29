@@ -547,8 +547,10 @@ class WC_Basgate extends WC_Payment_Gateway
             function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
                 var $ = jQuery;
                 console.log("==== STARTED basCheckOutCallback() resData.status:", resData.status)
+                console.log("==== STARTED basCheckOutCallback() resData.data:", JSON.stringify(resData.data))
                 if (resData.hasOwnProperty('status')) {
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
+                    console.log('===== basCheckOutCallback nonce:', nonce)
                     $.post(ajaxurl, {
                         data: resData.data,
                         status: resData.status,
@@ -637,6 +639,15 @@ class WC_Basgate extends WC_Payment_Gateway
         global $woocommerce;
 
         BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . wp_json_encode($_POST));
+        try {
+            if (isset($_POST['data'])) {
+                BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST[data] :' . wp_json_encode($_POST['data']));
+            }
+        } catch (\Throwable $th) {
+            BasgateHelper::basgate_log('====== check_basgate_response ERROR :' . $th->getMessage());
+        }
+
+        // if (isset($_POST['data'])) {     
 
         // if (isset($_POST['refund_order_id'])) {
         //     $order_id = intval($_POST['refund_order_id']);
@@ -647,7 +658,7 @@ class WC_Basgate extends WC_Payment_Gateway
         //     });
         // }
 
-        if (! isset($_POST['nonce']) ||            ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')) {
+        if (! isset($_POST['nonce']) || ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')) {
             die(esc_html("ERROR check_basgate_response wrong nonce"));
         }
 
