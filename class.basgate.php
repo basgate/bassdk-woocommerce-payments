@@ -485,6 +485,7 @@ class WC_Basgate extends WC_Payment_Gateway
             wp_redirect(wc_get_checkout_url());
             exit;
         } else if (is_wp_error($data)) {
+            BasgateHelper::basgate_log('====== generate_basgate_form is_wp_error($data):' . $data);
             $mssg = $data->get_error_messages();
             $mssg = is_array($mssg) ? reset($mssg) : $mssg;
             // $error_msg = __('Could not complete the transaction, \n\nplease check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . '\n\n Return ERROR Message:\n\n' . $mssg;
