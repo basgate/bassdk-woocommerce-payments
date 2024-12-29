@@ -557,16 +557,13 @@ class WC_Basgate extends WC_Payment_Gateway
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
                     console.log('===== basCheckOutCallback nonce:', nonce)
                     try {
-                        jQuery.ajax({
-                            type: "POST",
-                            dataType: 'json',
-                            ur: ajaxurl,
-                            data: {
+                        $.post(
+                            ajaxurl, {
                                 data: resData.data,
                                 status: resData.status,
                                 nonce: nonce,
                             },
-                            success: function(data, textStatus) {
+                            function(data, textStatus) {
                                 console.log('===== basCheckOutCallback textStatus:', textStatus)
                                 console.log('===== basCheckOutCallback data:', data)
                                 try {
@@ -579,8 +576,9 @@ class WC_Basgate extends WC_Payment_Gateway
 
                                 }
                                 // return data;
-                            }
-                        });
+                            },
+                            'json'
+                        );
                     } catch (error) {
                         console.log('===== basCheckOutCallback error 222:', error)
                     }
