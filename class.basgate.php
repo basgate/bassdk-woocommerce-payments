@@ -310,6 +310,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
                 $requestTimestamp = (string)  time();
                 /* body parameters */
+                //TODO: Should be fixed
                 $order_id_timestamp = $paramData['order_id'] . $requestTimestamp;
                 $basgateParams["body"] = array(
                     "appId" => $this->getSetting('bas_application_id'),
@@ -555,30 +556,34 @@ class WC_Basgate extends WC_Payment_Gateway
                 if (resData.hasOwnProperty('status')) {
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
                     console.log('===== basCheckOutCallback nonce:', nonce)
-                    $.ajax({
-                        type: "POST",
-                        dataType: 'json',
-                        ur: ajaxurl,
-                        data: {
-                            data: resData.data,
-                            status: resData.status,
-                            nonce: nonce,
-                        },
-                        success: function(data, textStatus) {
-                            console.log('===== basCheckOutCallback textStatus:', textStatus)
-                            console.log('===== basCheckOutCallback data:', data)
-                            try {
-                                var res = JSON.parse(data);
-                                if ('redirect' in res) {
-                                    window.location = res['redirect']
-                                }
-                            } catch (error) {
-                                console.log('===== basCheckOutCallback error:', error)
+                    try {
+                        jQuery.ajax({
+                            type: "POST",
+                            dataType: 'json',
+                            ur: ajaxurl,
+                            data: {
+                                data: resData.data,
+                                status: resData.status,
+                                nonce: nonce,
+                            },
+                            success: function(data, textStatus) {
+                                console.log('===== basCheckOutCallback textStatus:', textStatus)
+                                console.log('===== basCheckOutCallback data:', data)
+                                try {
+                                    var res = JSON.parse(data);
+                                    if ('redirect' in res) {
+                                        window.location = res['redirect']
+                                    }
+                                } catch (error) {
+                                    console.log('===== basCheckOutCallback error 111:', error)
 
+                                }
+                                // return data;
                             }
-                            // return data;
-                        }
-                    });
+                        });
+                    } catch (error) {
+                        console.log('===== basCheckOutCallback error 222:', error)
+                    }
                 } else {
                     //TODO:Handle errors message return from getBasPayment 
                 }
@@ -649,7 +654,7 @@ class WC_Basgate extends WC_Payment_Gateway
     {
         global $woocommerce;
 
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response isset($_POST[data] :' . isset($_POST['data']));
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response');
         try {
             if (isset($_POST['data'])) {
                 BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST[data] :' . wp_json_encode($_POST['data']));
