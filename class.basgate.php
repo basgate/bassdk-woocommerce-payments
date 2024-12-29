@@ -552,23 +552,29 @@ class WC_Basgate extends WC_Payment_Gateway
                 if (resData.hasOwnProperty('status')) {
                     var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
                     console.log('===== basCheckOutCallback nonce:', nonce)
-                    $.post(ajaxurl, {
-                        data: resData.data,
-                        status: resData.status,
-                        nonce: nonce,
-                    }, function(data, textStatus) {
-                        console.log('===== basCheckOutCallback textStatus:', textStatus)
-                        console.log('===== basCheckOutCallback data:', data)
-                        try {
-                            var res = JSON.parse(data);
-                            if ('redirect' in res) {
-                                window.location = res['redirect']
-                            }
-                        } catch (error) {
-                            console.log('===== basCheckOutCallback error:', error)
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        ur: ajaxurl,
+                        data: {
+                            data: resData.data,
+                            status: resData.status,
+                            nonce: nonce,
+                        },
+                        success: function(data, textStatus) {
+                            console.log('===== basCheckOutCallback textStatus:', textStatus)
+                            console.log('===== basCheckOutCallback data:', data)
+                            try {
+                                var res = JSON.parse(data);
+                                if ('redirect' in res) {
+                                    window.location = res['redirect']
+                                }
+                            } catch (error) {
+                                console.log('===== basCheckOutCallback error:', error)
 
+                            }
+                            // return data;
                         }
-                        // return data;
                     });
                 } else {
                     //TODO:Handle errors message return from getBasPayment 
