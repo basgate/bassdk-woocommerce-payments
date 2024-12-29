@@ -565,15 +565,23 @@ class WC_Basgate extends WC_Payment_Gateway
                             },
                             function(data, textStatus) {
                                 console.log('===== basCheckOutCallback textStatus:', textStatus)
-                                console.log('===== basCheckOutCallback data:', data)
+                                console.log('===== basCheckOutCallback data:', JSON.stringify(data))
                                 try {
-                                    var res = JSON.parse(data);
-                                    if ('redirect' in res) {
-                                        window.location = res['redirect']
+                                    if (typeof data === 'string') {
+                                        var res = JSON.parse(data);
+                                        if ('redirect' in res) {
+                                            window.location = res['redirect']
+                                        }
+                                    } else {
+                                        if ('redirect' in data) {
+                                            window.location = data['redirect']
+                                        }
                                     }
                                 } catch (error) {
                                     console.log('===== basCheckOutCallback error 111:', error)
-
+                                    if ('redirect' in data) {
+                                        window.location = data['redirect']
+                                    }
                                 }
                                 // return data;
                             },
