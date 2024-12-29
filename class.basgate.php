@@ -668,17 +668,10 @@ class WC_Basgate extends WC_Payment_Gateway
         }
 
         $order_id = $_REQUEST['orderId'];
-        $data = array(
-            "authenticated" => $_REQUEST['authenticated'],
-            "messages" => ["Authenticated successfully"],
-            "orderId" => $order_id,
-            "status" => "1",
-            "trxId" => $_REQUEST['trxId'],
-            "trxToken" => $_REQUEST['trxToken']
-        );
-        
+        $data = $_REQUEST;
+
         if (!empty($order_id)) {
-            $data = $_POST['data'];
+            // $data = $_POST['data'];
             $status = isset($data['status']) ? $data['status'] : '';
 
             BasgateHelper::basgate_log('====== STARTED check_basgate_response $status :' . $status);
