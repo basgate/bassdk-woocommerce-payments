@@ -1065,25 +1065,26 @@ class WC_Basgate extends WC_Payment_Gateway
         } while (!isset($res['body']['status']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
 
         BasgateHelper::basgate_log('====== send_refund_request $retry:' . $retry . ' , $res:' . wp_json_encode($res));
-        
+
         if (array_key_exists('success', $res) && $res['success'] == true) {
             $body = !empty($res['body']) ? $res['body'] : array();
             $status = !empty($body['status']) ? $body['status'] : 0;
+            $bodyData= !empty($body['data']) ? $body['data'] : array();
             if ($status == 1) {
-                BasgateHelper::basgate_log('====== send_refund_request $body :' . wp_json_encode($body));
+                BasgateHelper::basgate_log('====== send_refund_request $bodyData :' . wp_json_encode($bodyData));
                 $data = array();
-                $data['trxToken'] = $body['body']['trxToken'];
-                $data['trxId'] = $body['body']['trxId'];
-                $data['callBackUrl'] = $callBackURL;
+                $data['trxToken'] = $bodyData['trxToken'];
+                $data['trxId'] = $bodyData['trxId'];
+                // $data['callBackUrl'] = $callBackURL;
                 return $data;
             } else {
                 BasgateHelper::basgate_log(
                     sprintf(
-                        /*translators: 1:body, 2: bodystr , 3:checksum. */
-                        __('trxToken empty body: %1$s , \n bodystr: %2$s , \n $checksum: %3$s.', 'bassdk-woocommerce-payments'),
+                        /*translators: 1:body, 2: bodyData , 3:status. */
+                        __('trxToken empty body: %1$s , \n bodyData: %2$s , \n $status: %3$s.', 'bassdk-woocommerce-payments'),
                         wp_json_encode($body),
-                        $bodystr,
-                        $checksum
+                        wp_json_encode($bodyData),
+                        $status
                     )
                 );
                 $msg = array_key_exists('Messages', $body) ? $body['Messages'] : 'trxToken is empty';
