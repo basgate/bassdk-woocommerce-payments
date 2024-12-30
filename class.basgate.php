@@ -954,7 +954,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 $refund->set_order_id($order_id);
                 $refund->set_amount($refund_amount);
                 $refund->set_reason($reason);
-
+                BasgateHelper::basgate_log('====== process_refund Before add_order_note()');
                 $order->add_order_note(
                     sprintf(
                         __('Refunded %1$s - Reason: %2$s , BasStatus:%3$s', 'bassdk-woocommerce-payments'),
@@ -963,15 +963,16 @@ class WC_Basgate extends WC_Payment_Gateway
                         $response['status']
                     )
                 );
-
+                BasgateHelper::basgate_log('====== process_refund Before add_item()');
                 foreach ($order->get_items() as $item_id => $item) {
                     $refund->add_item(array(
                         'id' => $item_id,
                         'qty' => $item->get_quantity(),
                     ));
                 }
-
+                BasgateHelper::basgate_log('====== process_refund Before save()');
                 $refund->save();
+                BasgateHelper::basgate_log('====== process_refund After save()');
                 $refund->proccess_payment();
                 BasgateHelper::basgate_log('====== process_refund After process_payment()');
                 $result = 'Full refund issued for order ID: ' . $order_id . ' - Reason: ' . $reason;
