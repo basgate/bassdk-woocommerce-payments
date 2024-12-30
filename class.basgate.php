@@ -948,9 +948,12 @@ class WC_Basgate extends WC_Payment_Gateway
 
             if (array_key_exists('trxToken', $response) && array_key_exists('trxId', $response)) {
                 BasgateHelper::basgate_log('====== process_refund Start Refund');
-                $order->update_status('refunded', __('Refunded via Basgate.', 'bassdk-woocommerce-payments'));
+                $order->update_status('refunded', __('Refunded via Basgate :' . $reason, 'bassdk-woocommerce-payments'));
+                BasgateHelper::basgate_log('====== process_refund Before get_total()');
                 $refund_amount = $order->get_total();
+                BasgateHelper::basgate_log('====== process_refund Before new WC_Order_Refund()');
                 $refund = new WC_Order_Refund();
+                BasgateHelper::basgate_log('====== process_refund Before set_order_id()');
                 $refund->set_order_id($order_id);
                 $refund->set_amount($refund_amount);
                 $refund->set_reason($reason);
