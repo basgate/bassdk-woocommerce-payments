@@ -951,7 +951,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 $order->update_status('refunded', __('Refunded via Basgate :' . $reason, 'bassdk-woocommerce-payments'));
                 BasgateHelper::basgate_log('====== process_refund Before get_total()');
                 $refund_amount = $order->get_total();
-                BasgateHelper::basgate_log('====== process_refund Before new WC_Order_Refund()');
+                // BasgateHelper::basgate_log('====== process_refund Before new WC_Order_Refund()');
                 // $refund = new WC_Order_Refund();
                 // BasgateHelper::basgate_log('====== process_refund Before set_order_id()');
                 // $refund->set_order_id($order_id);
@@ -983,8 +983,8 @@ class WC_Basgate extends WC_Payment_Gateway
                     echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
                 });
                 BasgateHelper::basgate_log('====== process_refund Before wp_redirect()');
-                wp_redirect(admin_url('admin.php?page=wc-orders'));
-                exit;
+                // wp_redirect(admin_url('admin.php?page=wc-orders'));
+                // exit;
                 return true;
             } else {
                 return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
