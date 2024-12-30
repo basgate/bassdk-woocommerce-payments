@@ -935,7 +935,7 @@ class WC_Basgate extends WC_Payment_Gateway
             $basgate_data = json_decode($results['basgate_response'], true);
             $trxToken = $basgate_data['trxToken'];
             $response = $this->send_refund_request($reason, $order->get_currency(), $order->get_total(), $trxToken);
-            
+
             BasgateHelper::basgate_log('====== process_refund $response:' . wp_json_encode($response));
 
             if (is_wp_error($response)) {
@@ -947,6 +947,7 @@ class WC_Basgate extends WC_Payment_Gateway
             }
 
             if (array_key_exists('trxToken', $response) && array_key_exists('trxId', $response)) {
+                BasgateHelper::basgate_log('====== process_refund Start Refund');
                 $order->update_status('refunded', __('Refunded via Basgate.', 'bassdk-woocommerce-payments'));
                 $refund_amount = $order->get_total();
                 $refund = new WC_Order_Refund();
@@ -972,11 +973,13 @@ class WC_Basgate extends WC_Payment_Gateway
 
                 $refund->save();
                 $refund->proccess_payment();
-
+                BasgateHelper::basgate_log('====== process_refund After process_payment()');
                 $result = 'Full refund issued for order ID: ' . $order_id . ' - Reason: ' . $reason;
                 add_action('admin_notices', function () use ($result) {
                     echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
                 });
+                wp_redirect(admin_url('edit.php?post_type=shop_order'));
+                exit;
                 return true;
             } else {
                 return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
