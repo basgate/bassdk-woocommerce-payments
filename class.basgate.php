@@ -944,7 +944,7 @@ class WC_Basgate extends WC_Payment_Gateway
                 return new WP_Error('refund_failed', __('Refund failed response error. Please try again.', 'bassdk-woocommerce-payments'));
             }
 
-            if (array_key_exists('status', $response) && $response['status'] == 1) {
+            if (array_key_exists('trxToken', $response) && array_key_exists('trxId', $response)) {
                 $order->update_status('refunded', __('Refunded via Basgate.', 'bassdk-woocommerce-payments'));
                 $refund_amount = $order->get_total();
                 $refund = new WC_Order_Refund();
@@ -954,9 +954,10 @@ class WC_Basgate extends WC_Payment_Gateway
 
                 $order->add_order_note(
                     sprintf(
-                        __('Refunded %1$s - Reason: %2$s', 'bassdk-woocommerce-payments'),
+                        __('Refunded %1$s - Reason: %2$s , BasStatus:%3$s', 'bassdk-woocommerce-payments'),
                         wc_price($refund_amount),
-                        $refund->get_reason()
+                        $refund->get_reason(),
+                        $response['status']
                     )
                 );
 
@@ -1069,7 +1070,7 @@ class WC_Basgate extends WC_Payment_Gateway
         if (array_key_exists('success', $res) && $res['success'] == true) {
             $body = !empty($res['body']) ? $res['body'] : array();
             $status = !empty($body['status']) ? $body['status'] : 0;
-            $bodyData= !empty($body['data']) ? $body['data'] : array();
+            $bodyData = !empty($body['data']) ? $body['data'] : array();
             if ($status == 1) {
                 BasgateHelper::basgate_log('====== send_refund_request $bodyData :' . wp_json_encode($bodyData));
                 $data = array();
