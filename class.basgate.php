@@ -982,7 +982,8 @@ class WC_Basgate extends WC_Payment_Gateway
                 add_action('admin_notices', function () use ($result) {
                     echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
                 });
-                wp_redirect(admin_url('edit.php?post_type=shop_order'));
+                BasgateHelper::basgate_log('====== process_refund Before wp_redirect()');
+                wp_redirect(admin_url('admin.php?page=wc-orders'));
                 exit;
                 return true;
             } else {
