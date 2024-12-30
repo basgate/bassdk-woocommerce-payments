@@ -949,14 +949,7 @@ class WC_Basgate extends WC_Payment_Gateway
             if (array_key_exists('trxToken', $response) && array_key_exists('trxId', $response)) {
                 BasgateHelper::basgate_log('====== process_refund Start Refund');
                 $order->update_status('refunded', __('Refunded via Basgate :' . $reason, 'bassdk-woocommerce-payments'));
-                BasgateHelper::basgate_log('====== process_refund Before get_total()');
                 $refund_amount = $order->get_total();
-                // BasgateHelper::basgate_log('====== process_refund Before new WC_Order_Refund()');
-                // $refund = new WC_Order_Refund();
-                // BasgateHelper::basgate_log('====== process_refund Before set_order_id()');
-                // $refund->set_order_id($order_id);
-                // $refund->set_amount($refund_amount);
-                // $refund->set_reason($reason);
                 BasgateHelper::basgate_log('====== process_refund Before add_order_note()');
                 $order->add_order_note(
                     sprintf(
@@ -966,26 +959,12 @@ class WC_Basgate extends WC_Payment_Gateway
                         $response['status']
                     )
                 );
-                // BasgateHelper::basgate_log('====== process_refund Before add_item()');
-                // foreach ($order->get_items() as $item_id => $item) {
-                //     $refund->add_item(array(
-                //         'id' => $item_id,
-                //         'qty' => $item->get_quantity(),
-                //     ));
-                // }
-                // BasgateHelper::basgate_log('====== process_refund Before save()');
-                // $refund->save();
-                // BasgateHelper::basgate_log('====== process_refund After save()');
-                // $refund->proccess_payment();
                 BasgateHelper::basgate_log('====== process_refund After process_payment()');
                 $result = 'Full refund issued for order ID: ' . $order_id . ' - Reason: ' . $reason;
                 add_action('admin_notices', function () use ($result) {
                     echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
                 });
                 BasgateHelper::basgate_log('====== process_refund Before wp_redirect()');
-                // wp_redirect(admin_url('admin.php?page=wc-orders'));
-                // exit;
-                // return true;
                 $data = array(
                     'result' => 'success',
                     'redirect' => admin_url('admin.php?page=wc-orders')
