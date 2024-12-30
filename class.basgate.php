@@ -935,6 +935,8 @@ class WC_Basgate extends WC_Payment_Gateway
             $basgate_data = json_decode($results['basgate_response'], true);
             $trxToken = $basgate_data['trxToken'];
             $response = $this->send_refund_request($reason, $order->get_currency(), $order->get_total(), $trxToken);
+            
+            BasgateHelper::basgate_log('====== process_refund $response:' . wp_json_encode($response));
 
             if (is_wp_error($response)) {
                 return $response;
