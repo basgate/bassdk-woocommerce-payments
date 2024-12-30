@@ -985,7 +985,12 @@ class WC_Basgate extends WC_Payment_Gateway
                 BasgateHelper::basgate_log('====== process_refund Before wp_redirect()');
                 // wp_redirect(admin_url('admin.php?page=wc-orders'));
                 // exit;
-                return true;
+                // return true;
+                $data = array(
+                    'result' => 'success',
+                    'redirect' => admin_url('admin.php?page=wc-orders')
+                );
+                return $data;
             } else {
                 return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
             }
