@@ -2,19 +2,16 @@
 class BasgateConstants
 {
     const TRANSACTION_STATUS_URL_PRODUCTION = "https://api.basgate.com:4950/api/v1/merchant/secure/transaction/status";
-    const TRANSACTION_STATUS_URL_STAGING = "https://api-tst.basgate.com:4951/api/v1/merchant/secure/transaction/status";
+    const TRANSACTION_STATUS_URL_STAGING = "https://api-tst.basgate.com/api/v1/merchant/secure/transaction/status";
 
     const PRODUCTION_HOST = "https://api.basgate.com:4950/";
-    const STAGING_HOST = "https://api-tst.basgate.com:4951/";
+    const STAGING_HOST = "https://api-tst.basgate.com/";
 
-    // CONST ORDER_PROCESS_URL= "api/v1/merchant/secure/transaction/initiate";
     const ORDER_STATUS_URL = "api/v1/merchant/secure/transaction/status";
     const INITIATE_TRANSACTION_URL = "api/v1/merchant/secure/transaction/initiate";
-    // const BASGATE_SDK_URL_PRODUCTION = "https://pub-8bba29ca4a7a4024b100dca57bc15664.r2.dev/sdk/prod/";
-    // const BASGATE_SDK_URL_STAGING = "https://pub-8bba29ca4a7a4024b100dca57bc15664.r2.dev/sdk/stage/";
+    const REFUND_URL = "api/v1/merchant/refund-payment/request";
     const CHECKOUT_JS_URL = "https://pub-8bba29ca4a7a4024b100dca57bc15664.r2.dev/sdk/merchant/v1/public.js";
     const OPTION_DATA_NAME = "woocommerce_basgate_settings";
-
 
     const SAVE_BASGATE_RESPONSE = true;
     const CHANNEL_ID = "WEB";
@@ -68,6 +65,6 @@ class BasgateConstants
     const ERROR_INVALID_ORDER = "No order found to process. Kindly contact with us.";
     const ERROR_CURL_WARNING = "Your server is unable to connect with us. Please contact to Basgate Support.";
 
-    const WEBHOOK_STAGING_URL = "https://api-tst.basgate.com:4951/";
+    const WEBHOOK_STAGING_URL = "https://api-tst.basgate.com/";
     const WEBHOOK_PRODUCTION_URL = "https://api.basgate.com:4950/";
 }

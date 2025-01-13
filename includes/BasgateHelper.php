@@ -84,112 +84,6 @@ if (!class_exists('BasgateHelper')) :
             return false;
         }
 
-
-        // public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
-        // {
-        //     $headers = array("Content-Type" => "application/json");
-        //     if (!empty($extraHeaders)) {
-        //         $headers = array_merge($headers, $extraHeaders);
-        //     }
-        //     $args = array(
-        //         'headers' => $headers,
-        //         'body'      => $requestParamList,
-        //         'method'    => $method,
-        //     );
-
-        //     $result =  wp_remote_request($apiURL, $args);
-        //     $response_code = wp_remote_retrieve_response_code($result);
-
-        //     if (is_wp_error($result)) {
-        //         error_log(
-        //             sprintf(
-        //                 /* translators: 1: Url, 2: Error code, 3: Error message, 4: Event data. */
-        //                 __('executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s', 'bassdk-woocommerce-payments'),
-        //                 $apiURL,
-        //                 $result->get_error_code(),
-        //                 $result->get_error_message(),
-        //                 wp_json_encode($args)
-        //             )
-        //         );
-        //         throw new Exception(esc_attr__('Could not retrieve the access token, please try again!!!.', 'bassdk-woocommerce-payments'));
-        //     }
-
-        //     if (200 !==  $response_code) {
-        //         $error = wp_remote_retrieve_response_message($result);
-        //         $resp = wp_remote_retrieve_body($result);
-        //         error_log(
-        //             sprintf(
-        //                 /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
-        //                 __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-woocommerce-payments'),
-        //                 $apiURL,
-        //                 $response_code,
-        //                 wp_json_encode($args),
-        //                 $error,
-        //                 $resp
-        //             )
-        //         );
-        //         throw new Exception(esc_attr__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
-        //     } else {
-        //         $response_body = wp_remote_retrieve_body($result);
-        //         return json_decode($response_body, true);
-        //     }
-        // }
-
-
-        // static function httpPost($url, $data, $header)
-        // {
-        //     try {
-        //         $curl = curl_init($url);
-        //         curl_setopt($curl, CURLOPT_POST, true);
-        //         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        //         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        //         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-        //         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
-        //         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-
-        //         $response = curl_exec($curl);
-        //         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        //         $error = curl_error($curl);
-
-        //         if ($httpCode == 400) {
-        //             try {
-        //                 $data = json_decode($response, true);
-        //                 if (array_key_exists('messages', $data)) {
-        //                     wc_add_notice("Error: " . implode(' -- ', $data['messages']), 'error');
-        //                 }
-        //             } catch (\Throwable $th) {
-        //                 //throw $th;
-        //             }
-        //         } else if ($httpCode != 200) {
-        //             $msg = "Return httpCode is {$httpCode} \n"
-        //                 . curl_error($curl) . "URL: " . $url;
-        //             if ($error) {
-        //                 wc_add_notice("Error: " . $error, 'error');
-        //             }
-        //             error_log(
-        //                 sprintf(
-        //                     /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg. */
-        //                     __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s', 'bassdk-woocommerce-payments'),
-        //                     $url,
-        //                     $httpCode,
-        //                     $data,
-        //                     $error
-        //                 )
-        //             );
-        //             curl_close($curl);
-        //             return new Exception(__('Could not retrieve the access token, please try again.', 'bassdk-woocommerce-payments'));
-        //             // return $msg;
-        //             //return $response;
-        //         } else {
-        //             curl_close($curl);
-        //             return json_decode($response, true);
-        //         }
-        //     } catch (\Throwable $th) {
-        //         return new Exception("ERROR On httpPost :" . $th->getMessage());
-        //     }
-        // }
-
-
         public static function executecUrl($apiURL, $requestParamList, $method = 'POST', $extraHeaders = array())
         {
 
@@ -199,7 +93,9 @@ if (!class_exists('BasgateHelper')) :
                 set_time_limit($timeout + 10);
             }
             // 'Accept: text/plain'
-            $headers = array("Accept" => "*");
+            $headers = array(
+                "Accept" => "*",
+            );
             if (!empty($extraHeaders)) {
                 $headers = array_merge($headers, $extraHeaders);
             }
@@ -225,7 +121,7 @@ if (!class_exists('BasgateHelper')) :
                     wp_json_encode($args)
                 );
                 // error_log($msg);
-                BasgateHelper::basgate_log($msg);
+                BasgateHelper::basgate_log("ERROR on executecUrl is_wp_error msg :" . $msg);
                 return self::errorResponse($msg);
                 // throw new Exception(__('Could not retrieve the access token, please try again!!!.', BasgateConstants::ID));
             }
@@ -235,15 +131,14 @@ if (!class_exists('BasgateHelper')) :
             if (200 !==  $response_code) {
                 $msg = sprintf(
                     /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
-                    __('executecUrl error status!=200 for url: %1$s, Response code: %2$s,Data: %3$s , ErrorMsg: %4$s, Response Body:%5$s', 'bassdk-woocommerce-payments'),
+                    __('executecUrl error status!=200 for \n url: %1$s, \n Response code: %2$s, \n Data: %3$s ,\n ErrorMsg: %4$s,\n Response Body:%5$s', 'bassdk-woocommerce-payments'),
                     $apiURL,
                     $response_code,
                     wp_json_encode($args),
                     $error,
                     $response_body
                 );
-                BasgateHelper::basgate_log($msg);
-
+                BasgateHelper::basgate_log("ERROR on executecUrl is_wp_error msg :" . $msg);
                 return self::errorResponse($msg);
             } else {
                 $data = json_decode($response_body, true); // Decode JSON response
@@ -253,6 +148,49 @@ if (!class_exists('BasgateHelper')) :
                 self::basgate_log("===== executecUrl Success: " . wp_json_encode($data));
 
                 return self::successResponse($data);
+            }
+        }
+
+        //Process Basgate Token
+        public static function getBasToken($bassdk_api, $client_id, $client_secret, $grant_type  = "authorization_code")
+        {
+            BasgateHelper::basgate_log("===== STARTED getBasToken $bassdk_api, $client_id, $client_secret, $grant_type");
+            $redirect_uri = $bassdk_api . "api/v1/auth/callback";
+
+            try {
+                //Send Post request to get token details
+                $reqBody = [
+                    'grant_type' => $grant_type,
+                    'client_id' => $client_id,
+                    'client_secret' => $client_secret,
+                    // 'redirect_uri' => $redirect_uri
+                ];
+
+                $header = array("Content-type" => "application/x-www-form-urlencoded");
+
+                $retry = 1;
+                do {
+                    $response = BasgateHelper::executecUrl($bassdk_api . 'api/v1/auth/token', http_build_query($reqBody), "POST", $header);
+                    $retry++;
+                } while (!$response['success'] && $retry < BasgateConstants::MAX_RETRY_COUNT);
+                BasgateHelper::basgate_log("getBasToken response:" . wp_json_encode($response));
+                if (array_key_exists('success', $response) && $response['success'] == true) {
+                    if (array_key_exists('body', $response)) {
+                        $data = $response['body'];
+                        return $data;
+                        // if (array_key_exists('access_token', $data)) {
+                        //     return $data;
+                        // } else {
+                        //     return null;
+                        // }
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } catch (\Throwable $th) {
+                throw $th;
             }
         }
 

@@ -18,6 +18,19 @@ class WC_Basgate extends WC_Payment_Gateway
         $this->method_description = BasgateConstants::METHOD_DESCRIPTION;
         $this->icon = apply_filters('woocommerce_gateway_icon', plugin_dir_url(__FILE__) . 'assets/images/bassdk-logo.svg');
         $this->has_fields = false;
+        $this->supports = array(
+            'products',
+            // 'subscription_cancellation',
+            // 'subscription_reactivation',
+            // 'subscription_suspension',
+            // 'subscription_amount_changes',
+            // 'subscription_payment_method_change',
+            // 'subscription_date_changes',
+            // 'default_credit_card_form',
+            'refunds'
+            // ,
+            // 'pre-orders'
+        );
         $this->init_form_fields();
         $this->init_settings();
         $this->title = BasgateConstants::TITLE;
@@ -43,8 +56,8 @@ class WC_Basgate extends WC_Payment_Gateway
             add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
         }
         add_action('woocommerce_receipt_' . $this->id, array($this, 'receipt_page'));
-        wp_enqueue_script('bassdk-payment-script', plugin_dir_url(__FILE__) . 'assets/js/public.js', array(), time(),   array(
-            'strategy'  => 'async',
+        wp_enqueue_script('bassdk-payment-script', plugin_dir_url(__FILE__) . 'assets/js/public.js', array(), time(), array(
+            'strategy' => 'async',
             'in_footer' => true,
         ));
     }
@@ -78,62 +91,62 @@ class WC_Basgate extends WC_Payment_Gateway
         // $basgateContactLink = esc_url("https://basgate.com");
         $this->form_fields = array(
             'bas_description' => array(
-                'title'         => __('Description', 'bassdk-woocommerce-payments'),
-                'type'          => 'textarea',
+                'title' => __('Description', 'bassdk-woocommerce-payments'),
+                'type' => 'textarea',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
-                'description'   => __('This controls the description which the user sees during checkout.', 'bassdk-woocommerce-payments'),
-                'default'       => sprintf(
+                'description' => __('This controls the description which the user sees during checkout.', 'bassdk-woocommerce-payments'),
+                'default' => sprintf(
                     /* translators: 1: LogoUrl. */
                     esc_html__('The best payment gateway provider in Yemen for e-payment through most of wallets and banks <img src="%1$s" height="24px;" />', 'bassdk-woocommerce-payments'),
                     esc_url('https://ykbsocial.com/basgate/reportlogo.png')
                 )
             ),
             'bas_environment' => array(
-                'title'         => __('Environment Mode', 'bassdk-woocommerce-payments'),
+                'title' => __('Environment Mode', 'bassdk-woocommerce-payments'),
                 $this->id,
-                'type'          => 'select',
+                'type' => 'select',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
-                'options'       => array("0" => "Test/Staging", "1" => "Production"),
-                'description'   => __('Select "Test/Staging" to setup test transactions & "Production" once you are ready to go live', 'bassdk-woocommerce-payments'),
-                'default'       => '0'
+                'options' => array("0" => "Test/Staging", "1" => "Production"),
+                'description' => __('Select "Test/Staging" to setup test transactions & "Production" once you are ready to go live', 'bassdk-woocommerce-payments'),
+                'default' => '0'
             ),
             'bas_application_id' => array(
-                'title'         => __('Application Id', 'bassdk-woocommerce-payments'),
-                'type'          => 'text',
+                'title' => __('Application Id', 'bassdk-woocommerce-payments'),
+                'type' => 'text',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
-                'description'   => __('Based on the selected Environment Mode, copy the relevant Application ID for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
+                'description' => __('Based on the selected Environment Mode, copy the relevant Application ID for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
             ),
             'bas_merchant_key' => array(
-                'title'         => __('Merchant Key', 'bassdk-woocommerce-payments'),
-                'type'          => 'text',
+                'title' => __('Merchant Key', 'bassdk-woocommerce-payments'),
+                'type' => 'text',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
-                'description'   => __('Based on the selected Environment Mode, copy the Merchant Key for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
+                'description' => __('Based on the selected Environment Mode, copy the Merchant Key for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
             ),
             'bas_client_id' => array(
-                'title'         => __('Client Id', 'bassdk-woocommerce-payments'),
-                'type'          => 'text',
+                'title' => __('Client Id', 'bassdk-woocommerce-payments'),
+                'type' => 'text',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
-                'description'   => __('Based on the selected Environment Mode, copy the Client Id for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
+                'description' => __('Based on the selected Environment Mode, copy the Client Id for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
             ),
             'bas_client_secret' => array(
-                'title'         => __('Client Secret', 'bassdk-woocommerce-payments'),
-                'type'          => 'text',
+                'title' => __('Client Secret', 'bassdk-woocommerce-payments'),
+                'type' => 'text',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled'),
-                'description'   => __('Based on the selected Environment Mode, copy the Client Secret for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
+                'description' => __('Based on the selected Environment Mode, copy the Client Secret for test or production environment you received on email.', 'bassdk-woocommerce-payments'),
             ),
-            'enabled'           => array(
-                'title'             => __('Enable/Disable', 'bassdk-woocommerce-payments'),
-                'type'          => 'checkbox',
+            'enabled' => array(
+                'title' => __('Enable/Disable', 'bassdk-woocommerce-payments'),
+                'type' => 'checkbox',
                 'custom_attributes' => array('required' => 'required', 'disabled' => 'disabled', 'display' => 'none'),
-                'label'         => __('Enable Basgate Login/Payments.', 'bassdk-woocommerce-payments'),
-                'default'       => 'yes'
+                'label' => __('Enable Basgate Login/Payments.', 'bassdk-woocommerce-payments'),
+                'default' => 'yes'
             ),
-            'debug'           => array(
-                'title'             => __('Enable Debug', 'bassdk-woocommerce-payments'),
-                'type'          => 'checkbox',
+            'debug' => array(
+                'title' => __('Enable Debug', 'bassdk-woocommerce-payments'),
+                'type' => 'checkbox',
                 'custom_attributes' => array('disabled' => 'disabled', 'display' => 'none'),
-                'label'         => __('Enable debug mode to log all oprations.', 'bassdk-woocommerce-payments'),
-                'default'       => 'yes'
+                'label' => __('Enable debug mode to log all oprations.', 'bassdk-woocommerce-payments'),
+                'default' => 'yes'
             ),
         );
     }
@@ -157,38 +170,38 @@ class WC_Basgate extends WC_Payment_Gateway
             'data-mce-bogus' => array(),
         );
         $allowed_tags = array(
-            'div'           => $default_attribs,
-            'span'          => $default_attribs,
-            'p'             => $default_attribs,
-            'a'             => array_merge(
+            'div' => $default_attribs,
+            'span' => $default_attribs,
+            'p' => $default_attribs,
+            'a' => array_merge(
                 $default_attribs,
                 array(
                     'href' => array(),
                     'target' => array('_blank', '_top'),
                 )
             ),
-            'u'             =>  $default_attribs,
-            'i'             =>  $default_attribs,
-            'q'             =>  $default_attribs,
-            'b'             =>  $default_attribs,
-            'ul'            => $default_attribs,
-            'ol'            => $default_attribs,
-            'li'            => $default_attribs,
-            'br'            => $default_attribs,
-            'hr'            => $default_attribs,
-            'strong'        => $default_attribs,
-            'blockquote'    => $default_attribs,
-            'del'           => $default_attribs,
-            'strike'        => $default_attribs,
-            'em'            => $default_attribs,
-            'code'          => $default_attribs,
-            'h1'            => $default_attribs,
-            'h2'            => $default_attribs,
-            'h3'            => $default_attribs,
-            'h4'            => $default_attribs,
-            'h5'            => $default_attribs,
-            'h6'            => $default_attribs,
-            'table'         => $default_attribs
+            'u' => $default_attribs,
+            'i' => $default_attribs,
+            'q' => $default_attribs,
+            'b' => $default_attribs,
+            'ul' => $default_attribs,
+            'ol' => $default_attribs,
+            'li' => $default_attribs,
+            'br' => $default_attribs,
+            'hr' => $default_attribs,
+            'strong' => $default_attribs,
+            'blockquote' => $default_attribs,
+            'del' => $default_attribs,
+            'strike' => $default_attribs,
+            'em' => $default_attribs,
+            'code' => $default_attribs,
+            'h1' => $default_attribs,
+            'h2' => $default_attribs,
+            'h3' => $default_attribs,
+            'h4' => $default_attribs,
+            'h5' => $default_attribs,
+            'h6' => $default_attribs,
+            'table' => $default_attribs
         );
         //Echoing HTML safely end
 
@@ -200,7 +213,7 @@ class WC_Basgate extends WC_Payment_Gateway
         if (!empty(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')))) {
             //wp_remote_get($url, array('sslverify' => FALSE));
 
-            $response = (array)wp_remote_get(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')));
+            $response = (array) wp_remote_get(BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment')));
             if (!empty($response['errors'])) {
                 echo wp_kses('<div class="basgate_response error-box">' . BasgateConstants::ERROR_CURL_WARNING . '</div>', $allowed_tags);
             }
@@ -240,7 +253,7 @@ class WC_Basgate extends WC_Payment_Gateway
     public function receipt_page($order)
     {
         BasgateHelper::basgate_log('====== STARTED receipt_page');
-        echo $this->generate_basgate_form($order);
+        echo $this->generate_basgate_form(order_id: $order);
         echo $this->generate_basgate_callback($order);
     }
 
@@ -272,7 +285,7 @@ class WC_Basgate extends WC_Payment_Gateway
 
     /* 
      * Get the transaction token
-    */
+     */
     public function blinkCheckoutSend($paramData = array())
     {
         try {
@@ -292,11 +305,13 @@ class WC_Basgate extends WC_Payment_Gateway
             $callBackURL = add_query_arg('orderId', $paramData['order_id'], $callBackURL);
             BasgateHelper::basgate_log('====== blinkCheckoutSend $callBackURL:' . $callBackURL);
 
-            if (!empty($paramData['amount']) && (int)$paramData['amount'] > 0) {
+            if (!empty($paramData['amount']) && (int) $paramData['amount'] > 0) {
                 $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
                 // $requestTimestamp = gmdate("Y-m-d\TH:i:s\Z");
-                $requestTimestamp = (string)  time();
+                $requestTimestamp = (string) time();
                 /* body parameters */
+                //TODO: Should be fixed
+                $order_id_timestamp = $paramData['order_id'] . $requestTimestamp;
                 $basgateParams["body"] = array(
                     "appId" => $this->getSetting('bas_application_id'),
                     "requestTimestamp" => $requestTimestamp,
@@ -307,7 +322,7 @@ class WC_Basgate extends WC_Payment_Gateway
                         "name" => $paramData['cust_name'],
                     ),
                     "amount" => array(
-                        "value" => (float)$paramData['amount'],
+                        "value" => (float) $paramData['amount'],
                         "currency" => $paramData['currency'],
                     ),
                     "orderId" => $paramData['order_id'],
@@ -337,7 +352,17 @@ class WC_Basgate extends WC_Payment_Gateway
                 $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
 
                 $url = BasgateHelper::getBasgateURL(BasgateConstants::INITIATE_TRANSACTION_URL, $this->getSetting('bas_environment'));
-                $header = array('Accept' => ' text/plain', 'Content-Type' => 'application/json');
+                $correlationId = wp_generate_uuid4();
+                $header = array(
+                    'Content-Type' => 'application/json',
+                    "User-Agent" => "BasSdk",
+                    "x-client-id" => $this->getSetting('bas_client_id'),
+                    "x-app-id" => $this->getSetting('bas_application_id'),
+                    "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
+                    "x-environment" => $this->getSetting('bas_environment'),
+                    "correlationId" => $correlationId,
+                    "x-sdk-type" => "WordPress"
+                );
 
                 $retry = 1;
                 do {
@@ -453,6 +478,7 @@ class WC_Basgate extends WC_Payment_Gateway
         );
 
         $data = $this->blinkCheckoutSend($paramData);
+        BasgateHelper::basgate_log('====== generate_basgate_form blinkCheckoutSend $data :' . $data);
 
         if (is_null($data) || empty($data)) {
             BasgateHelper::basgate_log('====== generate_basgate_form inside if $data :' . $data);
@@ -462,6 +488,7 @@ class WC_Basgate extends WC_Payment_Gateway
             wp_redirect(wc_get_checkout_url());
             exit;
         } else if (is_wp_error($data)) {
+            BasgateHelper::basgate_log('====== generate_basgate_form is_wp_error($data):' . $data);
             $mssg = $data->get_error_messages();
             $mssg = is_array($mssg) ? reset($mssg) : $mssg;
             // $error_msg = __('Could not complete the transaction, \n\nplease check that you are inside basgate platform and try again.', 'bassdk-woocommerce-payments') . '\n\n Return ERROR Message:\n\n' . $mssg;
@@ -500,7 +527,7 @@ class WC_Basgate extends WC_Payment_Gateway
                                     // // if (jQuery(".pg-basgate-checkout").length > 1) {
                                     // //     jQuery(".pg-basgate-checkout:nth-of-type(2)").remove();
                                     // // }
-                                  return basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
+                                    return basCheckOutCallback(result, "' . $data['callBackUrl'] . '");
                                 } else {
                                     return null
                                 }
@@ -519,36 +546,57 @@ class WC_Basgate extends WC_Payment_Gateway
     {
         BasgateHelper::basgate_log('====== STARTED generate_basgate_callback');
         ?>
-        <script type="text/javascript">
-            // eslint-disable-next-line
-            function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
-                var $ = jQuery;
-                console.log("==== STARTED basCheckOutCallback() resData.status:", resData.status)
-                if (resData.hasOwnProperty('status')) {
-                    var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
-                    $.post(ajaxurl, {
-                        data: resData.data,
-                        status: resData.status,
-                        nonce: nonce,
-                    }, function(data, textStatus) {
-                        console.log('===== basCheckOutCallback textStatus:', textStatus)
-                        console.log('===== basCheckOutCallback data:', data)
-                        try {
-                            var res = JSON.parse(data);
-                            if ('redirect' in res) {
-                                window.location = res['redirect']
+                <script type="text/javascript">
+                    // eslint-disable-next-line
+                    function basCheckOutCallback(resData, ajaxurl) { // jshint ignore:line
+                        var $ = jQuery;
+                        console.log("==== STARTED basCheckOutCallback() resData.status:", resData.status)
+                        console.log("==== basCheckOutCallback() resData.data:", JSON.stringify(resData.data))
+                        console.log("==== basCheckOutCallback() ajaxurl:", ajaxurl)
+                        if (resData.hasOwnProperty('status')) {
+                            var nonce = '<?php echo esc_attr(wp_create_nonce('basgate_checkout_nonce')); ?>';
+                            console.log('===== basCheckOutCallback nonce:', nonce)
+                            try {
+                                ajaxurl = ajaxurl + '&' + $.param(resData.data);
+                                $.post(
+                                    ajaxurl, {
+                                        data: resData.data,
+                                        status: resData.status,
+                                        nonce: nonce,
+                                    },
+                                    function(data, textStatus) {
+                                        console.log('===== basCheckOutCallback textStatus:', textStatus)
+                                        console.log('===== basCheckOutCallback data:', JSON.stringify(data))
+                                        try {
+                                            if (typeof data === 'string') {
+                                                var res = JSON.parse(data);
+                                                if ('redirect' in res) {
+                                                    window.location = res['redirect']
+                                                }
+                                            } else {
+                                                if ('redirect' in data) {
+                                                    window.location = data['redirect']
+                                                }
+                                            }
+                                        } catch (error) {
+                                            console.log('===== basCheckOutCallback error 111:', error)
+                                            if ('redirect' in data) {
+                                                window.location = data['redirect']
+                                            }
+                                        }
+                                        // return data;
+                                    },
+                                    'json'
+                                );
+                            } catch (error) {
+                                console.log('===== basCheckOutCallback error 222:', error)
                             }
-                        } catch (error) {
-
+                        } else {
+                            //TODO:Handle errors message return from getBasPayment 
                         }
-                        // return data;
-                    });
-                } else {
-                    //TODO:Handle errors message return from getBasPayment 
-                }
-            }
-        </script>
-        <?php
+                    }
+                </script>
+            <?php
     }
 
     /**
@@ -612,49 +660,26 @@ class WC_Basgate extends WC_Payment_Gateway
     public function check_basgate_response()
     {
         global $woocommerce;
+        BasgateHelper::basgate_log('====== STARTED check_basgate_response $_REQUEST :' . wp_json_encode($_REQUEST));
 
-        BasgateHelper::basgate_log('====== STARTED check_basgate_response _POST :' . wp_json_encode($_POST));
-
-        if (! isset($_POST['nonce']) ||            ! wp_verify_nonce(sanitize_key($_POST['nonce']), 'basgate_checkout_nonce')) {
-            die(esc_html("ERROR check_basgate_response wrong nonce"));
+        if (!isset($_REQUEST['orderId']) || empty($_REQUEST['orderId'])) {
+            BasgateHelper::basgate_log('====== check_basgate_response ERROR orderId is empty');
+            die(esc_html("check_basgate_response ERROR orderId is empty"));
         }
 
-        if (!empty($_POST['data'])) {
-            BasgateHelper::basgate_log('====== STARTED check_basgate_response $_POST["data"] :' . wp_json_encode($_POST['data']));
-            $data = $_POST['data'];
-            // $data = isset($data['data']) ? json_decode($data['data'], true) : null;
+        $order_id = $_REQUEST['orderId'];
+        $data = $_REQUEST;
+
+        if (!empty($order_id)) {
+            // $data = $_POST['data'];
             $status = isset($data['status']) ? $data['status'] : '';
 
             BasgateHelper::basgate_log('====== STARTED check_basgate_response $status :' . $status);
 
             if (!empty($status)) {
                 BasgateHelper::basgate_log('====== check_basgate_response inside if()');
-                //check order status before executing webhook call
-                // if (isset($_GET['webhook']) && $_GET['webhook'] == 'yes') {
-                //     $getOrderId = !empty($data['orderId']) ? BasgateHelper::getOrderId(sanitize_text_field($data['orderId'])) : 0;
-                //     if (version_compare(WOOCOMMERCE_VERSION, '2.0.0', '>=')) {
-                //         $orderCheck = new WC_Order($getOrderId);
-                //     } else {
-                //         $orderCheck = new woocommerce_order($getOrderId);
-                //     }
-                //     $result = getBasgateOrderData($getOrderId);
-                //     if (isset($result) && json_decode($result['basgate_response'], true)['STATUS'] == "TXN_SUCCESS") {
-                //         exit;
-                //     }
-                //     if ($orderCheck->status == "processing" || $orderCheck->status == "completed") {
-                //         exit;
-                //     }
-                // }
-                //end webhook check
 
-                // if (!empty($_POST['CHECKSUMHASH'])) {
-                //     $post_checksum = sanitize_text_field($_POST['CHECKSUMHASH']);
-                //     unset($_POST['CHECKSUMHASH']);
-                // } else {
-                //     $post_checksum = "";
-                // }
                 $order = array();
-                // $isValidChecksum = BasgateChecksum::verifySignature($_POST, $this->getSetting('bas_merchant_key'), $post_checksum);
                 $isValidChecksum = !empty($data['authenticated']) && $data['authenticated'] === "true";
                 $responseDescription = (!empty($data['messages'])) ? sanitize_text_field(implode(' -- ', $data['messages'])) : "";
 
@@ -684,7 +709,7 @@ class WC_Basgate extends WC_Payment_Gateway
                     if (!empty($order)) {
                         BasgateHelper::basgate_log('====== check_basgate_response isset($order) :' . isset($order));
                         $reqBody = '{"head":{"signature":"sigg","requestTimeStamp":"timess"},"body":bodyy}';
-                        $requestTimestamp = (string)time();
+                        $requestTimestamp = (string) time();
                         $reqParams = array(
                             "appId" => $this->getSetting('bas_application_id'),
                             "orderId" => sanitize_text_field($data['orderId']),
@@ -710,7 +735,18 @@ class WC_Basgate extends WC_Payment_Gateway
                         $reqBody = str_replace('timess', $requestTimestamp, $reqBody);
 
                         $url = BasgateHelper::getBasgateURL(BasgateConstants::ORDER_STATUS_URL, $this->getSetting('bas_environment'));
-                        $header = array('Accept' => ' text/plain', 'Content-Type' => ' application/json');
+                        $correlationId = wp_generate_uuid4();
+                        $header = array(
+                            'Content-Type' => 'application/json',
+                            "User-Agent" => "BasSdk",
+                            "x-client-id" => $this->getSetting('bas_client_id'),
+                            "x-app-id" => $this->getSetting('bas_application_id'),
+                            "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
+                            "x-environment" => $this->getSetting('bas_environment'),
+                            "correlationId" => $correlationId,
+                            "x-sdk-type" => "WordPress"
+                        );
+
                         BasgateHelper::basgate_log('====== check_basgate_response $reqBody:' . $reqBody);
 
                         $retry = 1;
@@ -754,7 +790,7 @@ class WC_Basgate extends WC_Payment_Gateway
                             $this->fireFailure($order, __("It seems some issue in server to server communication. Kindly connect with us.", 'bassdk-woocommerce-payments'));
                         } else {
                             $trxStatus = strtolower($statusData['trxStatus']);
-                            $trxStatusId = (int)$statusData['trxStatusId'];
+                            $trxStatusId = (int) $statusData['trxStatusId'];
                             $trxId = $statusData['trxId'];
                             if ($trxStatus == 'completed' || $trxStatusId == 1003) {
 
@@ -874,10 +910,191 @@ class WC_Basgate extends WC_Payment_Gateway
         return $redirect_url;
     }
 
+    /**
+     * Process a refund if supported
+     *
+     * @param int $order_id
+     * @param float $amount
+     * @param string $reason
+     * @return bool|WP_Error True or false based on success, or a WP_Error object
+     */
+    public function process_refund($order_id, $amount = null, $reason = '')
+    {
+        BasgateHelper::basgate_log('====== STARTED process_refund $order_id:' . $order_id . ' , $amount:' . $amount . ' , $reason:' . $reason);
+        $order = wc_get_order($order_id);
+
+        if (!$order) {
+            return new WP_Error('invalid_order', __('Invalid order ID.', 'bassdk-woocommerce-payments'));
+        }
+        if (!isset($reason) || empty($reason)) {
+            $reason = 'Manual refund issued.';
+        }
+
+        if ($order->get_status() === 'completed') {
+            $results = getBasgateOrderData($order_id);
+            $basgate_data = json_decode($results['basgate_response'], true);
+            $trxToken = $basgate_data['trxToken'];
+            $response = $this->send_refund_request($reason, $order->get_currency(), $order->get_total(), $trxToken);
+
+            BasgateHelper::basgate_log('====== process_refund $response:' . wp_json_encode($response));
+
+            if (is_wp_error($response)) {
+                return $response;
+            }
+
+            if (!isset($response)) {
+                return new WP_Error('refund_failed', __('Refund failed response error. Please try again.', 'bassdk-woocommerce-payments'));
+            }
+
+            if (array_key_exists('trxToken', $response) && array_key_exists('trxId', $response)) {
+                BasgateHelper::basgate_log('====== process_refund Start Refund');
+                $order->update_status('refunded', __('Refunded via Basgate :' . $reason, 'bassdk-woocommerce-payments'));
+                $refund_amount = $order->get_total();
+                BasgateHelper::basgate_log('====== process_refund Before add_order_note()');
+                $order->add_order_note(
+                    sprintf(
+                        __('Refunded %1$s - Reason: %2$s , BasStatus:%3$s', 'bassdk-woocommerce-payments'),
+                        wc_price($refund_amount),
+                        $reason,
+                        $response['status']
+                    )
+                );
+                BasgateHelper::basgate_log('====== process_refund After process_payment()');
+                $result = 'Full refund issued for order ID: ' . $order_id . ' - Reason: ' . $reason;
+                add_action('admin_notices', function () use ($result) {
+                    echo '<div class="notice notice-success"><p>' . esc_html($result) . '</p></div>';
+                });
+                BasgateHelper::basgate_log('====== process_refund Before wp_redirect()');
+                $data = array(
+                    'result' => 'success',
+                    'redirect' => admin_url('admin.php?page=wc-orders')
+                );
+                return $data;
+            } else {
+                return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
+            }
+        } else {
+            return 'Order is not eligible for a refund.';
+        }
+
+        // return true;
+        // } else {
+        //     return new WP_Error('refund_failed', __('Refund failed. Please try again.', 'bassdk-woocommerce-payments'));
+        // }
+    }
+
+    /**
+     * Send refund request to the payment gateway
+     *
+     * @param array $refund_data
+     * @return array|WP_Error
+     */
+    private function send_refund_request($reason, $currency, $amount, $trxToken)
+    {
+        BasgateHelper::basgate_log('====== STARTED send_refund_request $trxToken:' . $trxToken . ' , $reason:' . $reason);
+
+        /* body parameters */
+
+        //curl --location 'http://localhost:8811/api/v1/merchant/refund-payment/request' \
+        // --header 'x-client-id;' \
+        // --header 'x-app-id;' \
+        // --header 'x-environment;' \
+        // --header 'correlationId;' \
+        // --header 'Content-Type: application/json' \
+        // --header 'Authorization: ••••••' \
+        // --data '{
+        //   "trxToken": "string",
+        //   "reason": "string",
+        //   "amount": 0,
+        //   "currency": "string",
+        //   "appId": "string"
+        // }'
+
+        $reqBody = wp_json_encode(array(
+            "trxToken" => $trxToken,
+            'reason' => $reason,
+            "amount" => $amount,
+            "currency" => $currency,
+            "appId" => $this->getSetting('bas_application_id'),
+        ));
+
+        BasgateHelper::basgate_log("====== send_refund_request reqBody: " . $reqBody);
+
+        $correlationId = wp_generate_uuid4();
+
+        $url = BasgateHelper::getBasgateURL(BasgateConstants::REFUND_URL, $this->getSetting('bas_environment'));
+
+        $header = array(
+            'Content-Type' => 'application/json',
+            "x-client-id" => $this->getSetting('bas_client_id'),
+            "x-app-id" => $this->getSetting('bas_application_id'),
+            "x-sdk-version" => BasgateConstants::PLUGIN_VERSION,
+            "x-environment" => $this->getSetting('bas_environment'),
+            "correlationId" => $correlationId,
+            "x-sdk-type" => "WordPress"
+        );
+
+        // #region getToken 
+
+        $client_id = $this->getSetting('bas_client_id');
+        $client_secret = $this->getSetting('bas_client_secret');
+        BasgateHelper::basgate_log('====== send_refund_request $client_id:' . $client_id . ' , $client_secret:' . $client_secret);
+        if ($this->getSetting('bas_environment') == 1) {
+            $baseUrl = BasgateConstants::PRODUCTION_HOST;
+        } else {
+            $baseUrl = BasgateConstants::STAGING_HOST;
+        }
+
+        $token = BasgateHelper::getBasToken($baseUrl, $client_id, $client_secret, "client_credentials");
+        if (isset($token['access_token'])) {
+            $header['Authorization'] = 'Bearer ' . $token['access_token'];
+        } else {
+            return new \WP_Error('connection_error', __("ERROR Can not complete the request invalid grant", 'bassdk-woocommerce-payments'));
+        }
+        // #endregion
+
+        $retry = 1;
+        do {
+            $res = BasgateHelper::executecUrl($url, $reqBody, "POST", $header);
+            $retry++;
+        } while (!isset($res['body']['status']) && $retry < BasgateConstants::MAX_RETRY_COUNT);
+
+        BasgateHelper::basgate_log('====== send_refund_request $retry:' . $retry . ' , $res:' . wp_json_encode($res));
+
+        if (array_key_exists('success', $res) && $res['success'] == true) {
+            $body = !empty($res['body']) ? $res['body'] : array();
+            $status = !empty($body['status']) ? $body['status'] : 0;
+            $bodyData = !empty($body['data']) ? $body['data'] : array();
+            if ($status == 1) {
+                BasgateHelper::basgate_log('====== send_refund_request $bodyData :' . wp_json_encode($bodyData));
+                $data = array();
+                $data['trxToken'] = $bodyData['trxToken'];
+                $data['trxId'] = $bodyData['trxId'];
+                // $data['callBackUrl'] = $callBackURL;
+                return $data;
+            } else {
+                BasgateHelper::basgate_log(
+                    sprintf(
+                        /*translators: 1:body, 2: bodyData , 3:status. */
+                        __('trxToken empty body: %1$s , \n bodyData: %2$s , \n $status: %3$s.', 'bassdk-woocommerce-payments'),
+                        wp_json_encode($body),
+                        wp_json_encode($bodyData),
+                        $status
+                    )
+                );
+                $msg = array_key_exists('Messages', $body) ? $body['Messages'] : 'trxToken is empty';
+                $msg = is_array($msg) ? reset($msg) : $msg;
+                return new \WP_Error('connection_error', __($msg, 'bassdk-woocommerce-payments'));
+            }
+        } else {
+            return new \WP_Error('connection_error', __("ERROR Can not complete the request", 'bassdk-woocommerce-payments'));
+        }
+    }
+
 
     /*
      * End basgate Essential Functions
-    **/
+     **/
 }
 
 
