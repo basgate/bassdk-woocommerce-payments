@@ -4,7 +4,7 @@
  * Plugin Name: Bassdk Payment for WooCommerce
  * Plugin URI: https://github.com/Basgate/bassdk-woocommerce-payments
  * Description: This blugin enabels you to opreat payments through Basgateway that provides you with many Local E-Wallets
- * Version: 0.2.7
+ * Version: 0.2.8
  * Author: Basgate Super APP 
  * Author URI: https://basgate.com/
  * Developer: Abdullah AlAnsi
@@ -95,7 +95,6 @@ function basgate_register_order_approval_payment_method_type()
         }
     );
 }
-/* ************************************************ */
 
 /* Create table 'basgate_order_data' after install basgate plugin */
 if (function_exists('register_activation_hook'))
@@ -104,80 +103,54 @@ if (function_exists('register_activation_hook'))
 if (function_exists('register_deactivation_hook'))
     register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 
-//TODO: Restore this code
-// add_action('wp_enqueue_scripts', 'enqueue_force_login_scripts');
-// function enqueue_force_login_scripts()
-// {
-//     BasgateHelper::basgate_log('===== STARTED enqueue_force_login_scripts() ');
-//     if (!is_user_logged_in()) {
-//         // Enqueue custom JavaScript
-//         wp_enqueue_script('force-login-script', plugin_dir_url(__FILE__) . 'assets/js/force-login.js', array('jquery'), null, true);
-//     }
-// }
 
 
-// add_action('wp_ajax_nopriv_add_to_cart', 'handle_ajax_add_to_cart');
+add_action('wp_footer', 'force_login_before_adding_to_cart_main');
 
-// function handle_ajax_add_to_cart()
-// {
-//     BasgateHelper::basgate_log('===== STARTED handle_ajax_add_to_cart() ');
-//     // Check if user is logged in
-//     if (!is_user_logged_in()) {
-//         // Return a JSON response indicating that login is required
-//         wp_send_json_error(array('message' => 'You must log in to add products to your cart.'));
-//     }
-
-//     // If logged in, proceed with the add to cart operation
-//     // This part is handled by WooCommerce, so you can simply call the WooCommerce function if needed.
-//     // For example:
-//     // $product_id = intval($_POST['product_id']);
-//     // WC()->cart->add_to_cart($product_id);
-
-//     // For demonstration, we'll just send a success response
-//     wp_send_json_success();
-// }
-
-// add_action('wp_footer', 'add_force_login_script');
-
-function add_force_login_script()
+function force_login_before_adding_to_cart_main()
 {
-    ?>
-        <script type="text/javascript">
-            console.log('===== add_force_login_script add_to_cart_button clicked 111')
-            jQuery(document).ready(function($) {
-                console.log('===== add_force_login_script add_to_cart_button clicked 222')
-                $('body').on('click', '.add_to_cart_button', function(e) {
-                    console.log('===== add_force_login_script add_to_cart_button clicked 333')
-                    if (!<?php echo json_encode(is_user_logged_in()); ?>) {
-                        e.preventDefault(); // Prevent the default action
-                        console.log('====== add_force_login_script You must log in to add products to your cart.');
-                        <?php
-                        // Set a transient message
-                        set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
-                        // Redirect to login page
-                        wp_redirect(wp_login_url());
-                        exit;
-                        ?>
-                    }
+    $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+    BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main add_to_cart_button clicked");
+    if (!$settings['enabled']):
+        ?>
+            <script type="text/javascript">
+                console.log('===== add_force_login_script add_to_cart_button clicked 111')
+                jQuery(document).ready(function($) {
+                    console.log('===== add_force_login_script add_to_cart_button clicked 222')
+                    $('body').on('click', '.add_to_cart_button', function(e) {
+                        console.log('===== add_force_login_script add_to_cart_button clicked 333')
+                        if (!<?php echo BasgateHelper::is_user_already_logged_in(); ?>) {
+                            e.preventDefault(); // Prevent the default action
+                            console.log('====== add_force_login_script You must log in to add products to your cart.');
+                            <?php
+                            BasgateHelper::basgate_log("===== add_force_login_script You must log in to add products to your cart.");
+                            // Set a transient message
+                            set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments'), 5); // 30 seconds 
+                            // Redirect to login page
+                            wp_redirect(wp_login_url(get_permalink()));
+                            exit;
+                            ?>
+                        }
+                    });
                 });
-            });
-        </script>
+            </script>
         <?php
+    endif;
 }
+
 
 // add_action('template_redirect', 'force_login_before_adding_to_cart');
+// function force_login_before_adding_to_cart()
+// {
+//     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
 
-function force_login_before_adding_to_cart()
-{
-    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
-
-    if (is_cart() && !is_user_logged_in()) {
-        set_transient('login_redirect_message', 'You must log in to view your cart.', 30); // 30 seconds 
-        // Redirect to login page
-        wp_redirect(wp_login_url(get_permalink()));
-        exit;
-    }
-}
+//     if (is_cart() && !BasgateHelper::is_user_already_logged_in()) {
+//         set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
+//         // Redirect to login page
+//         wp_redirect(wp_login_url(get_permalink()));
+//         exit;
+//     }
+// }
 
 add_action('login_message', 'add_login_message');
 
@@ -186,7 +159,7 @@ function add_login_message($message)
     BasgateHelper::basgate_log('===== STARTED add_login_message() message:' . $message);
     if ($mssg = get_transient('login_redirect_message')) {
         // Append the message to the existing login message
-        $message .= '<div class="login-message" style="color: red;">' . esc_html($mssg) . '</div>';
+        $message .= '<div class="login-message" style="color: yellow;">' . esc_html($mssg) . '</div>';
         delete_transient('login_redirect_message'); // Delete transient after displaying
     }
     return $message;
@@ -388,7 +361,6 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         echo wp_kses($table_html, $allowedposttags);
     }
 
-
     function getBasgateOrderData($order_id)
     {
         global $wpdb;
@@ -434,109 +406,109 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         BasgateHelper::basgate_log('====== STARTED woocommerce_basgate_add_css_js');
 
         ?>
-                <style>
-                    #basgate_payment_area .message {
-                        float: left;
-                    }
+                                                                <style>
+                                                                    #basgate_payment_area .message {
+                                                                        float: left;
+                                                                    }
 
-                    #basgate_payment_area .btn-area {
-                        float: right;
-                    }
+                                                                    #basgate_payment_area .btn-area {
+                                                                        float: right;
+                                                                    }
 
-                    #basgate_payment_area .btn-area .basgate-img-loader {
-                        margin: 6px;
-                        float: left;
-                        display: none;
-                    }
+                                                                    #basgate_payment_area .btn-area .basgate-img-loader {
+                                                                        margin: 6px;
+                                                                        float: left;
+                                                                        display: none;
+                                                                    }
 
-                    .basgate_response {
-                        padding: 7px 15px;
-                        margin-bottom: 20px;
-                        border: 1px solid transparent;
-                        border-radius: 4px;
-                        text-align: center;
-                    }
+                                                                    .basgate_response {
+                                                                        padding: 7px 15px;
+                                                                        margin-bottom: 20px;
+                                                                        border: 1px solid transparent;
+                                                                        border-radius: 4px;
+                                                                        text-align: center;
+                                                                    }
 
-                    .basgate_response.error-box {
-                        color: #a94442;
-                        background-color: #f2dede;
-                        border-color: #ebccd1;
-                    }
+                                                                    .basgate_response.error-box {
+                                                                        color: #a94442;
+                                                                        background-color: #f2dede;
+                                                                        border-color: #ebccd1;
+                                                                    }
 
-                    .basgate_response.success-box {
-                        color: #155724;
-                        background-color: #d4edda;
-                        border-color: #c3e6cb;
-                    }
+                                                                    .basgate_response.success-box {
+                                                                        color: #155724;
+                                                                        background-color: #d4edda;
+                                                                        border-color: #c3e6cb;
+                                                                    }
 
-                    .basgate_payment_block {
-                        table-layout: fixed;
-                        width: 100%;
-                    }
+                                                                    .basgate_payment_block {
+                                                                        table-layout: fixed;
+                                                                        width: 100%;
+                                                                    }
 
-                    .basgate_payment_block td {
-                        word-wrap: break-word;
-                    }
+                                                                    .basgate_payment_block td {
+                                                                        word-wrap: break-word;
+                                                                    }
 
-                    .basgate_highlight {
-                        font-weight: bold;
-                    }
+                                                                    .basgate_highlight {
+                                                                        font-weight: bold;
+                                                                    }
 
-                    .redColor {
-                        color: #f00;
-                    }
+                                                                    .redColor {
+                                                                        color: #f00;
+                                                                    }
 
-                    .wp-core-ui .button.button-basgate-fetch-status {
-                        float: left;
-                        line-height: normal;
-                        background: #2b9c2b;
-                        color: #fff;
-                        border-color: #2b9c2b;
-                    }
+                                                                    .wp-core-ui .button.button-basgate-fetch-status {
+                                                                        float: left;
+                                                                        line-height: normal;
+                                                                        background: #2b9c2b;
+                                                                        color: #fff;
+                                                                        border-color: #2b9c2b;
+                                                                    }
 
-                    .wp-core-ui .button.button-basgate-fetch-status:hover {
-                        background: #32bd32
-                    }
-                </style>
-                <script type="text/javascript">
-                    jQuery(document).ready(function($) {
-                        jQuery("#button-basgate-fetch-status").click(function() {
-                            var basgate_order_id = jQuery("#basgate_order_id").val();
-                            var order_data_id = jQuery("#order_data_id").val();
-                            var basgate_woo_nonce = jQuery("#basgate_woo_nonce").val();
-                            $('.basgate-img-loader').show();
+                                                                    .wp-core-ui .button.button-basgate-fetch-status:hover {
+                                                                        background: #32bd32
+                                                                    }
+                                                                </style>
+                                                                <script type="text/javascript">
+                                                                    jQuery(document).ready(function($) {
+                                                                        jQuery("#button-basgate-fetch-status").click(function() {
+                                                                            var basgate_order_id = jQuery("#basgate_order_id").val();
+                                                                            var order_data_id = jQuery("#order_data_id").val();
+                                                                            var basgate_woo_nonce = jQuery("#basgate_woo_nonce").val();
+                                                                            $('.basgate-img-loader').show();
 
-                            jQuery.ajax({
-                                type: "POST",
-                                dataType: 'json',
-                                data: {
-                                    action: "savetxnstatus",
-                                    basgate_order_id: basgate_order_id,
-                                    order_data_id: order_data_id,
-                                    basgate_woo_nonce: basgate_woo_nonce
-                                },
-                                url: "<?php echo esc_url(admin_url("admin-ajax.php")); ?>",
-                                success: function(data) {
-                                    $('.basgate-img-loader').hide();
-                                    if (data.success == true) {
-                                        var html = '';
-                                        $.each(data.response, function(index, value) {
-                                            html += "<tr>";
-                                            html += "<td> 1 - " + index + "</td>";
-                                            html += "<td> 2 - " + value + "</td>";
-                                            html += "</tr>";
-                                        });
-                                        jQuery('#basgate_payment_table').html(html);
-                                        jQuery('#basgate_payment_area div.message').html('<div class="basgate_response success-box">' + data.message + '</div>');
-                                    } else {
-                                        jQuery('#basgate_payment_area div.message').html('<div class="basgate_response error-box">' + data.message + '</div>');
-                                    }
-                                }
-                            });
-                        });
-                    });
-                </script>
-            <?php
+                                                                            jQuery.ajax({
+                                                                                type: "POST",
+                                                                                dataType: 'json',
+                                                                                data: {
+                                                                                    action: "savetxnstatus",
+                                                                                    basgate_order_id: basgate_order_id,
+                                                                                    order_data_id: order_data_id,
+                                                                                    basgate_woo_nonce: basgate_woo_nonce
+                                                                                },
+                                                                                url: "<?php echo esc_url(admin_url("admin-ajax.php")); ?>",
+                                                                                success: function(data) {
+                                                                                    $('.basgate-img-loader').hide();
+                                                                                    if (data.success == true) {
+                                                                                        var html = '';
+                                                                                        $.each(data.response, function(index, value) {
+                                                                                            html += "<tr>";
+                                                                                            html += "<td> 1 - " + index + "</td>";
+                                                                                            html += "<td> 2 - " + value + "</td>";
+                                                                                            html += "</tr>";
+                                                                                        });
+                                                                                        jQuery('#basgate_payment_table').html(html);
+                                                                                        jQuery('#basgate_payment_area div.message').html('<div class="basgate_response success-box">' + data.message + '</div>');
+                                                                                    } else {
+                                                                                        jQuery('#basgate_payment_area div.message').html('<div class="basgate_response error-box">' + data.message + '</div>');
+                                                                                    }
+                                                                                }
+                                                                            });
+                                                                        });
+                                                                    });
+                                                                </script>
+                                                            <?php
     }
 
 
@@ -645,9 +617,7 @@ function woocommerce_basgate_init()
 
     // WooCommerce payment gateway class to hook Payment gateway
     require_once(plugin_basename('class.basgate.php'));
-
     // BasgateHelper::basgate_log('===++++ woocommerce_basgate_init 111');
-
     add_filter('woocommerce_payment_gateways', 'woocommerce_add_basgate_gateway');
     function woocommerce_add_basgate_gateway($methods)
     {
@@ -655,14 +625,14 @@ function woocommerce_basgate_init()
         return $methods;
     }
 
-    //TODO: Restore this code after test
-    // add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
+    //TODO: In Test Mode 20250121 we need to hide the Basgate Payment Method
+    add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
-        $user = wp_get_current_user();
-        if ($user->ID && get_user_meta($user->ID, 'authenticated_by', true) !== 'basgate') {
+       // $user = wp_get_current_user();
+        if (!BasgateHelper::is_user_already_logged_in()) {
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced authenticated_by!=basgate');
             unset($available_gateways['basgate']);
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced after unset $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
@@ -685,28 +655,28 @@ function woocommerce_basgate_init()
     function woocommerce_basgate_front_add_css()
     {
         ?>
-                <style>
-                    .basgate_response {
-                        padding: 15px;
-                        margin-bottom: 20px;
-                        border: 1px solid transparent;
-                        border-radius: 4px;
-                        text-align: center;
-                    }
+                                                                <style>
+                                                                    .basgate_response {
+                                                                        padding: 15px;
+                                                                        margin-bottom: 20px;
+                                                                        border: 1px solid transparent;
+                                                                        border-radius: 4px;
+                                                                        text-align: center;
+                                                                    }
 
-                    .basgate_response.error-box {
-                        color: #a94442;
-                        background-color: #f2dede;
-                        border-color: #ebccd1;
-                    }
+                                                                    .basgate_response.error-box {
+                                                                        color: #a94442;
+                                                                        background-color: #f2dede;
+                                                                        border-color: #ebccd1;
+                                                                    }
 
-                    .basgate_response.success-box {
-                        color: #155724;
-                        background-color: #d4edda;
-                        border-color: #c3e6cb;
-                    }
-                </style>
-        <?php
+                                                                    .basgate_response.success-box {
+                                                                        color: #155724;
+                                                                        background-color: #d4edda;
+                                                                        border-color: #c3e6cb;
+                                                                    }
+                                                                </style>
+                                                        <?php
     }
 
     function basgateResponseMessage($content)

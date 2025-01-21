@@ -4,7 +4,7 @@
  * BasgateHelper Class 
  */
 require_once __DIR__ . "/BasgateConstants.php";
-if (!class_exists('BasgateHelper')) :
+if (!class_exists('BasgateHelper')):
     class BasgateHelper
     {
         /* 
@@ -41,7 +41,8 @@ if (!class_exists('BasgateHelper')) :
          */
         public static function getBasgateURL($url = false, $isProduction = 0)
         {
-            if (!$url) return false;
+            if (!$url)
+                return false;
             if ($isProduction == 1) {
                 return BasgateConstants::PRODUCTION_HOST . $url;
             } else {
@@ -53,7 +54,8 @@ if (!class_exists('BasgateHelper')) :
          */
         public static function getBasgateSDKURL($url = false, $isProduction = 0)
         {
-            if (!$url) return false;
+            if (!$url)
+                return false;
             return $url;
             // if ($isProduction == 1) {
             //     return BasgateConstants::BASGATE_SDK_URL_PRODUCTION . $url;
@@ -89,7 +91,7 @@ if (!class_exists('BasgateHelper')) :
 
             self::basgate_log("===== STARTED executecUrl " . $method . " url:" . $apiURL);
             $timeout = 45;
-            if (! ini_get('safe_mode')) {
+            if (!ini_get('safe_mode')) {
                 set_time_limit($timeout + 10);
             }
             // 'Accept: text/plain'
@@ -101,13 +103,13 @@ if (!class_exists('BasgateHelper')) :
             }
             $args = array(
                 'headers' => $headers,
-                'body'      => $requestParamList,
-                'method'    => $method,
-                'timeout'     => $timeout,
+                'body' => $requestParamList,
+                'method' => $method,
+                'timeout' => $timeout,
 
             );
 
-            $result =  wp_remote_request($apiURL, $args);
+            $result = wp_remote_request($apiURL, $args);
             $response_code = wp_remote_retrieve_response_code($result);
             $error = wp_remote_retrieve_response_message($result);
 
@@ -128,7 +130,7 @@ if (!class_exists('BasgateHelper')) :
 
             $response_body = wp_remote_retrieve_body($result);
 
-            if (200 !==  $response_code) {
+            if (200 !== $response_code) {
                 $msg = sprintf(
                     /* translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body. */
                     __('executecUrl error status!=200 for \n url: %1$s, \n Response code: %2$s, \n Data: %3$s ,\n ErrorMsg: %4$s,\n Response Body:%5$s', 'bassdk-woocommerce-payments'),
@@ -152,7 +154,7 @@ if (!class_exists('BasgateHelper')) :
         }
 
         //Process Basgate Token
-        public static function getBasToken($bassdk_api, $client_id, $client_secret, $grant_type  = "authorization_code")
+        public static function getBasToken($bassdk_api, $client_id, $client_secret, $grant_type = "authorization_code")
         {
             BasgateHelper::basgate_log("===== STARTED getBasToken $bassdk_api, $client_id, $client_secret, $grant_type");
             $redirect_uri = $bassdk_api . "api/v1/auth/callback";
@@ -222,7 +224,7 @@ if (!class_exists('BasgateHelper')) :
                 $is_debug = $settings['debug'];
             }
 
-            if ((! defined('WP_DEBUG') || ! WP_DEBUG) && $is_debug == 'no') {
+            if ((!defined('WP_DEBUG') || !WP_DEBUG) && $is_debug == 'no') {
                 return; // Only log if WP_DEBUG is enabled
             }
 
@@ -230,7 +232,7 @@ if (!class_exists('BasgateHelper')) :
                 error_log($message);
             }
 
-            if (! function_exists('get_filesystem_method')) {
+            if (!function_exists('get_filesystem_method')) {
                 require_once(ABSPATH . 'wp-admin/includes/file.php');
             }
 
@@ -256,6 +258,18 @@ if (!class_exists('BasgateHelper')) :
                 $new_contents,
                 FS_CHMOD_FILE // predefined mode settings for WP files
             );
+        }
+
+        public static function is_user_already_logged_in()
+        {
+            Helper::basgate_log('===== STARTED is_user_already_logged_in() ');
+            $current_user = wp_get_current_user();
+            $authenticated_by = get_user_meta($current_user->ID, 'authenticated_by', true);
+
+            if (is_user_logged_in() && $authenticated_by === 'basgate') {
+                return true;
+            }
+            return false;
         }
     }
 endif;
