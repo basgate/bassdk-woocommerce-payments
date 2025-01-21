@@ -13,9 +13,9 @@ class WC_Basgate extends WC_Payment_Gateway
     public function __construct()
     {
         // Go wild in here
-        $this->id = BasgateConstants::ID;
-        $this->method_title = BasgateConstants::METHOD_TITLE;
-        $this->method_description = BasgateConstants::METHOD_DESCRIPTION;
+        $this->id = __(BasgateConstants::ID, 'bassdk-woocommerce-payments');
+        $this->method_title = __(BasgateConstants::METHOD_TITLE, 'bassdk-woocommerce-payments');
+        $this->method_description = __(BasgateConstants::METHOD_DESCRIPTION, 'bassdk-woocommerce-payments');
         $this->icon = apply_filters('woocommerce_gateway_icon', plugin_dir_url(__FILE__) . 'assets/images/bassdk-logo.svg');
         $this->has_fields = false;
         $this->supports = array(
@@ -33,7 +33,7 @@ class WC_Basgate extends WC_Payment_Gateway
         );
         $this->init_form_fields();
         $this->init_settings();
-        $this->title = BasgateConstants::TITLE;
+        $this->title = __(BasgateConstants::TITLE, 'bassdk-woocommerce-payments');
         $this->description = $this->getSetting('bas_description');
         $this->msg = array('message' => '', 'class' => '');
 

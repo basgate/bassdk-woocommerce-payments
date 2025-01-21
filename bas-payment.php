@@ -106,33 +106,38 @@ if (function_exists('register_deactivation_hook'))
 
 
 add_action('wp_footer', 'force_login_before_adding_to_cart_main');
+// add_action('template_redirect', 'force_login_before_adding_to_cart_main');
 
 function force_login_before_adding_to_cart_main()
 {
     $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+
     BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main add_to_cart_button clicked");
-    if (!$settings['enabled']):
+    if ($settings['enabled'] && is_cart()):
         ?>
             <script type="text/javascript">
                 console.log('===== add_force_login_script add_to_cart_button clicked 111')
-                jQuery(document).ready(function($) {
-                    console.log('===== add_force_login_script add_to_cart_button clicked 222')
-                    $('body').on('click', '.add_to_cart_button', function(e) {
-                        console.log('===== add_force_login_script add_to_cart_button clicked 333')
-                        if (!<?php echo BasgateHelper::is_user_already_logged_in(); ?>) {
-                            e.preventDefault(); // Prevent the default action
-                            console.log('====== add_force_login_script You must log in to add products to your cart.');
-                            <?php
-                            BasgateHelper::basgate_log("===== add_force_login_script You must log in to add products to your cart.");
-                            // Set a transient message
-                            set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments'), 5); // 30 seconds 
-                            // Redirect to login page
-                            wp_redirect(wp_login_url(get_permalink()));
-                            exit;
-                            ?>
-                        }
-                    });
-                });
+                window.addEventListener("JSBridgeReady", async (event) => {
+                    console.log('===== add_force_login_script JSBridgeReady READY ')
+                    jQuery(document).ready(function($) {
+                        console.log('===== add_force_login_script add_to_cart_button clicked 222')
+                        $('body').on('click', '.add_to_cart_button', function(e) {
+                            console.log('===== add_force_login_script add_to_cart_button clicked 333')
+                                if (!<?php echo BasgateHelper::is_user_already_logged_in(); ?>) {
+                                    e.preventDefault(); // Prevent the default action
+                                    console.log('====== add_force_login_script You must log in to add products to your cart.');
+                                    <?php
+                                    BasgateHelper::basgate_log("===== add_force_login_script You must log in to add products to your cart.");
+                                    // Set a transient message
+                                    set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments'), 5); // 30 seconds 
+                                    // Redirect to login page
+                                    wp_redirect(wp_login_url(get_permalink()));
+                                    exit;
+                                    ?>
+                                }
+                        });
+                    }, 
+                false); });
             </script>
         <?php
     endif;
@@ -631,7 +636,7 @@ function woocommerce_basgate_init()
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
-       // $user = wp_get_current_user();
+        // $user = wp_get_current_user();
         if (!BasgateHelper::is_user_already_logged_in()) {
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced authenticated_by!=basgate');
             unset($available_gateways['basgate']);
@@ -654,29 +659,30 @@ function woocommerce_basgate_init()
 
     function woocommerce_basgate_front_add_css()
     {
+        //@lin
         ?>
-                                                                <style>
-                                                                    .basgate_response {
-                                                                        padding: 15px;
-                                                                        margin-bottom: 20px;
-                                                                        border: 1px solid transparent;
-                                                                        border-radius: 4px;
-                                                                        text-align: center;
-                                                                    }
+            <style>
+                .basgate_response {
+                    padding: 15px;
+                    margin-bottom: 20px;
+                    border: 1px solid transparent;
+                    border-radius: 4px;
+                    text-align: center;
+                }
 
-                                                                    .basgate_response.error-box {
-                                                                        color: #a94442;
-                                                                        background-color: #f2dede;
-                                                                        border-color: #ebccd1;
-                                                                    }
+                .basgate_response.error-box {
+                    color: #a94442;
+                    background-color: #f2dede;
+                    border-color: #ebccd1;
+                }
 
-                                                                    .basgate_response.success-box {
-                                                                        color: #155724;
-                                                                        background-color: #d4edda;
-                                                                        border-color: #c3e6cb;
-                                                                    }
-                                                                </style>
-                                                        <?php
+                .basgate_response.success-box {
+                    color: #155724;
+                    background-color: #d4edda;
+                    border-color: #c3e6cb;
+                }
+            </style>
+        <?php
     }
 
     function basgateResponseMessage($content)

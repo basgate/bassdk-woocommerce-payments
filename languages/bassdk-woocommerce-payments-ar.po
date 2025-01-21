@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bassdk Payment for WooCommerce\n"
-"POT-Creation-Date: 2025-01-13 22:04+0300\n"
-"PO-Revision-Date: 2025-01-13 22:05+0300\n"
+"POT-Creation-Date: 2025-01-21 21:47+0300\n"
+"PO-Revision-Date: 2025-01-21 21:49+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -45,7 +45,7 @@ msgstr ""
 #: .history/bas-payment_20241017182437.php:183
 #: .history/bas-payment_20241020231946.php:183
 #: .history/bas-payment_20241023213803.php:182
-#: .history/bas-payment_20241024192642.php:184 bas-payment.php:278
+#: .history/bas-payment_20241024192642.php:184 bas-payment.php:251
 msgid "BasSDK Payments"
 msgstr "منصة بس للمدفوعات"
 
@@ -71,22 +71,23 @@ msgstr ""
 "Login SDK</a> ."
 
 #: .history/bas-payment_20241023213803.php:265
-#: .history/bas-payment_20241024192642.php:267 bas-payment.php:361
+#: .history/bas-payment_20241024192642.php:267 bas-payment.php:334
 msgid "Fetch Status"
 msgstr "التحقق من حالة الطلب"
 
 #: .history/bas-payment_20241023213803.php:440
-#: .history/bas-payment_20241024192642.php:442 bas-payment.php:552
+#: .history/bas-payment_20241024192642.php:442 bas-payment.php:524
 msgid "Something went wrong. Please again"
 msgstr "حدث خطاء ما, يرجى إعادة المحاولة"
 
 #: .history/bas-payment_20241023213803.php:459
-#: .history/bas-payment_20241024192642.php:461 bas-payment.php:571
+#: .history/bas-payment_20241024192642.php:461 bas-payment.php:543
 msgid "Updated <b>STATUS</b> has been fetched"
 msgstr "تم تحديث ال <b>الحالة</b> بنجاح"
 
 #: .history/class-block_20241013032706.php:42
 #: .history/class-block_20241024193734.php:45 class-block.php:44
+#: includes/BasgateConstants.php:38 includes/BasgateConstants.php:43
 msgid "Pay via Basgate"
 msgstr "الدفع بواسطة منصة بس"
 
@@ -271,8 +272,8 @@ msgstr "أخر تحديث"
 #: .history/class.basgate_20241024192008.php:321
 #: .history/class.basgate_20241024192008.php:680
 #: .history/class.basgate_20241024225329.php:317
-#: .history/class.basgate_20241024225329.php:670 class.basgate.php:342
-#: class.basgate.php:725
+#: .history/class.basgate_20241024225329.php:670 class.basgate.php:338
+#: class.basgate.php:721
 #, php-format
 msgid "Could not retrieve signature, please try again Data: %1$s."
 msgstr "لم يستطع إيجاد التوقيع, الرجاء المحاولة مرة أخرى %1$s."
@@ -284,8 +285,8 @@ msgstr "لم يستطع إيجاد التوقيع, الرجاء المحاولة
 #: .history/class.basgate_20241024192008.php:325
 #: .history/class.basgate_20241024192008.php:684
 #: .history/class.basgate_20241024225329.php:321
-#: .history/class.basgate_20241024225329.php:674 class.basgate.php:346
-#: class.basgate.php:729
+#: .history/class.basgate_20241024225329.php:674 class.basgate.php:342
+#: class.basgate.php:725
 msgid "Could not retrieve signature, please try again."
 msgstr "لم يستطع إيجاد التوقيع, الرجاء المحاولة مرة أخرى."
 
@@ -317,7 +318,7 @@ msgstr ""
 
 #: .history/class.basgate_20241023214314.php:728
 #: .history/class.basgate_20241024192008.php:732
-#: .history/class.basgate_20241024225329.php:719 class.basgate.php:790
+#: .history/class.basgate_20241024225329.php:719 class.basgate.php:786
 msgid ""
 "It seems some issue in server to server communication. Kindly connect with "
 "us."
@@ -325,7 +326,7 @@ msgstr "يبدو ان هناك مشكلة في الاتصال مع السيرف�
 
 #: .history/class.basgate_20241023214314.php:739
 #: .history/class.basgate_20241024192008.php:743
-#: .history/class.basgate_20241024225329.php:730 class.basgate.php:801
+#: .history/class.basgate_20241024225329.php:730 class.basgate.php:797
 msgid "Thank you for your order. Your payment has been successfully received."
 msgstr "شكرا لك, طلب الدفع الخاص بك تم استلامة بنجاح."
 
@@ -341,7 +342,7 @@ msgstr "<b>:رقم الطلب منصة بس</b> "
 
 #: .history/class.basgate_20241023214314.php:757
 #: .history/class.basgate_20241024192008.php:761
-#: .history/class.basgate_20241024225329.php:748 class.basgate.php:819
+#: .history/class.basgate_20241024225329.php:748 class.basgate.php:815
 msgid "Your payment has been pending!"
 msgstr "طلب الدفع الخاص بك تم تعليقة!"
 
@@ -350,26 +351,26 @@ msgstr "طلب الدفع الخاص بك تم تعليقة!"
 #: .history/class.basgate_20241024192008.php:763
 #: .history/class.basgate_20241024192008.php:770
 #: .history/class.basgate_20241024225329.php:750
-#: .history/class.basgate_20241024225329.php:757 class.basgate.php:821
-#: class.basgate.php:828
+#: .history/class.basgate_20241024225329.php:757 class.basgate.php:817
+#: class.basgate.php:824
 msgid " Reason: "
 msgstr " السبب: "
 
 #: .history/class.basgate_20241023214314.php:764
 #: .history/class.basgate_20241024192008.php:768
-#: .history/class.basgate_20241024225329.php:755 class.basgate.php:826
+#: .history/class.basgate_20241024225329.php:755 class.basgate.php:822
 msgid "Your payment has been failed!"
 msgstr "فشل طلب الدفع الخاص بك!"
 
 #: .history/class.basgate_20241023214314.php:773
 #: .history/class.basgate_20241024192008.php:777
-#: .history/class.basgate_20241024225329.php:764 class.basgate.php:835
+#: .history/class.basgate_20241024225329.php:764 class.basgate.php:831
 msgid "No order found to process. Kindly contact with us."
 msgstr "لم يتم العثور على طلبك, الرجاء التواصل بنا."
 
 #: .history/class.basgate_20241023214314.php:776
 #: .history/class.basgate_20241024192008.php:780
-#: .history/class.basgate_20241024225329.php:767 class.basgate.php:838
+#: .history/class.basgate_20241024225329.php:767 class.basgate.php:834
 msgid "Security Error. Checksum Mismatched!"
 msgstr "خطء امني. النتيجة غير مطابقة!"
 
@@ -383,7 +384,7 @@ msgstr ""
 "الالكترونية والبنوك المحلية  <img src=\"%s\" height=\"24px;\" />"
 
 #: .history/class.basgate_20241024192008.php:447
-#: .history/class.basgate_20241024225329.php:437 class.basgate.php:485
+#: .history/class.basgate_20241024225329.php:437 class.basgate.php:481
 msgid ""
 "Could not retrieve the Transaction Token, please check that you are inside "
 "basgate platform and try again."
@@ -401,11 +402,11 @@ msgstr ""
 "افضل مزود خدمة لبوابات الدفع المالية في اليمن والتي تضم اكثر المحافظ "
 "الالكترونية والبنوك المحلية  <img src=\"%1$s\" height=\"24px;\" />"
 
-#: .history/class.basgate_20241024225329.php:737 class.basgate.php:808
+#: .history/class.basgate_20241024225329.php:737 class.basgate.php:804
 msgid "Transaction ID:"
 msgstr "رقم العملية:"
 
-#: .history/class.basgate_20241024225329.php:737 class.basgate.php:808
+#: .history/class.basgate_20241024225329.php:737 class.basgate.php:804
 msgid "Basgate Order ID:"
 msgstr "رقم الطلب منصة بس:"
 
@@ -417,7 +418,7 @@ msgstr "رقم الطلب منصة بس:"
 #: .history/includes/BasgateHelper_20241023214838.php:138
 #: .history/includes/BasgateHelper_20241024191805.php:229
 #: .history/includes/BasgateHelper_20241024225432.php:211
-#: includes/BasgateHelper.php:117
+#: includes/BasgateHelper.php:119
 #, php-format
 msgid ""
 "executecUrl error for url: %1$s, Error code: %2$s, Error message: %3$s, "
@@ -493,6 +494,10 @@ msgstr ""
 "يتطلب الدفع الخاص بمنصة \"بس\" تحميل وتفعيل ال SDK الخاص بالدخول, للتحميل "
 "أضغط هنا"
 
+#: bas-payment.php:128
+msgid "You must log in to view your cart."
+msgstr "يجب عليك تسجيل الدخول قبل مواصلة الشراء ..."
+
 #: class.basgate.php:145
 msgid "Enable Debug"
 msgstr "تفعيل نمط المطور"
@@ -502,52 +507,60 @@ msgid "Enable debug mode to log all oprations."
 msgstr "تفعيل نمط المطور لتسحيل جميع العمليات."
 
 #. translators: 1:body, 2: bodystr , 3:checksum.
-#: class.basgate.php:387
+#: class.basgate.php:383
 #, php-format
 msgid "trxToken empty body: %1$s , \\n bodystr: %2$s , \\n $checksum: %3$s."
 msgstr "trxToken empty body: %1$s , \\n bodystr: %2$s , \\n $checksum: %3$s."
 
-#: class.basgate.php:401 class.basgate.php:1090
+#: class.basgate.php:397 class.basgate.php:1086
 msgid "ERROR Can not complete the request"
 msgstr "خطاء , لا يمكن أتمام الطلب"
 
-#: class.basgate.php:404
+#: class.basgate.php:400
 msgid "ERROR amount is empty"
 msgstr "خطاء, خانة المبلغ فارغة"
 
-#: class.basgate.php:927
+#: class.basgate.php:923
 msgid "Invalid order ID."
 msgstr "خطاء في رقم الطلب."
 
-#: class.basgate.php:946
+#: class.basgate.php:942
 msgid "Refund failed response error. Please try again."
 msgstr "خطاء في الرد من السرفر عند عملية الاسترداد يرجى المحاولة لاحقا."
 
-#: class.basgate.php:951
+#: class.basgate.php:947
 msgid "Refunded via Basgate :"
 msgstr "استرداد المبلغ عبر منصة بس :"
 
-#: class.basgate.php:956
+#: class.basgate.php:952
 #, php-format
 msgid "Refunded %1$s - Reason: %2$s , BasStatus:%3$s"
 msgstr "استرداد  %1$s - بسبب: %2$s , الحالة:%3$s"
 
-#: class.basgate.php:974
+#: class.basgate.php:970
 msgid "Refund failed. Please try again."
 msgstr "خطاء في عملية الاسترداد يرجى المحاولة لاحقا."
 
-#: class.basgate.php:1052
+#: class.basgate.php:1048
 msgid "ERROR Can not complete the request invalid grant"
 msgstr "خطاء , لا يمكن أتمام الطلب بسبب خطاء في التخويل"
 
 #. translators: 1:body, 2: bodyData , 3:status.
-#: class.basgate.php:1079
+#: class.basgate.php:1075
 #, php-format
 msgid "trxToken empty body: %1$s , \\n bodyData: %2$s , \\n $status: %3$s."
 msgstr "trxToken empty body: %1$s , \\n bodyData: %2$s , \\n $status: %3$s."
 
+#: includes/BasgateConstants.php:36 includes/BasgateConstants.php:39
+msgid ""
+"The best payment gateway provider in Yemen for e-payment through most of "
+"wallets and banks"
+msgstr ""
+"افضل مزود خدمة لبوابات الدفع المالية في اليمن والتي تضم اكثر المحافظ "
+"الالكترونية والبنوك المحلية"
+
 #. translators: 1: Url, 2: Response code, 3: Event data, 4: ErrorMsg ,5:Response Body.
-#: includes/BasgateHelper.php:134
+#: includes/BasgateHelper.php:136
 #, php-format
 msgid ""
 "executecUrl error status!=200 for \\n url: %1$s, \\n Response code: %2$s, "
