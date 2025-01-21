@@ -626,7 +626,7 @@ function woocommerce_basgate_init()
     }
 
     //TODO: In Test Mode 20250121 we need to hide the Basgate Payment Method
-    add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
+    // add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
 
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
