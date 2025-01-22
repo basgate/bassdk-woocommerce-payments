@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Bassdk Payment for WooCommerce\n"
 "POT-Creation-Date: 2025-01-21 21:47+0300\n"
-"PO-Revision-Date: 2025-01-21 21:49+0300\n"
+"PO-Revision-Date: 2025-01-22 20:56+0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -571,7 +571,7 @@ msgstr ""
 
 #. Plugin Name of the plugin/theme
 msgid "Bassdk Payment for WooCommerce"
-msgstr "الدفع عبر منصة بس لل WooCommerce"
+msgstr "Bassdk Payment for WooCommerce"
 
 #. Plugin URI of the plugin/theme
 msgid "https://github.com/Basgate/bassdk-woocommerce-payments"
