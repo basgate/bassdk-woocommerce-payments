@@ -134,24 +134,22 @@ function force_login_before_adding_to_cart_main()
                 window.addEventListener("JSBridgeReady", async (event) => {
                     alert('JSBridgeReady event fired 222');
                     console.log('===== force_login_before_adding_to_cart_main JSBridgeReady READY ')
-                    jQuery(document).ready(function($) {
-                        console.log('===== force_login_before_adding_to_cart_main add_to_cart_button clicked 222')
-                        $('body').on('click', '.add_to_cart_button', function(e) {
-                            console.log('===== force_login_before_adding_to_cart_main add_to_cart_button clicked 333')
-                            // if (!<?php echo BasgateHelper::is_user_already_logged_in(); ?>) {
-                                e.preventDefault(); // Prevent the default action
-                                console.log('====== force_login_before_adding_to_cart_main You must log in to add products to your cart.');
-                                <?php
-                                BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main You must log in to add products to your cart.");
-                                // Set a transient message
-                                set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments'), 5); // 30 seconds 
-                                // Redirect to login page
-                                wp_redirect(wp_login_url(get_permalink()));
-                                // exit;
-                                ?>
-                            // }
-                        });
-                    }); 
+                    // jQuery(document).ready(function($) {
+                    //     console.log('===== force_login_before_adding_to_cart_main add_to_cart_button clicked 222')
+                    //     $('body').on('click', '.add_to_cart_button', function(e) {
+                    //         console.log('===== force_login_before_adding_to_cart_main add_to_cart_button clicked 333')
+                    //             e.preventDefault(); // Prevent the default action
+                    //             console.log('====== force_login_before_adding_to_cart_main You must log in to add products to your cart.');
+                    //             <?php
+                    //             BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main You must log in to add products to your cart.");
+                    //             // Set a transient message
+                    //             set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments'), 5); // 30 seconds 
+                    //             // Redirect to login page
+                    //             wp_redirect(wp_login_url(get_permalink()));
+                    //             // exit;
+                    //             ?>
+                    //     });
+                    // }); 
                 },false);
             </script>
         <?php
