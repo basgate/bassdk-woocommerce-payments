@@ -145,7 +145,7 @@ function force_login_before_adding_to_cart_main()
 
 // //TODO: In Test Mode 20250121 we need to hide the Basgate Payment Method
 if (!is_admin()) {
-    add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
+    add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced', 20);
 }
 
 function custom_hide_basgate_payment_method_advanced($available_gateways)
@@ -429,7 +429,6 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
     function woocommerce_basgate_add_css_js()
     {
         BasgateHelper::basgate_log('====== STARTED woocommerce_basgate_add_css_js');
-
         ?>
             <style>
                 #basgate_payment_area .message {
