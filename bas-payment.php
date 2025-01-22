@@ -411,109 +411,109 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         BasgateHelper::basgate_log('====== STARTED woocommerce_basgate_add_css_js');
 
         ?>
-                                                                <style>
-                                                                    #basgate_payment_area .message {
-                                                                        float: left;
-                                                                    }
+            <style>
+                #basgate_payment_area .message {
+                    float: left;
+                }
 
-                                                                    #basgate_payment_area .btn-area {
-                                                                        float: right;
-                                                                    }
+                #basgate_payment_area .btn-area {
+                    float: right;
+                }
 
-                                                                    #basgate_payment_area .btn-area .basgate-img-loader {
-                                                                        margin: 6px;
-                                                                        float: left;
-                                                                        display: none;
-                                                                    }
+                #basgate_payment_area .btn-area .basgate-img-loader {
+                    margin: 6px;
+                    float: left;
+                    display: none;
+                }
 
-                                                                    .basgate_response {
-                                                                        padding: 7px 15px;
-                                                                        margin-bottom: 20px;
-                                                                        border: 1px solid transparent;
-                                                                        border-radius: 4px;
-                                                                        text-align: center;
-                                                                    }
+                .basgate_response {
+                    padding: 7px 15px;
+                    margin-bottom: 20px;
+                    border: 1px solid transparent;
+                    border-radius: 4px;
+                    text-align: center;
+                }
 
-                                                                    .basgate_response.error-box {
-                                                                        color: #a94442;
-                                                                        background-color: #f2dede;
-                                                                        border-color: #ebccd1;
-                                                                    }
+                .basgate_response.error-box {
+                    color: #a94442;
+                    background-color: #f2dede;
+                    border-color: #ebccd1;
+                }
 
-                                                                    .basgate_response.success-box {
-                                                                        color: #155724;
-                                                                        background-color: #d4edda;
-                                                                        border-color: #c3e6cb;
-                                                                    }
+                .basgate_response.success-box {
+                    color: #155724;
+                    background-color: #d4edda;
+                    border-color: #c3e6cb;
+                }
 
-                                                                    .basgate_payment_block {
-                                                                        table-layout: fixed;
-                                                                        width: 100%;
-                                                                    }
+                .basgate_payment_block {
+                    table-layout: fixed;
+                    width: 100%;
+                }
 
-                                                                    .basgate_payment_block td {
-                                                                        word-wrap: break-word;
-                                                                    }
+                .basgate_payment_block td {
+                    word-wrap: break-word;
+                }
 
-                                                                    .basgate_highlight {
-                                                                        font-weight: bold;
-                                                                    }
+                .basgate_highlight {
+                    font-weight: bold;
+                }
 
-                                                                    .redColor {
-                                                                        color: #f00;
-                                                                    }
+                .redColor {
+                    color: #f00;
+                }
 
-                                                                    .wp-core-ui .button.button-basgate-fetch-status {
-                                                                        float: left;
-                                                                        line-height: normal;
-                                                                        background: #2b9c2b;
-                                                                        color: #fff;
-                                                                        border-color: #2b9c2b;
-                                                                    }
+                .wp-core-ui .button.button-basgate-fetch-status {
+                    float: left;
+                    line-height: normal;
+                    background: #2b9c2b;
+                    color: #fff;
+                    border-color: #2b9c2b;
+                }
 
-                                                                    .wp-core-ui .button.button-basgate-fetch-status:hover {
-                                                                        background: #32bd32
-                                                                    }
-                                                                </style>
-                                                                <script type="text/javascript">
-                                                                    jQuery(document).ready(function($) {
-                                                                        jQuery("#button-basgate-fetch-status").click(function() {
-                                                                            var basgate_order_id = jQuery("#basgate_order_id").val();
-                                                                            var order_data_id = jQuery("#order_data_id").val();
-                                                                            var basgate_woo_nonce = jQuery("#basgate_woo_nonce").val();
-                                                                            $('.basgate-img-loader').show();
+                .wp-core-ui .button.button-basgate-fetch-status:hover {
+                    background: #32bd32
+                }
+            </style>
+            <script type="text/javascript">
+                jQuery(document).ready(function($) {
+                    jQuery("#button-basgate-fetch-status").click(function() {
+                        var basgate_order_id = jQuery("#basgate_order_id").val();
+                        var order_data_id = jQuery("#order_data_id").val();
+                        var basgate_woo_nonce = jQuery("#basgate_woo_nonce").val();
+                        $('.basgate-img-loader').show();
 
-                                                                            jQuery.ajax({
-                                                                                type: "POST",
-                                                                                dataType: 'json',
-                                                                                data: {
-                                                                                    action: "savetxnstatus",
-                                                                                    basgate_order_id: basgate_order_id,
-                                                                                    order_data_id: order_data_id,
-                                                                                    basgate_woo_nonce: basgate_woo_nonce
-                                                                                },
-                                                                                url: "<?php echo esc_url(admin_url("admin-ajax.php")); ?>",
-                                                                                success: function(data) {
-                                                                                    $('.basgate-img-loader').hide();
-                                                                                    if (data.success == true) {
-                                                                                        var html = '';
-                                                                                        $.each(data.response, function(index, value) {
-                                                                                            html += "<tr>";
-                                                                                            html += "<td> 1 - " + index + "</td>";
-                                                                                            html += "<td> 2 - " + value + "</td>";
-                                                                                            html += "</tr>";
-                                                                                        });
-                                                                                        jQuery('#basgate_payment_table').html(html);
-                                                                                        jQuery('#basgate_payment_area div.message').html('<div class="basgate_response success-box">' + data.message + '</div>');
-                                                                                    } else {
-                                                                                        jQuery('#basgate_payment_area div.message').html('<div class="basgate_response error-box">' + data.message + '</div>');
-                                                                                    }
-                                                                                }
-                                                                            });
-                                                                        });
-                                                                    });
-                                                                </script>
-                                                            <?php
+                        jQuery.ajax({
+                            type: "POST",
+                            dataType: 'json',
+                            data: {
+                                action: "savetxnstatus",
+                                basgate_order_id: basgate_order_id,
+                                order_data_id: order_data_id,
+                                basgate_woo_nonce: basgate_woo_nonce
+                            },
+                            url: "<?php echo esc_url(admin_url("admin-ajax.php")); ?>",
+                            success: function(data) {
+                                $('.basgate-img-loader').hide();
+                                if (data.success == true) {
+                                    var html = '';
+                                    $.each(data.response, function(index, value) {
+                                        html += "<tr>";
+                                        html += "<td> 1 - " + index + "</td>";
+                                        html += "<td> 2 - " + value + "</td>";
+                                        html += "</tr>";
+                                    });
+                                    jQuery('#basgate_payment_table').html(html);
+                                    jQuery('#basgate_payment_area div.message').html('<div class="basgate_response success-box">' + data.message + '</div>');
+                                } else {
+                                    jQuery('#basgate_payment_area div.message').html('<div class="basgate_response error-box">' + data.message + '</div>');
+                                }
+                            }
+                        });
+                    });
+                });
+            </script>
+        <?php
     }
 
 
@@ -632,7 +632,6 @@ function woocommerce_basgate_init()
 
     //TODO: In Test Mode 20250121 we need to hide the Basgate Payment Method
     add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
-
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
