@@ -634,7 +634,7 @@ function woocommerce_basgate_init()
     add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
-        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
+        BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced before $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
         // $user = wp_get_current_user();
         if (!BasgateHelper::is_user_already_logged_in()) {
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced authenticated_by!=basgate');
