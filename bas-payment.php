@@ -240,12 +240,14 @@ function uninstall_basgate_plugin()
 
 function basgateWoopayment_enqueue_style()
 {
+    BasgateHelper::basgate_log('====== STARTED basgateWoopayment_enqueue_style');
     wp_enqueue_style('basgateWoopayment', plugin_dir_url(__FILE__) . 'assets/css/basgate-payments.css', array(), time(), '');
     wp_enqueue_script('basgate-script', plugin_dir_url(__FILE__) . 'assets/js/basgate-payments.js', array('jquery'), time(), true);
 }
 
 function basgateWoopayment_js_css()
 {
+    BasgateHelper::basgate_log('====== STARTED basgateWoopayment_js_css');
     if (class_exists('WooCommerce')) {
         if (is_cart() || is_checkout()) {
             add_action('wp_head', 'basgateWoopayment_enqueue_style');

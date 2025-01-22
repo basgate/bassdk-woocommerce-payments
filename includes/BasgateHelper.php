@@ -262,11 +262,12 @@ if (!class_exists('BasgateHelper')):
 
         public static function is_user_already_logged_in()
         {
-            self::basgate_log('===== STARTED is_user_already_logged_in() ');
+            self::basgate_log('===== STARTED is_user_already_logged_in() - Payments ');
             $current_user = wp_get_current_user();
             $authenticated_by = get_user_meta($current_user->ID, 'authenticated_by', true);
 
             if (is_user_logged_in() && $authenticated_by === 'basgate') {
+                self::basgate_log('===== is_user_already_logged_in() - Payments - User is already logged in - Basgate');
                 return true;
             }
             return false;

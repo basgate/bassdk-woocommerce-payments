@@ -7,6 +7,7 @@ var isBasInDebug = false
 var isBasAuthTokenReturned = false
 
 console.log("Start Basgate-ClientSDK Script initBas() - Payments");
+
 function initBas() {
     console.log("initBas() STARTED - Payments");
     window.addEventListener("JSBridgeReady", async (event) => {
@@ -15,6 +16,26 @@ function initBas() {
         await getBasConfig();
     }, false);
 }
+
+////// FROM ALIBABA SDK //////
+
+function isBasSupperApp(callback) {
+    // Invoke directly if JSBridge is already injected
+    if (window.JSBridgeReady) {
+        callback && callback();
+    } else {
+        // Otherwise listen to JSBridgeReady event
+        document.addEventListener('JSBridgeReady', callback, false);
+    }
+}
+
+
+isBasSupperApp(function () {
+    alert('bridge ready');
+});
+
+
+/////////
 
 // // console.log("isBasSupperApp()");
 // const isBasSupperApp = () => {
