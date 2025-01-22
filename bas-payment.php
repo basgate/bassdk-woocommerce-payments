@@ -111,9 +111,19 @@ add_action('wp_footer', 'force_login_before_adding_to_cart_main');
 function force_login_before_adding_to_cart_main()
 {
     $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+    if (isset($settings['enabled']) && $settings['enabled'] !== 'yes') {
+        return;
+    }
+    if(!class_exists('WooCommerce')){
+        return;
+    }
+
+    if(!is_checkout() && !is_cart()){
+        return;
+    }
 
     BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main add_to_cart_button clicked");
-    if ($settings['enabled'] == 'yes'):
+    if (!BasgateHelper::is_user_already_logged_in()) :
         ?>
             <script type="text/javascript">
                 console.log('===== add_force_login_script add_to_cart_button clicked 111')
@@ -184,7 +194,7 @@ function add_login_message($message)
     BasgateHelper::basgate_log('===== STARTED add_login_message() message:' . $message);
     if ($mssg = get_transient('login_redirect_message')) {
         // Append the message to the existing login message
-        $message .= '<div class="login-message" style="color: yellow;">' . esc_html($mssg) . '</div>';
+        $message .= '<div class="login-message" style="color: darkorange;">' . esc_html($mssg) . '</div>';
         delete_transient('login_redirect_message'); // Delete transient after displaying
     }
     return $message;
@@ -535,7 +545,6 @@ if (BasgateConstants::SAVE_BASGATE_RESPONSE) {
         <?php
     }
 
-
     add_action('wp_ajax_savetxnstatus', 'savetxnstatus');
 
     function savetxnstatus()
@@ -664,7 +673,7 @@ function woocommerce_basgate_init()
 
     function woocommerce_basgate_front_add_css()
     {
-        //@lin
+        
         ?>
             <style>
                 .basgate_response {
