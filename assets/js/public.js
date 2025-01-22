@@ -6,9 +6,9 @@ var isJSBridgeReadyPayments = false
 var isBasInDebug = false
 var isBasAuthTokenReturned = false
 
-console.log("Start Basgate-ClientSDK Script initBas()");
+console.log("Start Basgate-ClientSDK Script initBas() - Payments");
 function initBas() {
-    console.log("initBas() STARTED");
+    console.log("initBas() STARTED - Payments");
     window.addEventListener("JSBridgeReady", async (event) => {
         console.log("JSBridgeReady fired");
         isJSBridgeReadyPayments = true

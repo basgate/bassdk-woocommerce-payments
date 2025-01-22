@@ -113,7 +113,7 @@ function force_login_before_adding_to_cart_main()
     $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
 
     BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main add_to_cart_button clicked");
-    if ($settings['enabled'] && is_cart()):
+    if ($settings['enabled'] == 'yes'):
         ?>
             <script type="text/javascript">
                 console.log('===== add_force_login_script add_to_cart_button clicked 111')
@@ -623,6 +623,7 @@ function woocommerce_basgate_init()
     // WooCommerce payment gateway class to hook Payment gateway
     require_once(plugin_basename('class.basgate.php'));
     // BasgateHelper::basgate_log('===++++ woocommerce_basgate_init 111');
+
     add_filter('woocommerce_payment_gateways', 'woocommerce_add_basgate_gateway');
     function woocommerce_add_basgate_gateway($methods)
     {
@@ -630,12 +631,11 @@ function woocommerce_basgate_init()
         return $methods;
     }
 
-    //TODO: In Test Mode 20250121 we need to hide the Basgate Payment Method
+    // //TODO: In Test Mode 20250121 we need to hide the Basgate Payment Method
     add_filter('woocommerce_available_payment_gateways', 'custom_hide_basgate_payment_method_advanced');
     function custom_hide_basgate_payment_method_advanced($available_gateways)
     {
         BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced before $available_gateways:' . wp_unslash(esc_attr(wp_json_encode($available_gateways))));
-        // $user = wp_get_current_user();
         if (!BasgateHelper::is_user_already_logged_in()) {
             BasgateHelper::basgate_log('===++++ custom_hide_basgate_payment_method_advanced authenticated_by!=basgate');
             unset($available_gateways['basgate']);
@@ -660,28 +660,28 @@ function woocommerce_basgate_init()
     {
         //@lin
         ?>
-            <style>
-                .basgate_response {
-                    padding: 15px;
-                    margin-bottom: 20px;
-                    border: 1px solid transparent;
-                    border-radius: 4px;
-                    text-align: center;
-                }
+                            <style>
+                                .basgate_response {
+                                    padding: 15px;
+                                    margin-bottom: 20px;
+                                    border: 1px solid transparent;
+                                    border-radius: 4px;
+                                    text-align: center;
+                                }
 
-                .basgate_response.error-box {
-                    color: #a94442;
-                    background-color: #f2dede;
-                    border-color: #ebccd1;
-                }
+                                .basgate_response.error-box {
+                                    color: #a94442;
+                                    background-color: #f2dede;
+                                    border-color: #ebccd1;
+                                }
 
-                .basgate_response.success-box {
-                    color: #155724;
-                    background-color: #d4edda;
-                    border-color: #c3e6cb;
-                }
-            </style>
-        <?php
+                                .basgate_response.success-box {
+                                    color: #155724;
+                                    background-color: #d4edda;
+                                    border-color: #c3e6cb;
+                                }
+                            </style>
+                        <?php
     }
 
     function basgateResponseMessage($content)
