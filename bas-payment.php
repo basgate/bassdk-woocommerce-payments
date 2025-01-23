@@ -116,7 +116,7 @@ function force_login_before_adding_to_cart()
         ?>
         <script>
             window.addEventListener("JSBridgeReady",(event)=>{
-                alert('JSBridgeReady event fired 333');
+                // alert('JSBridgeReady event fired 333');
                 var login_url='<?php echo $login_url; ?>';
                 console.log('===== force_login_before_adding_to_cart() login_url:'+login_url);
                 window.location.href=login_url;
