@@ -104,28 +104,52 @@ if (function_exists('register_deactivation_hook')) {
     register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 }
 
-add_filter('woocommerce_add_to_cart_validation', 'validate_add_cart_item', 10, 6);
-
-// function validate_add_cart_item($passed, $product_id, $quantity, $variation_id = '', $variations = '')
-function validate_add_cart_item($passed)
+add_action('template_redirect', 'force_login_before_adding_to_cart');
+function force_login_before_adding_to_cart()
 {
-    global $woocommerce;
-    BasgateHelper::basgate_log("===== validate_add_cart_item add_to_cart_button clicked passed:" . $passed );
-    $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
-    if (isset($settings['enabled']) && $settings['enabled'] !== 'yes') {
-        BasgateHelper::basgate_log('===== validate_add_cart_item enabled:' . $settings['enabled']);
-        return $passed;
-    }
+    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
 
-    if(BasgateHelper::is_user_already_logged_in()){
-        return $passed;
-    }
-
-    wp_enqueue_script('basgate-force-login', plugin_dir_url(__FILE__) . 'assets/js/force-login.js', array(), time(), true);
-
-    return $passed;
-
+    if (is_cart() && !BasgateHelper::is_user_already_logged_in()):
+        set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
+        $login_url=wp_login_url(get_permalink());
+        BasgateHelper::basgate_log('===== force_login_before_adding_to_cart() login_url:'.$login_url);
+        ?>
+        <script>
+            window.addEventListener("JSBridgeReady",(event)=>{
+                alert('JSBridgeReady event fired 333');
+                var login_url='<?php echo $login_url; ?>';
+                console.log('===== force_login_before_adding_to_cart() login_url:'+login_url);
+                window.location.href=login_url;
+            },false);
+        </script>
+        <?php
+        // Redirect to login page
+        // exit;
+    endif;
 }
+
+// add_filter('woocommerce_add_to_cart_validation', 'validate_add_cart_item', 10, 6);
+
+// // function validate_add_cart_item($passed, $product_id, $quantity, $variation_id = '', $variations = '')
+// function validate_add_cart_item($passed)
+// {
+//     global $woocommerce;
+//     BasgateHelper::basgate_log("===== validate_add_cart_item add_to_cart_button clicked passed:" . $passed );
+//     $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
+//     if (isset($settings['enabled']) && $settings['enabled'] !== 'yes') {
+//         BasgateHelper::basgate_log('===== validate_add_cart_item enabled:' . $settings['enabled']);
+//         return $passed;
+//     }
+
+//     if(BasgateHelper::is_user_already_logged_in()){
+//         return $passed;
+//     }
+
+//     wp_enqueue_script('basgate-force-login', plugin_dir_url(__FILE__) . 'assets/js/force-login.js', array(), time(), true);
+
+//     return $passed;
+
+// }
 
 
 // //TODO: In Test Mode 20250121 we need to hide the Basgate Payment Method
