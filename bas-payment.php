@@ -110,6 +110,7 @@ add_action('wp_footer', 'force_login_before_adding_to_cart_main');
 
 function force_login_before_adding_to_cart_main()
 {
+    BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main add_to_cart_button clicked");
     $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
     if (isset($settings['enabled']) && $settings['enabled'] !== 'yes') {
         return;
@@ -122,7 +123,6 @@ function force_login_before_adding_to_cart_main()
         return;
     }
 
-    BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main add_to_cart_button clicked");
     if (!BasgateHelper::is_user_already_logged_in()) :
         ?>
             <script type="text/javascript">
@@ -177,18 +177,18 @@ function custom_hide_basgate_payment_method_advanced($available_gateways)
     return $available_gateways;
 }
 
-// add_action('template_redirect', 'force_login_before_adding_to_cart');
-// function force_login_before_adding_to_cart()
-// {
-//     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
+add_action('template_redirect', 'force_login_before_adding_to_cart');
+function force_login_before_adding_to_cart()
+{
+    BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
 
-//     if (is_cart() && !BasgateHelper::is_user_already_logged_in()) {
-//         set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
-//         // Redirect to login page
-//         wp_redirect(wp_login_url(get_permalink()));
-//         exit;
-//     }
-// }
+    if (is_cart() && !BasgateHelper::is_user_already_logged_in()) {
+        set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
+        // Redirect to login page
+        wp_redirect(wp_login_url(get_permalink()));
+        exit;
+    }
+}
 
 add_action('login_message', 'add_login_message');
 
