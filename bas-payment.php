@@ -113,17 +113,22 @@ function force_login_before_adding_to_cart_main()
     BasgateHelper::basgate_log("===== force_login_before_adding_to_cart_main add_to_cart_button clicked");
     $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
     if (isset($settings['enabled']) && $settings['enabled'] !== 'yes') {
+        BasgateHelper::basgate_log('===== force_login_before_adding_to_cart_main enabled:' . $settings['enabled']);
         return;
     }
     if(!class_exists('WooCommerce')){
+        BasgateHelper::basgate_log('===== force_login_before_adding_to_cart_main WooCommerce class not found');
         return;
     }
 
     if(!is_checkout() && !is_cart()){
+        BasgateHelper::basgate_log('===== force_login_before_adding_to_cart_main is_checkout() or is_cart() not found');
         return;
     }
-
+    BasgateHelper::basgate_log('===== force_login_before_adding_to_cart_main is_checkout() or is_cart() found');
+    
     if (!BasgateHelper::is_user_already_logged_in()) :
+        BasgateHelper::basgate_log('===== force_login_before_adding_to_cart_main authenticated_by!=basgate');
         set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
         $login_url=wp_login_url(get_permalink());
         BasgateHelper::basgate_log('===== force_login_before_adding_to_cart() login_url:'.$login_url);
