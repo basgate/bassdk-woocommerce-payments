@@ -104,12 +104,12 @@ if (function_exists('register_deactivation_hook')) {
     register_deactivation_hook(__FILE__, 'uninstall_basgate_plugin');
 }
 
-add_filter('woocommerce_add_to_cart_validation', 'validate_add_cart_item', 10, 5);
+add_filter('woocommerce_add_to_cart_validation', 'validate_add_cart_item', 10, 6);
 
 // function validate_add_cart_item($passed, $product_id, $quantity, $variation_id = '', $variations = '')
 function validate_add_cart_item($passed)
 {
-    // BasgateHelper::basgate_log("===== validate_add_cart_item add_to_cart_button clicked product_id:" . $product_id . " , quantity:" . $quantity . " , variation_id:" . $variation_id);
+    global $woocommerce;
     BasgateHelper::basgate_log("===== validate_add_cart_item add_to_cart_button clicked passed:" . $passed );
     $settings = get_option(BasgateConstants::OPTION_DATA_NAME);
     if (isset($settings['enabled']) && $settings['enabled'] !== 'yes') {
@@ -117,18 +117,10 @@ function validate_add_cart_item($passed)
         return $passed;
     }
 
-    // BasgateHelper::basgate_log('===== validate_add_cart_item is_checkout():' . is_checkout() . ' or is_cart():' . is_cart());
-    // if (!is_checkout() && !is_cart()) {
-    //     BasgateHelper::basgate_log('===== validate_add_cart_item is_checkout():' . is_checkout() . ' or is_cart():' . is_cart() . ' not found');
-    //     return $passed;
-    // }
-    // BasgateHelper::basgate_log('===== validate_add_cart_item is_checkout() or is_cart() found');
-
     if(BasgateHelper::is_user_already_logged_in()){
         return $passed;
     }
 
-    // if (!BasgateHelper::is_user_already_logged_in()):
     BasgateHelper::basgate_log('===== validate_add_cart_item authenticated_by!=basgate');
     set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
     $login_url = wp_login_url(get_permalink());
@@ -145,7 +137,6 @@ function validate_add_cart_item($passed)
             },false);
         </script>
     <?php
-    // endif;
     return $passed;
 
 }
