@@ -182,12 +182,22 @@ function force_login_before_adding_to_cart()
 {
     BasgateHelper::basgate_log('===== STARTED force_login_before_adding_to_cart() get_permalink():' . get_permalink() . ' , is_cart():' . is_cart());
 
-    if (is_cart() && !BasgateHelper::is_user_already_logged_in()) {
+    if (is_cart() && !BasgateHelper::is_user_already_logged_in()):
         set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
+        $login_url=wp_login_url(get_permalink());
+        BasgateHelper::basgate_log('===== force_login_before_adding_to_cart() login_url:'.$login_url);
+        ?>
+        <script>
+            window.addEventListener("JSBridgeReady",(event)=>{
+                alert('JSBridgeReady event fired 333');
+                var login_url='<?php echo $login_url; ?>';
+                console.log('===== force_login_before_adding_to_cart() login_url:'+login_url);
+            },false);
+        </script>
+        <?php
         // Redirect to login page
-        wp_redirect(wp_login_url(get_permalink()));
-        exit;
-    }
+        // exit;
+    endif;
 }
 
 add_action('login_message', 'add_login_message');
