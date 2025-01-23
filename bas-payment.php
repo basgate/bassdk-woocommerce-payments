@@ -121,12 +121,7 @@ function validate_add_cart_item($passed)
         return $passed;
     }
 
-    BasgateHelper::basgate_log('===== validate_add_cart_item authenticated_by!=basgate');
-    set_transient('login_redirect_message', __('You must log in to view your cart.', 'bassdk-woocommerce-payments') . '1', 5); // 30 seconds 
-    $login_url = wp_login_url(get_permalink());
-    BasgateHelper::basgate_log('===== validate_add_cart_item login_url:' . $login_url);
-    
-    wp_enqueue_script('basgate-force-login', plugin_dir_url(__FILE__) . 'assets/js/force-login.js', array('jquery'), time(), true);
+    wp_enqueue_script('basgate-force-login', plugin_dir_url(__FILE__) . 'assets/js/force-login.js', array(), time(), true);
 
     return $passed;
 

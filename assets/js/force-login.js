@@ -1,5 +1,6 @@
 
 console.log('===== forceLogin.js STARTED');
+alert('forceLogin.js STARTED');
 window.addEventListener("JSBridgeReady", (event) => {
     alert('JSBridgeReady event fired ');
     console.log('JSBridgeReady event fired ');
