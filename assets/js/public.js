@@ -35,7 +35,6 @@ isBasSupperApp(function () {
 });
 
 
-/////////
 
 // // console.log("isBasSupperApp()");
 // const isBasSupperApp = () => {
