@@ -41,73 +41,73 @@ isBasSupperApp(function () {
 //     return isJSBridgeReadyPayments;
 // }
 
-// // console.log("getBasConfig()");
-// /*  @getBasConfig()
-//     Dont call this method while your application in init mode
-//     return {
-//             'status': string,
-//             'locale': string,
-//             'isInBasSuperApp': bool,
-//             'messages': string[],
-//             'envType': string,
-//         };
-// */
-// const getBasConfig = async () => {
-//     console.log("getBasConfig() STARTED");
-//     return window.JSBridge.call('basConfigs').then(function (result) {
-//         console.log("basConfigs Result:", JSON.stringify(result));
-//         if (result) {
-//             if ("isInBasSuperApp" in result) {
-//                 isJSBridgeReadyPayments = true;
-//             }
+// console.log("getBasConfig()");
+/*  @getBasConfig()
+    Dont call this method while your application in init mode
+    return {
+            'status': string,
+            'locale': string,
+            'isInBasSuperApp': bool,
+            'messages': string[],
+            'envType': string,
+        };
+*/
+const getBasConfig = async () => {
+    console.log("getBasConfig() STARTED");
+    return window.JSBridge.call('basConfigs').then(function (result) {
+        console.log("basConfigs Result:", JSON.stringify(result));
+        if (result) {
+            if ("isInBasSuperApp" in result) {
+                isJSBridgeReadyPayments = true;
+            }
 
-//             if ("envType" in result) {
-//                 isBasInDebug = result.envType == "stage"
-//             }
-//             return result;
-//         } else {
-//             return null
-//         }
-//     });
-// }
+            if ("envType" in result) {
+                isBasInDebug = result.envType == "stage"
+            }
+            return result;
+        } else {
+            return null
+        }
+    });
+}
 
-// // console.log("getBasAuthCode()");
-// const getBasAuthCode = async (clientId) => {
-//     if (!isJSBridgeReadyPayments) await initBas();
-//     if ("JSBridge" in window) {
-//         if (isBasInDebug) console.log("BasSDK getBasAuthCode STARTED")
-//         return window.JSBridge.call('basFetchAuthCode',
-//             {
-//                 clientId: clientId
-//             }).then(function (result) {
-//                 /****** Response Example ******/
-//                 /*
-//                 {
-//                     "status":1,
-//                     "data":{
-//                         "auth_id":"FD268ED889B7DFB008093D04809E8B7FC26B821421B278",
-//                         "authid":"FD268ED889B7DFB008093D04809E8B7FC26B821421B278",
-//                         "openid":"null",
-//                         "return_url":"null"},
-//                     "messages":["تمت العملية بنجاح"]
-//                 }
-//                 */
-//                 /****** End Response Example ******/
-//                 // alert(JSON.stringify(result))
-//                 if (isBasInDebug) console.log("BasSDK getBasAuthCode result:", JSON.stringify(result))
-//                 if (result) {
-//                     isBasAuthTokenReturned = true;
-//                     return result;
-//                 } else {
-//                     return null
-//                 }
-//             });
-//     } else {
-//         console.error("JSBridge not Existing in window");
-//         return null;
-//     }
+// console.log("getBasAuthCode()");
+const getBasAuthCode = async (clientId) => {
+    if (!isJSBridgeReadyPayments) await initBas();
+    if ("JSBridge" in window) {
+        if (isBasInDebug) console.log("BasSDK getBasAuthCode STARTED")
+        return window.JSBridge.call('basFetchAuthCode',
+            {
+                clientId: clientId
+            }).then(function (result) {
+                /****** Response Example ******/
+                /*
+                {
+                    "status":1,
+                    "data":{
+                        "auth_id":"FD268ED889B7DFB008093D04809E8B7FC26B821421B278",
+                        "authid":"FD268ED889B7DFB008093D04809E8B7FC26B821421B278",
+                        "openid":"null",
+                        "return_url":"null"},
+                    "messages":["تمت العملية بنجاح"]
+                }
+                */
+                /****** End Response Example ******/
+                // alert(JSON.stringify(result))
+                if (isBasInDebug) console.log("BasSDK getBasAuthCode result:", JSON.stringify(result))
+                if (result) {
+                    isBasAuthTokenReturned = true;
+                    return result;
+                } else {
+                    return null
+                }
+            });
+    } else {
+        console.error("JSBridge not Existing in window");
+        return null;
+    }
 
-// }
+}
 
 /****** Response Example ******/
 /*{
